@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Globalization;
 using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Sound;
 using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Configuration;
@@ -30,7 +32,7 @@ namespace Utopia.Shared.Entities.Inventory
     [ProtoInclude(106, typeof(GodHandTool))]
     [ProtoInclude(107, typeof(Extractor))]
     [ProtoInclude(108, typeof(MeleeWeapon))]
-    public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity
+    public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity, ISoundEmitterEntity
     {
         private VoxelModelInstance _modelInstance;
 
@@ -76,6 +78,27 @@ namespace Utopia.Shared.Entities.Inventory
         [Category("Gameplay")]
         [ProtoMember(8)]
         public float PickRange { get; set; }
+
+        /// <summary>
+        /// Optional model state for the entity, if not set the main state will be used
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Optional model state for the entity, if not set the main state will be used")]
+        [TypeConverter(typeof(ModelStateConverter))]
+        [ProtoMember(9)]
+        public string ModelState { get; set; }
+
+        /// <summary>
+        /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
+        /// </summary>
+        [Category("Gameplay")]
+        [Description("Allows to transform the item when it is picked")]
+        [ProtoMember(10)]
+        public List<ItemTransformation> Transformations { get; set; }
+
+
+        [Browsable(false)]
+        public ISoundEngine SoundEngine { get; set; }
 
         /// <summary>
         /// Gets or sets voxel model instance
@@ -142,6 +165,7 @@ namespace Utopia.Shared.Entities.Inventory
             MaxStackSize = 1;
 
             EmittedSound = new StaticEntitySoundSource();
+            Transformations = new List<ItemTransformation>();
         }
 
         /// <summary>
@@ -310,15 +334,32 @@ namespace Utopia.Shared.Entities.Inventory
                     return impact;
                 }
 
+                OnBeforePut(entity);
                 // put entity into the world
                 cursor.AddEntity(entity, owner.DynamicId);
                 impact.EntityId = entity.StaticId;
+
+                if (SoundEngine != null)
+                {
+                    var sound = entity.PutSound ?? EntityFactory.Config.EntityPut;
+                    if (sound != null)
+                    {
+                        SoundEngine.StartPlay3D(sound, entity.Position.AsVector3());
+                    }
+                }
+
                 return impact;
             }
             
             impact.Message = "CharacterEntity owner is expected";
             return impact;
         }
+
+        protected virtual void OnBeforePut(Item item)
+        {
+
+        }
+        
 
         /// <summary>
         /// Defines tool pick behaviour for the blocks
@@ -343,5 +384,32 @@ namespace Utopia.Shared.Entities.Inventory
         {
             return PickType.Pick;
         }
+
+        public override object Clone()
+        {
+            var item = (Item)base.Clone();
+            if (Transformations != null)
+                item.Transformations = new List<ItemTransformation>(Transformations);
+            
+            return item;
+        }
+    }
+
+    [ProtoContract]
+    public struct ItemTransformation
+    {
+        /// <summary>
+        /// Entity that will be given instead of default
+        /// </summary>
+        [Description("Entities that will be given instead of default")]
+        [ProtoMember(1)]
+        public List<InitSlot> GeneratedItems { get; set; }
+
+        /// <summary>
+        /// A chance that item will transform to other entity [0;1]
+        /// </summary>
+        [Description("A chance that item will transform to other entity [0;1]")]
+        [ProtoMember(2)]
+        public float TransformChance { get; set; }
     }
 }

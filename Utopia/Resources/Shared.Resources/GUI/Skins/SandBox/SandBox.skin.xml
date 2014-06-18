@@ -11,6 +11,7 @@
     <font name="BebasFont" contentPath="Images\BebasNeue.ttf" fontName="Small Fonts" fontSize="18" fontStyle="Regular" />
     <bitmap name="controls" contentPath="SandBoxSheet" />
     <bitmap name="toolbar" contentPath="BottomPanel" />
+    <bitmap name="GUI" contentPath="GUI" />
   </resources>
   <frames>
     <frame name="window">
@@ -433,6 +434,15 @@
       <region source="controls" hplacement="left" vplacement="bottom" x="160" y="253" w="2" h="2" />
       <region source="controls" hplacement="stretch" vplacement="bottom" x="162" y="253" w="1" h="2" />
       <region source="controls" hplacement="right" vplacement="bottom" x="168" y="253" w="22" h="2" />
+    </frame>
+    <frame name="WeaterConditions">
+      <region source="GUI" hplacement="stretch" vplacement="stretch" x="1" y="1" w="10" h="100" />
+    </frame>
+    <frame name="WeaterTemperature">
+      <region source="GUI" hplacement="stretch" vplacement="stretch" x="13" y="0" w="16" h="16" />
+    </frame>
+    <frame name="WeaterMoisture">
+      <region source="GUI" hplacement="stretch" vplacement="stretch" x="13" y="18" w="16" h="16" />
     </frame>
   </frames>
 </skin>

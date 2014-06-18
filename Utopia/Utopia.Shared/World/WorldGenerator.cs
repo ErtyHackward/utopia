@@ -24,8 +24,7 @@ namespace Utopia.Shared.World
         /// </summary>
         public WorldParameters WorldParameters { get; set; }
 
-        //public LandscapeManager<GeneratedChunk> LandscapeManager { get; private set; }
-
+        public IEntitySpawningControler EntitySpawningControler { get; set; }
 
         /// <summary>
         /// Initializes instance of world generator
@@ -105,7 +104,7 @@ namespace Utopia.Shared.World
         }
 
         /// <summary>
-        /// Gets a generated chunk. Generates 9 chunks (target + 8 surrounding). Consider using GenerateAsync method
+        /// Gets a generated chunk.
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>

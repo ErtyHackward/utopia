@@ -199,15 +199,15 @@ namespace Utopia.Shared.Configuration
                 GroundCube = UtopiaProcessorParams.CubeId.Stone,
                 CubeVeins = new List<CubeVein>()
                 {
-                    new CubeVein(){ Name = "Sand Vein", CubeId = UtopiaProcessorParams.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "Rock Vein",CubeId = UtopiaProcessorParams.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
-                    new CubeVein(){ Name = "Dirt Vein",CubeId = UtopiaProcessorParams.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
-                    new CubeVein(){ Name = "Gravel Vein",CubeId = UtopiaProcessorParams.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
-                    new CubeVein(){ Name = "GoldOre Vein",CubeId = UtopiaProcessorParams.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
-                    new CubeVein(){ Name = "CoalOre Vein",CubeId = UtopiaProcessorParams.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
-                    new CubeVein(){ Name = "MoonStone Vein",CubeId = UtopiaProcessorParams.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
-                    new CubeVein(){ Name = "DynamicWater",CubeId = UtopiaProcessorParams.CubeId.WaterFlow, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
-                    new CubeVein(){ Name = "DynamicLava",CubeId = UtopiaProcessorParams.CubeId.LavaFlow, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
+                    new CubeVein(){ Name = "Sand Vein", Cube = UtopiaProcessorParams.CubeId.Sand, VeinSize = 12, VeinPerChunk = 8, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "Rock Vein",Cube = UtopiaProcessorParams.CubeId.Rock, VeinSize = 8, VeinPerChunk = 8, SpawningHeight = new RangeB(1,50) },
+                    new CubeVein(){ Name = "Dirt Vein",Cube = UtopiaProcessorParams.CubeId.Dirt, VeinSize = 12, VeinPerChunk = 16, SpawningHeight = new RangeB(1,128) },
+                    new CubeVein(){ Name = "Gravel Vein",Cube = UtopiaProcessorParams.CubeId.Gravel, VeinSize = 16, VeinPerChunk = 5, SpawningHeight = new RangeB(40,128) },
+                    new CubeVein(){ Name = "GoldOre Vein",Cube = UtopiaProcessorParams.CubeId.GoldOre, VeinSize = 8, VeinPerChunk = 5, SpawningHeight = new RangeB(1,40) },
+                    new CubeVein(){ Name = "CoalOre Vein",Cube = UtopiaProcessorParams.CubeId.CoalOre, VeinSize = 16, VeinPerChunk = 16, SpawningHeight = new RangeB(1,80) },
+                    new CubeVein(){ Name = "MoonStone Vein",Cube = UtopiaProcessorParams.CubeId.MoonStone, VeinSize = 4, VeinPerChunk = 3, SpawningHeight = new RangeB(1,20) },
+                    new CubeVein(){ Name = "DynamicWater",Cube = UtopiaProcessorParams.CubeId.WaterFlow, VeinSize = 5, VeinPerChunk = 20, SpawningHeight = new RangeB(60,120) },
+                    new CubeVein(){ Name = "DynamicLava",Cube = UtopiaProcessorParams.CubeId.LavaFlow, VeinSize = 5, VeinPerChunk = 40, SpawningHeight = new RangeB(2,60) }
                 }
             };
 

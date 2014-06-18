@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer;
@@ -63,7 +64,7 @@ namespace Utopia.Entities.Managers
         private readonly PostEffectComponent _postEffectComponent;
         private ISoundEngine _soundEngine;
         private TimerManager.GameTimer _energyUpdateTimer;
-
+        private Random random;
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -332,7 +333,7 @@ namespace Utopia.Entities.Managers
             ShowDebugInfo = true;
 
             // Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
-            VisualVoxelEntity = new VisualVoxelEntity(PlayerCharacter, voxelModelManager);
+            VisualVoxelEntity = new VisualVoxelEntity(PlayerCharacter, null, voxelModelManager);
 
             //Add a new Timer trigger
             _energyUpdateTimer = timerManager.AddTimer(1000); //A timer that will be raised every second
@@ -340,6 +341,12 @@ namespace Utopia.Entities.Managers
 
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
+            
+            // create "real" random
+            var entropySource = RNGCryptoServiceProvider.Create();
+            var bytes = new byte[4];
+            entropySource.GetBytes(bytes);
+            random = new Random(BitConverter.ToInt32(bytes,0));
         }
 
         void Equipment_ItemEquipped(object sender, CharacterEquipmentEventArgs e)
@@ -493,6 +500,8 @@ namespace Utopia.Entities.Managers
             // wait until landscape being loaded
             if (!WorldChunks.IsInitialLoadCompleted) 
                 return;
+
+            Player.EntityState.Entropy = random.Next();
 
             // Input handling
             inputHandler();

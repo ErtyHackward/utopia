@@ -160,14 +160,7 @@ namespace Utopia.Shared.Server.Structs
         {
             if (State != ServerNpcState.Idle)
                 return;
-            
-            if (Faction.Designations.Any(d => d is DigDesignation))
-            {
-                if (!EquipItem<BasicCollector>())
-                    return;
-
-                State = ServerNpcState.UsingBlock;
-            }            
+          
         }
 
         /// <summary>

@@ -160,7 +160,7 @@ namespace Utopia.GUI.Inventory
 
         public override void Draw(DeviceContext context, int index)
         {
-            if (_currentItem.HasValue)
+            if (_currentItem.HasValue && _icon != null)
             {
                 _spriteRender.Begin(false, context);
 

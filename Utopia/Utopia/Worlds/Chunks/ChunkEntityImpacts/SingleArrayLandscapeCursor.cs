@@ -1,6 +1,5 @@
 ﻿using System;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
@@ -14,11 +13,13 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
     public class SingleArrayLandscapeCursor : ILandscapeCursor
     {
         private readonly IChunkEntityImpactManager _landscapeManager;
+        private readonly WorldConfiguration _config;
         private Vector3I _globalPosition;
-        private WorldConfiguration _config;
         private int _bigArrayIndex;
 
-        public bool isError { get { return _bigArrayIndex == int.MaxValue; } }
+        public uint OwnerDynamicId { get; set; }
+
+        public bool IsError { get { return _bigArrayIndex == int.MaxValue; } }
 
         /// <summary>
         /// Occurs when someone tries to write using this cursor
@@ -42,9 +43,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 _bigArrayIndex = _landscapeManager.CubesHolder.Index(ref _globalPosition);
             }
         }
-
-        public uint OwnerDynamicId { get; set; }
-
+        
         public byte Read()
         {
             return _landscapeManager.CubesHolder.Cubes[_bigArrayIndex].Id;
@@ -164,6 +163,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return this;
         }
 
+        /// <summary>
+        /// Moves current cursor and returns itself (Fluent interface)
+        /// </summary>
+        /// <param name="moveVector"></param>
+        /// <returns></returns>
         public ILandscapeCursor Move(Vector3I moveVector)
         {
             _globalPosition += moveVector;
@@ -192,5 +196,20 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return _landscapeManager.RemoveEntity(entity, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
 
+        /// <summary>
+        /// throws NotSupportedException
+        /// </summary>
+        public void BeginTransaction()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// throws NotSupportedException
+        /// </summary>
+        public void CommitTransaction()
+        {
+            throw new NotSupportedException();
+        }
     }
 }

@@ -11,6 +11,10 @@ using Utopia.Shared.Entities.Interfaces;
 using System.ComponentModel;
 using Utopia.Shared.Configuration;
 using System.Linq;
+using Utopia.Shared.Structs.Helpers;
+using Utopia.Shared.Tools;
+using System.Drawing.Design;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -48,16 +52,19 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         [ProtoMember(1)]
         public string Name { get; set; }
 
-        [Browsable(false)]
         [ProtoMember(2)]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte SurfaceCube { get; set; }
 
-        [Browsable(false)]
         [ProtoMember(3)]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte UnderSurfaceCube { get; set; }
 
-        [Browsable(false)]
         [ProtoMember(4)]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte GroundCube { get; set; }        
 
         [Description("Under surface layer size"), Category("Composition")]
@@ -184,26 +191,26 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 //Generate the vein X time
                 for (int i = 0; i < vein.VeinPerChunk; i++)
                 {
-                    if (vein.CubeId != UtopiaProcessorParams.CubeId.LavaFlow &&
-                        vein.CubeId != UtopiaProcessorParams.CubeId.WaterFlow)
+                    if (vein.Cube != UtopiaProcessorParams.CubeId.LavaFlow &&
+                        vein.Cube != UtopiaProcessorParams.CubeId.WaterFlow)
                     {
                         //Get Rnd chunk Location.
                         int x = rnd.Next(0, 16);
                         int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
                         int z = rnd.Next(0, 16);
 
-                        PopulateChunkWithResource(vein.CubeId, cursor, x, y, z, vein.VeinSize, rnd);
+                        PopulateChunkWithResource(vein.Cube, cursor, x, y, z, vein.VeinSize, rnd);
                     }
                     else
                     {
-                        if (vein.CubeId == UtopiaProcessorParams.CubeId.LavaFlow)
+                        if (vein.Cube == UtopiaProcessorParams.CubeId.LavaFlow)
                         {
                             //Get Rnd chunk Location.
                             int x = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
                             int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
                             int z = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
 
-                            PopulateChunkWithLiquidSources(vein.CubeId, cursor, x, y, z, vein.VeinSize);
+                            PopulateChunkWithLiquidSources(vein.Cube, cursor, x, y, z, vein.VeinSize);
                         }
                     }
                 }
@@ -225,31 +232,52 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         int y = rnd.Next(cavern.SpawningHeight.Min, cavern.SpawningHeight.Max);
                         int z = rnd.Next(7, 9);
                         int layer = rnd.Next(cavern.CavernHeightSize.Min, cavern.CavernHeightSize.Max + 1);
-                        PopulateChunkWithCave(cursor, x, y, z, layer, cavern.CubeId, rnd);
+                        PopulateChunkWithCave(cursor, x, y, z, layer, cavern.Cube, rnd);
                     }
                 }
             }
         }
 
-        public void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
+        //Will send back a dictionnary with the entity amount that have been generated
+        public Dictionary<ushort, int> GenerateChunkStaticItems(ByteChunkCursor cursor, GeneratedChunk chunk, Biome biome, FastRandom rnd, EntityFactory entityFactory, UtopiaEntitySpawningControler spawnControler)
         {
-            foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.isChunkGenerationSpawning))
+            Dictionary<ushort, int> entityAmount = new Dictionary<ushort, int>();
+
+            foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.IsChunkGenerationSpawning))
             {
-                //Entity population
                 for (int i = 0; i < entity.MaxEntityAmount; i++)
                 {
-                    if (rnd.NextDouble() <= entity.SpawningChance)
+                    Vector3D entityPosition;
+                    if (spawnControler.TryGetSpawnLocation(entity, chunk, cursor, rnd, out entityPosition))
                     {
-                        //Get Rnd chunk Location.
-                        int x = rnd.Next(0, 16);
-                        int z = rnd.Next(0, 16);
-                        int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
+                        //Create the entity
+                        var createdEntity = entityFactory.CreateFromBluePrint(entity.BluePrintId);
+                        var chunkWorldPosition = chunk.BlockPosition;
 
-                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.BluePrintId, x, y, z, rnd, entityFactory, false);
+                        //Should take into account the SpawnLocation ! (Ceiling or not !)
+                        if (createdEntity is IBlockLinkedEntity)
+                        {
+                            Vector3I linkedCubePosition = BlockHelper.EntityToBlock(entityPosition);
+                            linkedCubePosition.Y--;
+                            ((IBlockLinkedEntity)createdEntity).LinkedCube = linkedCubePosition;
+                        }
+
+                        if (createdEntity is BlockLinkedItem)
+                        {
+                            Vector3I LocationCube = BlockHelper.EntityToBlock(entityPosition);
+                            ((BlockLinkedItem)createdEntity).BlockLocationRoot = LocationCube;
+                        }
+
+                        createdEntity.Position = entityPosition;
+
+                        chunk.Entities.Add((StaticEntity)createdEntity);
+                        if (!entityAmount.ContainsKey(createdEntity.BluePrintId)) entityAmount[createdEntity.BluePrintId] = 0;
+                        entityAmount[createdEntity.BluePrintId]++;
                     }
                 }
             }
-            //logger.Warn("{0} | {1}", chunk.Position, nbr);
+
+            return entityAmount;
         }
 
         #endregion

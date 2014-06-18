@@ -170,5 +170,13 @@ namespace Utopia.Shared.Entities
             return _name;
         }
 
+        /// <summary>
+        /// Late entity initialization after the factory creation
+        /// </summary>
+        internal virtual void FactoryInitialize()
+        {
+
+        }
+
     }
 }

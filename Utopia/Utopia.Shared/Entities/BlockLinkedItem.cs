@@ -20,6 +20,7 @@ namespace Utopia.Shared.Entities
     [ProtoInclude(100, typeof(OrientedBlockLinkedItem))]
     [ProtoInclude(101, typeof(Plant))]
     [ProtoInclude(102, typeof(LinkedLightSource))]
+    [ProtoInclude(103, typeof(GrowingEntity))]
     public abstract class BlockLinkedItem : Item, IBlockLinkedEntity, IBlockLocationRoot
     {
         /// <summary>
@@ -73,13 +74,13 @@ namespace Utopia.Shared.Entities
         /// </summary>
         [Browsable(false)]
         [ProtoMember(7)]
-        public bool NotLinked { get; set; }
+        public bool NotLinked { get { return !Linked; } set { Linked = !value; } }
 
         /// <summary>
         /// Indicates if this item has block link or not
         /// </summary>
         [Browsable(false)]
-        public bool Linked { get { return !NotLinked; } set { NotLinked = !value; } }
+        public bool Linked { get; set; }
 
         public override void SetPosition(EntityPosition pos, IItem item, IDynamicEntity owner)
         {
@@ -89,13 +90,13 @@ namespace Utopia.Shared.Entities
 
             if (!owner.EntityState.IsBlockPicked)
             {
-                cubeEntity.NotLinked = true;
+                cubeEntity.Linked = false;
             }
             else
             {
                 cubeEntity.LinkedCube = owner.EntityState.PickedBlockPosition;
                 cubeEntity.BlockLocationRoot = BlockHelper.EntityToBlock(pos.Position);
-                cubeEntity.NotLinked = false;
+                cubeEntity.Linked = true;
             }
         }
 

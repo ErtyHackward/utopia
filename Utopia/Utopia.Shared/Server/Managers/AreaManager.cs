@@ -31,7 +31,7 @@ namespace Utopia.Shared.Server.Managers
         private readonly Dictionary<uint, ServerDynamicEntity> _dynamicEntities = new  Dictionary<uint, ServerDynamicEntity>();
         private readonly object _areaManagerSyncRoot = new object();
         private readonly Timer _entityUpdateTimer;
-        private DateTime _lastUpdate = DateTime.MinValue;
+        private UtopiaTime _lastUpdate;
 
         #region Properties
 #if DEBUG
@@ -110,7 +110,7 @@ namespace Utopia.Shared.Server.Managers
         {
             if (e.Message.EntityLink.IsStatic)
             {
-                GetArea(new Vector3D(e.Message.EntityLink.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, e.Message.EntityLink.ChunkPosition.Y * AbstractChunk.ChunkSize.Z)).OnEntityLockChanged(e);
+                GetArea(new Vector3D(e.Message.EntityLink.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, e.Message.EntityLink.ChunkPosition.Z * AbstractChunk.ChunkSize.Z)).OnEntityLockChanged(e);
             }
         }
 
@@ -160,7 +160,7 @@ namespace Utopia.Shared.Server.Managers
                 SourceEntityId = e.SourceDynamicId
             };
 
-            GetArea(new Vector3D(eargs.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, eargs.ChunkPosition.Y * AbstractChunk.ChunkSize.Z)).OnBlocksChanged(eargs);
+            GetArea(new Vector3D(eargs.ChunkPosition.X * AbstractChunk.ChunkSize.X, 0, eargs.ChunkPosition.Z * AbstractChunk.ChunkSize.Z)).OnBlocksChanged(eargs);
         }
 
         // update dynamic entities
@@ -172,7 +172,7 @@ namespace Utopia.Shared.Server.Managers
                 {
                     var state = new DynamicUpdateState
                     {
-                        ElapsedTime = _lastUpdate == DateTime.MinValue ? TimeSpan.Zero : _server.Clock.Now - _lastUpdate,
+                        ElapsedTime = _lastUpdate == new UtopiaTime() ? UtopiaTimeSpan.Zero : _server.Clock.Now - _lastUpdate,
                         CurrentTime = _server.Clock.Now
                     };
 
@@ -318,7 +318,7 @@ namespace Utopia.Shared.Server.Managers
                 for (int z = -1; z < 2; z++)
                 {
                     var area = GetArea(new Vector3D(entity.DynamicEntity.Position.X + x * MapArea.AreaSize.X, 0,
-                                                   entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
+                                                    entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
                     entity.AddArea(area);
                     if (x == 0 && z == 0)
                     {
@@ -364,7 +364,7 @@ namespace Utopia.Shared.Server.Managers
                 for (int z = -1; z < 2; z++)
                 {
                     var area = GetArea(new Vector3D(entity.DynamicEntity.Position.X + x * MapArea.AreaSize.X, 0,
-                                                   entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
+                                                    entity.DynamicEntity.Position.Z + z * MapArea.AreaSize.Y));
                     if (x == 0 && z == 0)
                         area.RemoveEntity((int)entity.DynamicEntity.DynamicId);
 

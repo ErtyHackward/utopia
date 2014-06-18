@@ -1,15 +1,20 @@
 ﻿using System.ComponentModel;
 using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Settings;
+using Utopia.Shared.Tools;
+using Utopia.Shared.Entities.Concrete;
+using System.Drawing.Design;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
     [ProtoContract]
     public partial class CubeVein
     {
-        [Browsable(false)]
         [ProtoMember(1)]
-        public byte CubeId { get; set; }
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
+        public byte Cube { get; set; }
 
         [ProtoMember(2)]
         public string Name { get; set; }

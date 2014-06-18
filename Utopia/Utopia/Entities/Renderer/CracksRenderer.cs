@@ -134,11 +134,5 @@ namespace Utopia.Entities.Renderer
             
             base.Draw(context, index);
         }
-
-        public override void BeforeDispose()
-        {
-            _cracksArray.Dispose();
-            base.BeforeDispose();
-        }
     }
 }

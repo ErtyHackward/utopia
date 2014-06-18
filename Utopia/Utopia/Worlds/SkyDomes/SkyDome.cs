@@ -9,6 +9,7 @@ using Utopia.Shared.World;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using S33M3DXEngine.Main;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Worlds.SkyDomes
 {
@@ -62,9 +63,9 @@ namespace Utopia.Worlds.SkyDomes
         //Get sunray direction
         protected Vector3 GetDirection()
         {
-            float y = (float)Math.Cos(_clock.ClockTime.Time);
-            float x = (float)(Math.Sin(_clock.ClockTime.Time) * Math.Cos(this._fPhi));
-            float z = (float)(Math.Sin(_clock.ClockTime.Time) * Math.Sin(this._fPhi));
+            float y = (float)Math.Cos(_clock.ClockTime.ClockTimeNormalized * MathHelper.TwoPi);
+            float x = (float)(Math.Sin(_clock.ClockTime.ClockTimeNormalized * MathHelper.TwoPi)); // * Math.Cos(this._fPhi));
+            float z = 0; //(float)(Math.Sin(_clock.ClockTime.ClockTimeNormalized) * Math.Sin(this._fPhi));
 
             return new Vector3(x, y, z);
         }

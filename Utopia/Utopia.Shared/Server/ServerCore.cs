@@ -102,6 +102,16 @@ namespace Utopia.Shared.Server
         /// </summary>
         public GlobalStateManager GlobalStateManager { get; private set; }
 
+        /// <summary>
+        /// Contains the logic behind chunk's entities spawning.
+        /// </summary>
+        public EntitySpawningManager EntitySpawningManager { get; private set; }
+
+        /// <summary>
+        /// Contains the logic behind the entities growing
+        /// </summary>
+        public EntityGrowingManager EntityGrowingManager { get; private set; }
+
         public WorldParameters WorldParameters { get; private set; }
 
         #endregion
@@ -135,9 +145,10 @@ namespace Utopia.Shared.Server
 
             ConnectionManager = new ConnectionManager(SettingsManager.Settings.ServerPort);
 
-            Clock = new Clock(DateTime.Now, TimeSpan.FromMinutes(20));
-
             Scheduler = new ScheduleManager();
+
+            UtopiaTime startTime = CustomStorage.GetVariable<UtopiaTime>("GameTimeElapsed");
+            Clock = new Clock(this, startTime, TimeSpan.FromMinutes(20));
 
             LandscapeManager = new ServerLandscapeManager(
                 this, 
@@ -168,6 +179,10 @@ namespace Utopia.Shared.Server
             
             LoginManager = new LoginManager(this, EntityFactory);
 
+            EntitySpawningManager = new EntitySpawningManager(this, worldGenerator.EntitySpawningControler);
+
+            EntityGrowingManager = new Managers.EntityGrowingManager(this);
+
             Services.Initialize();
         }
 
@@ -176,6 +191,7 @@ namespace Utopia.Shared.Server
         /// </summary>
         public void Dispose()
         {
+            Clock.Dispose();
             AreaManager.Dispose();
             ConnectionManager.Dispose();
             LandscapeManager.Dispose();

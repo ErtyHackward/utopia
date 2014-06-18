@@ -47,6 +47,13 @@ namespace S33M3Resources.Structs
             this.z = (int)z;
         }
 
+        public Vector3I(int p)
+        {
+            x = p;
+            y = p;
+            z = p;
+        }
+
         /// <summary>
         /// Returns length between vectors using sqrt
         /// </summary>

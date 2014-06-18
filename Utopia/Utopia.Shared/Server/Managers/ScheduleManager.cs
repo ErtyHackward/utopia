@@ -86,7 +86,13 @@ namespace Utopia.Shared.Server.Managers
         /// <param name="callDelegate"></param>
         public ScheduleTask AddTaskOnce(string name, DateTime startAt, TimeSpan callAt, Action callDelegate)
         {
-            var task = new ScheduleTask{ Name = name, CallDelegate = callDelegate, CallType = ScheduleCallType.Once, ExecuteAt = callAt, StartDateTime = startAt };
+            var task = new ScheduleTask{ 
+                Name = name, 
+                CallDelegate = callDelegate, 
+                CallType = ScheduleCallType.Once, 
+                ExecuteAt = callAt, 
+                StartDateTime = startAt 
+            };
 
             AddTask(task);
 
@@ -102,7 +108,13 @@ namespace Utopia.Shared.Server.Managers
         /// <param name="callDelegate"></param>
         public ScheduleTask AddTaskPeriodic(string name, DateTime startAt, TimeSpan interval, Action callDelegate)
         {
-            var task = new ScheduleTask { CallType = ScheduleCallType.Periodic, Name = name, CallDelegate = callDelegate, CallInterval = interval, StartDateTime = startAt };
+            var task = new ScheduleTask { 
+                CallType = ScheduleCallType.Periodic, 
+                Name = name, 
+                CallDelegate = callDelegate, 
+                CallInterval = interval, 
+                StartDateTime = startAt 
+            };
 
             AddTask(task);
 

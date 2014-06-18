@@ -687,7 +687,7 @@ namespace Utopia.Entities.Managers
         //Dynamic Entity management
         private VisualDynamicEntity CreateVisualEntity(ICharacterEntity entity)
         {
-            return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
+            return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, null, _voxelModelManager));
         }
 
 

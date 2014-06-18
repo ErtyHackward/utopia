@@ -8,6 +8,7 @@ using System.Threading;
 using S33M3Resources.Structs;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
@@ -141,10 +142,15 @@ namespace Utopia.Shared.Server.Managers
             chunk.NeedSave = true;
             chunk.PureGenerated = false;
 
-            lock (_chunksToSave)
+            if (Monitor.TryEnter(_chunksToSave,5000))
             {
                 if (!_chunksToSave.Contains(chunk))
                     _chunksToSave.Add(chunk);
+                Monitor.Exit(_chunksToSave);
+            }
+            else
+            {
+                logger.Debug("Unable to aquire lock to save the chunk");
             }
         }
 
@@ -273,13 +279,53 @@ namespace Utopia.Shared.Server.Managers
         }
 
         /// <summary>
+        /// Returns a copy of list of all chunks in memory
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ServerChunk> GetBufferedChunks()
+        {
+            List<ServerChunk> chunks;
+            lock (_chunks)
+            {
+                chunks = new List<ServerChunk>(_chunks.Values);
+            }
+
+            return chunks;
+        }
+
+        public ServerChunk GenerateChunk(Vector3I chunkPos)
+        {
+            var generatedChunk = _generator.GetChunk(chunkPos);
+
+            if (generatedChunk != null)
+            {
+                return new ServerChunk(generatedChunk) { Position = chunkPos, LastAccess = DateTime.Now };
+            }
+            return null;
+        }
+
+        public void WipeChunk(Vector3I chunkPos)
+        {
+            var chunk = GetChunk(chunkPos);
+
+            if (chunk.PureGenerated)
+                return;
+
+            RemoveChunk(chunk);
+
+            chunk = GenerateChunk(chunkPos);
+            RequestSave(chunk);
+            SaveChunks();
+        }
+
+        /// <summary>
         /// Gets chunk. First it tries to get cached in memory value, then it checks the database, and then it generates the chunk
         /// </summary>
         /// <param name="position">chunk position</param>
         /// <returns></returns>
         public override ServerChunk GetChunk(Vector3I position)
         {
-            ServerChunk chunk = null;
+            ServerChunk chunk;
             // search chunk in memory or load it
             if (_chunks.ContainsKey(position))
             {
@@ -296,18 +342,22 @@ namespace Utopia.Shared.Server.Managers
 
                         if (data == null)
                         {
-                            var generatedChunk = _generator.GetChunk(position);
-
-                            if (generatedChunk != null)
-                            {
-                                chunk = new ServerChunk(generatedChunk) { Position = position, LastAccess = DateTime.Now };
-                            }
+                            chunk = GenerateChunk(position);
                         }
                         else
                         {
-                            chunk = new ServerChunk { Position = position };
-                            chunk.Decompress(data);
-                            EntityFactory.PrepareEntities(chunk.Entities);
+
+                            try
+                            {
+                                chunk = new ServerChunk { Position = position };
+                                chunk.Decompress(data);
+                                EntityFactory.PrepareEntities(chunk.Entities);
+                            }
+                            catch (Exception e)
+                            {
+                                logger.Error("Error when decompressing chunk {1}: {0}", e.Message, position);
+                                chunk = GenerateChunk(position);
+                            }
                         }
 
                         _chunks.Add(position, chunk);
@@ -370,35 +420,44 @@ namespace Utopia.Shared.Server.Managers
 
         public void SaveChunks()
         {
-            lock (_chunksToSave)
+            if (Monitor.TryEnter(_chunksToSave, 5000))
             {
-
-                SaveTime = 0;
-                ChunksSaved = 0;
-
-                if (_chunksToSave.Count == 0)
-                    return;
-
-                _saveStopwatch.Restart();
-                var positions = new Vector3I[_chunksToSave.Count];
-                var datas = new List<byte[]>(_chunksToSave.Count);
-
-                int index = 0;
-                foreach (var serverChunk in _chunksToSave)
+                try
                 {
-                    serverChunk.NeedSave = false;
-                    positions[index] = serverChunk.Position;
-                    datas.Add(serverChunk.Compress());
-                    index++;
+                    SaveTime = 0;
+                    ChunksSaved = 0;
+
+                    if (_chunksToSave.Count == 0)
+                        return;
+
+                    _saveStopwatch.Restart();
+                    var positions = new Vector3I[_chunksToSave.Count];
+                    var datas = new List<byte[]>(_chunksToSave.Count);
+
+                    int index = 0;
+                    foreach (var serverChunk in _chunksToSave)
+                    {
+                        serverChunk.NeedSave = false;
+                        positions[index] = serverChunk.Position;
+                        datas.Add(serverChunk.Compress());
+                        index++;
+                    }
+
+                    _chunksStorage.SaveChunksData(positions, datas.ToArray());
+                    _chunksToSave.Clear();
+                    _saveStopwatch.Stop();
+
+                    SaveTime = _saveStopwatch.Elapsed.TotalMilliseconds;
+                    ChunksSaved = positions.Length;
                 }
-
-                _chunksStorage.SaveChunksData(positions, datas.ToArray());
-                _chunksToSave.Clear();
-                _saveStopwatch.Stop();
-
-                SaveTime = _saveStopwatch.Elapsed.TotalMilliseconds;
-                ChunksSaved = positions.Length;
-
+                finally
+                {
+                    Monitor.Exit(_chunksToSave);
+                }
+            }
+            else
+            {
+                logger.Debug("Unable to aquire lock for saving chunks in 5sec, skipping");
             }
         }
 
@@ -491,34 +550,6 @@ namespace Utopia.Shared.Server.Managers
             SaveChunks();
         }
 
-        public IEnumerable<ServerChunk> SurroundChunks(Vector3D vector3D, float radius = 10)
-        {
-            // first we check current chunk, then 26 surrounding, then 16
-
-            var chunkPosition = new Vector3I((int)Math.Floor(vector3D.X / AbstractChunk.ChunkSize.X),
-                                             (int)Math.Floor(vector3D.Y / AbstractChunk.ChunkSize.Y),
-                                             (int)Math.Floor(vector3D.Z / AbstractChunk.ChunkSize.Z));
-
-            yield return GetChunk(chunkPosition);
-
-
-            for (int i = 1; i * AbstractChunk.ChunkSize.X < radius; i++) // can be easily rewrited to handle situation when X and Z is not equal, hope it will not happen...
-            {
-                for (int x = -i; x <= i; x++)
-                {
-                    for (int y = -i; y <= i; y++)
-                    {
-                        for (int z = -i; z <= i; z++)
-                        {
-                            // checking only border chunks
-                            if (x == -i || x == i || y == -i || y == i || z == i || z == -i)
-                            {
-                                yield return GetChunk(new Vector3I(chunkPosition.X + x, chunkPosition.Y + y, chunkPosition.Z + z));
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        
     }
 }

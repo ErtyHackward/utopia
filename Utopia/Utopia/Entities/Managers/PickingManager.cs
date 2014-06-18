@@ -194,7 +194,7 @@ namespace Utopia.Entities.Managers
             var activeModelState = instance.State;
 
             var visualModel = visualVoxelEntity.VisualVoxelModel;
-            if (visualModel == null)
+            if (visualModel == null || visualModel.VoxelModel != instance.VoxelModel)
                 return false;
 
             //For each Part in the model (A model can be composed of several parts)

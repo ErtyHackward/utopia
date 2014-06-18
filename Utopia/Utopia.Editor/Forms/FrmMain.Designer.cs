@@ -55,6 +55,7 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ltreeVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downloadAllModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.officialSiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,6 +69,7 @@
             this.entityListView = new System.Windows.Forms.ListView();
             this.largeImageList = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuEntity = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuCategories.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -178,7 +180,8 @@
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ltreeVisualizerToolStripMenuItem,
-            this.checkConfigurationToolStripMenuItem});
+            this.checkConfigurationToolStripMenuItem,
+            this.downloadAllModelsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -186,16 +189,23 @@
             // ltreeVisualizerToolStripMenuItem
             // 
             this.ltreeVisualizerToolStripMenuItem.Name = "ltreeVisualizerToolStripMenuItem";
-            this.ltreeVisualizerToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.ltreeVisualizerToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.ltreeVisualizerToolStripMenuItem.Text = "Ltree Visualizer...";
             this.ltreeVisualizerToolStripMenuItem.Click += new System.EventHandler(this.ltreeVisualizerToolStripMenuItem_Click);
             // 
             // checkConfigurationToolStripMenuItem
             // 
             this.checkConfigurationToolStripMenuItem.Name = "checkConfigurationToolStripMenuItem";
-            this.checkConfigurationToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.checkConfigurationToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.checkConfigurationToolStripMenuItem.Text = "Check configuration...";
             this.checkConfigurationToolStripMenuItem.Click += new System.EventHandler(this.checkConfigurationToolStripMenuItem_Click);
+            // 
+            // downloadAllModelsToolStripMenuItem
+            // 
+            this.downloadAllModelsToolStripMenuItem.Name = "downloadAllModelsToolStripMenuItem";
+            this.downloadAllModelsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.downloadAllModelsToolStripMenuItem.Text = "Download new models...";
+            this.downloadAllModelsToolStripMenuItem.Click += new System.EventHandler(this.downloadAllModelsToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -234,6 +244,7 @@
             // 
             // tvMainCategories
             // 
+            this.tvMainCategories.AllowDrop = true;
             this.tvMainCategories.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvMainCategories.Enabled = false;
             this.tvMainCategories.HideSelection = false;
@@ -295,7 +306,11 @@
             this.tvMainCategories.SelectedImageIndex = 0;
             this.tvMainCategories.Size = new System.Drawing.Size(182, 373);
             this.tvMainCategories.TabIndex = 5;
+            this.tvMainCategories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.tvMainCategories_ItemDrag);
             this.tvMainCategories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvMainCategories_AfterSelect);
+            this.tvMainCategories.DragDrop += new System.Windows.Forms.DragEventHandler(this.tvMainCategories_DragDrop);
+            this.tvMainCategories.DragEnter += new System.Windows.Forms.DragEventHandler(this.tvMainCategories_DragEnter);
+            this.tvMainCategories.DragOver += new System.Windows.Forms.DragEventHandler(this.tvMainCategories_DragOver);
             this.tvMainCategories.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tvMainCategories_MouseDown);
             this.tvMainCategories.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tvMainCategories_MouseUp);
             // 
@@ -374,6 +389,7 @@
             this.entityListView.Size = new System.Drawing.Size(661, 392);
             this.entityListView.TabIndex = 2;
             this.entityListView.UseCompatibleStateImageBehavior = false;
+            this.entityListView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.entityListView_KeyPress);
             this.entityListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.entityListView_MouseDoubleClick);
             // 
             // largeImageList
@@ -385,9 +401,17 @@
             // contextMenuEntity
             // 
             this.contextMenuEntity.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.contextMenuEntity.Name = "contextMenuEntity";
-            this.contextMenuEntity.Size = new System.Drawing.Size(108, 26);
+            this.contextMenuEntity.Size = new System.Drawing.Size(108, 48);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.copyToolStripMenuItem.Text = "Copy";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
@@ -406,6 +430,7 @@
             this.Name = "FrmMain";
             this.Text = "Utopia realm editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMain_FormClosing);
+            this.Shown += new System.EventHandler(this.FrmMain_Shown);
             this.contextMenuCategories.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -451,6 +476,8 @@
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ltreeVisualizerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkConfigurationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem downloadAllModelsToolStripMenuItem;
     }
 }
 

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Server.Events;
 using Utopia.Shared.Server.Structs;
+using Utopia.Shared.Server.Utils;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Server.Managers
@@ -14,6 +16,7 @@ namespace Utopia.Shared.Server.Managers
         private readonly ServerCore _server;
         private readonly Dictionary<uint, uint> _lockedDynamicEntities = new Dictionary<uint, uint>();
         private readonly Dictionary<EntityLink, uint> _lockedStaticEntities = new Dictionary<EntityLink, uint>();
+        private readonly Dictionary<uint, ServerNpc> _npcs = new Dictionary<uint, ServerNpc>();
 
         /// <summary>
         /// Occurs on success lock/unlock of an entity
@@ -351,6 +354,17 @@ namespace Utopia.Shared.Server.Managers
             // retranslate success locks
             if (success)
                 OnEntityLockChanged(e);
+        }
+
+        public ServerNpc AddNpc(CharacterEntity charEntity)
+        {
+            var npc = new ServerNpc(_server, charEntity);
+            var id = DynamicIdHelper.GetNextUniqueId();
+            npc.DynamicEntity.DynamicId = id;
+            _server.AreaManager.AddEntity(npc);
+            _npcs.Add(id, npc);
+
+            return npc;
         }
     }
 }

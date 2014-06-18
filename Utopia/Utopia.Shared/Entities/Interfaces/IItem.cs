@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using ProtoBuf;
 using Utopia.Shared.Entities.Inventory;
@@ -39,6 +40,11 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets maximum pick range, 0 means default
         /// </summary>
         float PickRange { get; set; }
+
+        /// <summary>
+        /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
+        /// </summary>
+        List<ItemTransformation> Transformations { get; set; }
 
         /// <summary>
         /// Returns new entity position correspoding to the player

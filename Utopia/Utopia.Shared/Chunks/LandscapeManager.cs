@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using S33M3CoreComponents.Physics.Verlet;
 using SharpDX;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Shared.Server.Structs;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
@@ -309,6 +313,44 @@ namespace Utopia.Shared.Chunks
             }
 
             return new Vector3D(vector2.X, y + 1, vector2.Z);
+        }
+
+        public IEnumerable<IAbstractChunk> AroundChunks(Vector3D vector3D, float radius = 10)
+        {
+            // first we check current chunk, then 26 surrounding, then 16
+
+            var chunkPosition = new Vector3I((int)Math.Floor(vector3D.X / AbstractChunk.ChunkSize.X),
+                                             (int)Math.Floor(vector3D.Y / AbstractChunk.ChunkSize.Y),
+                                             (int)Math.Floor(vector3D.Z / AbstractChunk.ChunkSize.Z));
+
+            yield return GetChunk(chunkPosition);
+
+
+            for (int i = 1; i * AbstractChunk.ChunkSize.X < radius; i++) // can be easily rewrited to handle situation when X and Z is not equal, hope it will not happen...
+            {
+                for (int x = -i; x <= i; x++)
+                {
+                    for (int y = -i; y <= i; y++)
+                    {
+                        for (int z = -i; z <= i; z++)
+                        {
+                            // checking only border chunks
+                            if (x == -i || x == i || y == -i || y == i || z == i || z == -i)
+                            {
+                                var chunk = GetChunk(new Vector3I(chunkPosition.X + x, chunkPosition.Y + y, chunkPosition.Z + z));
+                                if (chunk != null)
+                                    yield return chunk;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<IStaticEntity> AroundEntities(Vector3D position, float radius)
+        {
+            var distanceSquared = radius * radius;
+            return AroundChunks(position, radius).SelectMany(chunk => chunk.Entities).Where(e => Vector3D.DistanceSquared(e.Position, position) <= distanceSquared);
         }
     }
 }

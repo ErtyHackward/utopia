@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using S33M3DXEngine.Debug.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras;
@@ -32,6 +33,8 @@ namespace Utopia.Sounds
     /// </summary>
     public class GameSoundManager : GameComponent, IDebugInfo
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private struct DynamicEntitySoundTrack
         {
             public IDynamicEntity Entity;
@@ -319,7 +322,14 @@ namespace Utopia.Sounds
             //Walking step sound processing
             WalkingSoundProcessing();
 
-            StaticEntitiesEmittedSoundProcessing();
+            try
+            {
+                StaticEntitiesEmittedSoundProcessing();
+            }
+            catch (InvalidOperationException x)
+            {
+                logger.Error("Error when processing static sounds: {0}", x.Message);
+            }
         }
 
         public string GetDebugInfo()

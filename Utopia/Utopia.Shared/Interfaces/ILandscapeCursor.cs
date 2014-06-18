@@ -71,7 +71,6 @@ namespace Utopia.Shared.Interfaces
         /// <returns></returns>
         byte PeekValue<T>(Vector3I moveVector, out T tag) where T: BlockTag;
 
-
         /// <summary>
         /// Return Cube profile
         /// </summary>
@@ -106,6 +105,16 @@ namespace Utopia.Shared.Interfaces
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
         /// <returns></returns>
         IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0);
+
+        /// <summary>
+        /// Starts new transaction
+        /// </summary>
+        void BeginTransaction();
+
+        /// <summary>
+        /// Finish the transaction
+        /// </summary>
+        void CommitTransaction();
     }
 
     public class LandscapeCursorBeforeWriteEventArgs : EventArgs

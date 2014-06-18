@@ -124,7 +124,7 @@ PS_IN VS_LIQUID(VS_LIQUID_IN input)
 	output.fogPower = 1 - (clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1));
 	output.causticPower = clamp( ((length(worldPosition.xyz) - 30) / 20), 0, 1);
 	if(facetype != 3) output.causticPower = 1;
-	output.BiomeData = input.BiomeInfo.xy;
+	output.BiomeData = (input.BiomeInfo.xy * 0.6f) + 0.2f;
 	output.BiomeData.x = saturate(output.BiomeData.x + WeatherGlobalOffset.x);
 	output.BiomeData.y = saturate(output.BiomeData.y + WeatherGlobalOffset.y);
 	output.Various.x = input.VertexInfo1.z;
@@ -141,7 +141,14 @@ PS_OUT PS(PS_IN input)
 	PS_OUT output;
 
 	float fogvalue = input.fogPower;
-	if(FogType != 2.0) clip(fogvalue <= 0.001 ? -1:1); //If fog maximum, pixel clamped (Will leave the sky buffer at this place)
+	if (FogType != 2.0)
+	{
+		if (fogvalue <= 0.001)
+		{
+			clip(-1);
+			return output;
+		}
+	}
 
 	//The alpha value is following the Angle of view to the face
 	float4 colorInput = float4(TerraTexture.Sample(SamplerDiffuse, input.StaticUVW).rgb, 1) * input.EmissiveLight;

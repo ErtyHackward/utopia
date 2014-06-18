@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Sound;
 using SharpDX;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
@@ -119,6 +120,12 @@ namespace Utopia.Shared.Entities.Concrete
                     cursor.Write(CubeId);
                     impact.Success = true;
                     impact.CubeId = CubeId;
+
+                    if (SoundEngine != null && EntityFactory.Config.ResourcePut != null)
+                    {
+                        SoundEngine.StartPlay3D(EntityFactory.Config.ResourcePut, entity.EntityState.NewBlockPosition + new Vector3(0.5f));
+                    }
+
                     return impact;
                 }
             }

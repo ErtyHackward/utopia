@@ -1,5 +1,6 @@
 using System;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Server.Structs
 {
@@ -24,6 +25,11 @@ namespace Utopia.Shared.Server.Structs
         public bool NeedSave { get; set; }
 
         /// <summary>
+        /// Gets or sets last chunk refresh in game time
+        /// </summary>
+        public UtopiaTime LastSpawningRefresh { get; set; }
+
+        /// <summary>
         /// Occurs when some of containing blocks was changed
         /// </summary>
         public event EventHandler<ChunkDataProviderDataChangedEventArgs> BlocksChanged;
@@ -36,7 +42,6 @@ namespace Utopia.Shared.Server.Structs
 
         public ServerChunk() : base(new InsideDataProvider())
         {
-            
         }
 
         /// <summary>

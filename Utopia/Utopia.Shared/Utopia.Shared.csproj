@@ -29,6 +29,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>9e741a56</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,21 +72,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\protobuf-net.2.0.0.621\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.2.5.0\lib\net40\SharpDX.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.D3DCompiler, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.D3DCompiler, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.D3DCompiler.2.5.0\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D11, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.Direct3D11, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.Direct3D11.2.5.0\lib\net40\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.DXGI, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.DXGI, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.DXGI.2.5.0\lib\net40\SharpDX.DXGI.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -115,6 +116,30 @@
     </Compile>
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\CursorRelativeMovement.cs" />
+    <Compile Include="Chunks\IEntitySpawningControler.cs" />
+    <Compile Include="ClassExt\CursorHelper.cs" />
+    <Compile Include="ClassExt\ListExtension.cs" />
+    <Compile Include="Entities\Concrete\TreeSoul.cs" />
+    <Compile Include="Entities\GrowingEntity.cs" />
+    <Compile Include="Entities\Concrete\PlantGrowingEntity.cs" />
+    <Compile Include="Entities\Concrete\TreeGrowingEntity.cs" />
+    <Compile Include="Entities\GrowingEntity.designer.cs">
+      <DependentUpon>GrowingEntity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Server\Commands\WipeChunkCommand.cs" />
+    <Compile Include="Server\Managers\EntityGrowingManager.cs" />
+    <Compile Include="Services\Season.designer.cs">
+      <DependentUpon>Season.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Structs\Scope.cs" />
+    <Compile Include="Structs\UtopiaTime.cs" />
+    <Compile Include="Structs\UtopiaTimeConfiguration.cs" />
+    <Compile Include="Structs\UtopiaTimeSpan.cs" />
+    <Compile Include="Tools\BlueprintTextHintConverter.cs" />
+    <Compile Include="Tools\BlueprintTypeEditor.cs" />
+    <Compile Include="Tools\UtopiaTimeSpanConverter.cs" />
+    <Compile Include="Tools\ValueTypeTypeConverter.cs" />
+    <Compile Include="World\Processors\Utopia\UtopiaEntitySpawningControler.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
@@ -325,6 +350,7 @@
     <Compile Include="Server\Managers\CommandsManager.cs" />
     <Compile Include="Server\Managers\ConnectionManager.cs" />
     <Compile Include="Server\Managers\EntityManager.cs" />
+    <Compile Include="Server\Managers\EntitySpawningManager.cs" />
     <Compile Include="Server\Managers\GlobalStateManager.cs" />
     <Compile Include="Server\Managers\LoginManager.cs" />
     <Compile Include="Server\Managers\PerformanceManager.cs" />
@@ -332,7 +358,6 @@
     <Compile Include="Server\Managers\ServerLandscapeManager.cs" />
     <Compile Include="Server\Managers\ServiceManager.cs" />
     <Compile Include="Server\Managers\SQLiteStorageManager.cs" />
-    <Compile Include="Server\Managers\WeatherManager.cs" />
     <Compile Include="Server\ServerCore.cs" />
     <Compile Include="Server\ServerSettings.cs" />
     <Compile Include="Server\Structs\FocusAI.cs" />
@@ -460,7 +485,6 @@
     <Compile Include="Structs\Range2I.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
-    <Compile Include="Tools\BlueprintSelector.cs" />
     <Compile Include="Tools\ContainerEditor.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -471,7 +495,7 @@
     <Compile Include="Tools\ExceptionHandler.cs" />
     <Compile Include="Tools\FullSoundSelector.cs" />
     <Compile Include="Tools\ModelSelector.cs" />
-    <Compile Include="Tools\ModelStateSelector.cs" />
+    <Compile Include="Tools\ModelStateConverter.cs" />
     <Compile Include="Tools\ShortSoundSelector.cs" />
     <Compile Include="Tools\SoundList.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
@@ -595,6 +619,13 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\SharpDX.2.6.2\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.2\build\SharpDX.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpDX.2.6.2\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpDX.2.6.2\build\SharpDX.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

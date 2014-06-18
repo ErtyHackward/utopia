@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Diagnostics;
 
@@ -116,6 +117,40 @@ namespace Utopia.Shared.Net.Connections
 
         #endregion
 
+        public static bool IsPortFree(int port)
+        {
+            Socket socket = null;
+            try
+            {
+                socket = new Socket(AddressFamily.InterNetwork,
+                                    SocketType.Stream,
+                                    ProtocolType.Tcp);
+                var ep = new IPEndPoint(IPAddress.Any, port);
+                socket.Bind(ep);
+
+                var ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+                var tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
+
+                foreach (var tcpi in tcpConnInfoArray)
+                {
+                    if (tcpi.LocalEndPoint.Port == port)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                if (socket != null)
+                    socket.Dispose();
+            }
+        }
         
     }
 

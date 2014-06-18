@@ -317,6 +317,8 @@ namespace S33M3CoreComponents.States
 
         public void ActivateGameStateAsync(GameState state, bool preservePreviousStates = false)
         {
+            logger.Debug("Activating new game state {0}", state.Name);
+
             //_inActivationProcess filter that only one Activation can be requested at a time !
             //state.IsActivationRequested filter the case where the requested state is already on an Activation process (Cannot request it twice)
             if (_inActivationProcess == false || state.IsActivationRequested == false)

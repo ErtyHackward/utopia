@@ -31,6 +31,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>4763cea7</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -77,21 +78,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\protobuf-net.2.0.0.621\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.2.5.0\lib\net40\SharpDX.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.D3DCompiler, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.D3DCompiler, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.D3DCompiler.2.5.0\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D11, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.Direct3D11, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.Direct3D11.2.5.0\lib\net40\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.DXGI, Version=2.5.0.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.DXGI, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.DXGI.2.5.0\lib\net40\SharpDX.DXGI.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -119,9 +120,13 @@
     <Compile Include="GUI\EnergyBar\EnergyBar.cs" />
     <Compile Include="GUI\EnergyBar\EnergyBarsContainer.cs" />
     <Compile Include="GUI\EnergyBar\EnergyBarsContainerRenderer.cs" />
+    <Compile Include="GUI\Weather\WeatherContainer.cs" />
+    <Compile Include="GUI\Weather\WeatherContainerRenderer.cs" />
     <Compile Include="GUI\WindRose\CompassControlRenderer.cs" />
     <Compile Include="GUI\WindRose\WindRoseComponent.cs" />
     <Compile Include="GUI\WindRose\CompassControl.cs" />
+    <Compile Include="Network\BlocksChangedMessageBuffer.cs" />
+    <Compile Include="Particules\EditorParticuleEngine.cs" />
     <Compile Include="Particules\SpriteDynamicEmitter.cs" />
     <Compile Include="PostEffects\IPostEffect.cs" />
     <Compile Include="PostEffects\PostEffectComponent.cs" />
@@ -230,6 +235,7 @@
     <Compile Include="Worlds\Chunks\VisualChunk3D.cs" />
     <Compile Include="Worlds\Chunks\VisualChunkBase.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks3D.cs" />
+    <Compile Include="Worlds\GameClocks\VisualClockTime.cs" />
     <Compile Include="Worlds\Shadows\WorldShadowMap.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
     <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
@@ -244,10 +250,8 @@
     <Compile Include="Worlds\Cubes\LiquidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\SolidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\ICubeMeshFactory.cs" />
-    <Compile Include="Worlds\GameClocks\Clock.cs" />
+    <Compile Include="Worlds\GameClocks\ClientClock.cs" />
     <Compile Include="Worlds\GameClocks\IClock.cs" />
-    <Compile Include="Worlds\GameClocks\RealTimeClock.cs" />
-    <Compile Include="Worlds\GameClocks\WorldClock.cs" />
     <Compile Include="Worlds\Chunks\IWorldChunks.cs" />
     <Compile Include="Worlds\Liquid\enuFloodDirection.cs" />
     <Compile Include="Worlds\SkyDomes\ISkyDome.cs" />
@@ -336,4 +340,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\SharpDX.2.6.2\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.2\build\SharpDX.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpDX.2.6.2\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpDX.2.6.2\build\SharpDX.targets'))" />
+  </Target>
 </Project>

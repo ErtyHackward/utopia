@@ -222,7 +222,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         {
                             //Find the chunk where this neightboor is located !! (Could be a chunk next to this one !)
                             Vector3I NeightCubeWorldPosition = new Vector3I(xNeight + chunk.CubeRange.Position.X, yNeight, zNeight + chunk.CubeRange.Position.Z);
-                            VisualChunk neighbChunk = WorldChunks.GetChunk(ref NeightCubeWorldPosition);
+                            VisualChunk neighbChunk = WorldChunks.GetChunk(NeightCubeWorldPosition);
 
                             BlockTag tag = neighbChunk.BlockData.GetTag(new Vector3I(NeightCubeWorldPosition.X - neighbChunk.CubeRange.Position.X, yNeight, NeightCubeWorldPosition.Z - neighbChunk.CubeRange.Position.Z));
                             ICubeYOffsetModifier tagOffset = tag as ICubeYOffsetModifier;

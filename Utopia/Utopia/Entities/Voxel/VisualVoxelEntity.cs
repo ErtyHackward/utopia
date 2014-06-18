@@ -1,5 +1,6 @@
 ﻿using System;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Concrete.Interface;
@@ -32,9 +33,10 @@ namespace Utopia.Entities.Voxel
         /// <summary>
         /// Creates a VisualVoxelEntity ready to render
         /// </summary>
+        /// <param name="model"></param>
         /// <param name="manager"></param>
         /// <param name="wrapped">wrapped VoxelEntity from server</param>
-        public VisualVoxelEntity(IVoxelEntity wrapped, VoxelModelManager manager)
+        public VisualVoxelEntity(IVoxelEntity wrapped, VisualVoxelModel model, VoxelModelManager manager)
             : base(wrapped.DefaultSize, wrapped)
         {
             _voxelEntity = wrapped;
@@ -45,7 +47,8 @@ namespace Utopia.Entities.Voxel
             if (wrapped.ModelInstance == null)
                 return;
 
-            var model = manager.GetModel(wrapped.ModelName);
+            if (model == null)
+                model = manager.GetModel(wrapped.ModelName);
 
             // set the model or wait for it
             if (model == null)
@@ -66,19 +69,17 @@ namespace Utopia.Entities.Voxel
                     voxelModelBB = _voxelEntity.ModelInstance.State.BoundingBox;
                 }
 
-                if (voxelModelBB != null)
+                var scaleFactor = GetModelScale(wrapped);
+
+                LocalBBox = new BoundingBox(voxelModelBB.Minimum * scaleFactor, voxelModelBB.Maximum * scaleFactor);
+
+                //Add instance rotation, if existing
+                if (Entity is IStaticEntity)
                 {
-                    LocalBBox = new BoundingBox(voxelModelBB.Minimum / 16, voxelModelBB.Maximum / 16);
-
-                    //Add instance rotation, if existing
-                    if (Entity is IStaticEntity)
-                    {
-                        LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(((IStaticEntity)Entity).Rotation));
-                    }
-
-                    ComputeWorldBoundingBox(Entity.Position, out WorldBBox);
+                    LocalBBox = LocalBBox.Transform(Matrix.RotationQuaternion(( (IStaticEntity)Entity ).Rotation));
                 }
-                
+
+                ComputeWorldBoundingBox(Entity.Position, out WorldBBox);
             }
         }
 

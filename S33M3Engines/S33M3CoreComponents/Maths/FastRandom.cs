@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using S33M3Resources.Structs;
 
 namespace S33M3CoreComponents.Maths
 {
@@ -408,6 +409,15 @@ namespace S33M3CoreComponents.Maths
             }
             _byteBufferState >>= 1;
             return (byte)(_byteBuffer >>= 1);
+        }
+
+        public Vector2I NextVector2IInRadius(float radius)
+        {
+            var angle = NextDouble() * Math.PI * 2;
+            var r = NextDouble() * radius;
+            var x = r * Math.Cos(angle);
+            var y = r * Math.Sin(angle);
+            return new Vector2I((int)x, (int)y);
         }
 
         #endregion

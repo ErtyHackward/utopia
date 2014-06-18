@@ -44,7 +44,7 @@ namespace Utopia.Entities.Voxel
         /// Request a missing model from the server
         /// </summary>
         /// <param name="name"></param>
-        public void RequestModel(string name)
+        public void RequestModelAsync(string name)
         {
             bool requested;
             lock (_syncRoot)
@@ -57,20 +57,22 @@ namespace Utopia.Entities.Voxel
             // don't request the model before we are initialized or already requested
             if (requested && _initialized)
             {
-                logger.Info("Downloading model: {0}", name);
-                var req = WebRequest.Create(string.Format("http://utopiarealms.com/models/{0}/download", Uri.EscapeDataString(name)));
-                req.BeginGetResponse(ModelReceived, req);
+                new System.Action(() => DownloadModel(name)).BeginInvoke(null, null);
             }
-            
         }
 
-        private void ModelReceived(IAsyncResult ar)
+        /// <summary>
+        /// Request a missing model from the server
+        /// </summary>
+        /// <param name="name"></param>
+        public void DownloadModel(string name)
         {
-            var req = (HttpWebRequest)ar.AsyncState;
-
+            logger.Info("Downloading model: {0}", name);
+            
             try
             {
-                var response = req.EndGetResponse(ar);
+                var req = WebRequest.Create(string.Format("http://utopiarealms.com/models/{0}/download", Uri.EscapeDataString(name)));
+                var response = req.GetResponse();
 
                 using (var stream = response.GetResponseStream())
                 {
@@ -78,7 +80,12 @@ namespace Utopia.Entities.Voxel
 
                     lock (_syncRoot)
                     {
-                        _models.Add(voxelModel.Name, new VisualVoxelModel(voxelModel, VoxelMeshFactory));
+                        if (_models.ContainsKey(voxelModel.Name))
+                            _models.Remove(voxelModel.Name);
+
+                        var model = new VisualVoxelModel(voxelModel, VoxelMeshFactory);
+                        model.BuildMesh();
+                        _models.Add(voxelModel.Name, model);
                         _pendingModels.Remove(voxelModel.Name);
                     }
 
@@ -110,7 +117,7 @@ namespace Utopia.Entities.Voxel
             }
 
             if (requestIfMissing)
-                RequestModel(name);
+                RequestModelAsync(name);
 
             return null;
         }
@@ -169,14 +176,18 @@ namespace Utopia.Entities.Voxel
             // load all models
             lock (_syncRoot)
             {
+                if (_initialized)
+                    return;
+
                 foreach (var voxelModel in VoxelModelStorage.Enumerate())
                 {
                     var vmodel = new VisualVoxelModel(voxelModel, VoxelMeshFactory);
                     vmodel.BuildMesh(); //Build the mesh of all local models
                     _models.Add(voxelModel.Name, vmodel);
                 }
+                
+                _initialized = true;
             }
-            _initialized = true;
             
             // if we have some requested models, remove those that was loaded
             List<string> loadedModels;
@@ -205,7 +216,7 @@ namespace Utopia.Entities.Voxel
             // request the rest models
             foreach (var absentModel in requestSet)
             {
-                RequestModel(absentModel);
+                RequestModelAsync(absentModel);
             }
         }
 
@@ -243,6 +254,26 @@ namespace Utopia.Entities.Voxel
                 VoxelModelStorage.Save(model.VoxelModel);
                 _models.Remove(oldName);
                 _models.Add(newName, model);
+            }
+        }
+
+        public VisualVoxelModel GetModelByHash(string hash)
+        {
+            lock (_syncRoot)
+            {
+                var model = _models.Select(p => p.Value).FirstOrDefault(m =>
+                {
+                    if (m.VoxelModel.Hash == null)
+                        m.VoxelModel.UpdateHash();
+                    return m.VoxelModel.Hash.ToString() == hash;
+                });
+
+                if (model == null)
+                {
+                    RequestModelAsync(hash);
+                }
+
+                return model;
             }
         }
     }

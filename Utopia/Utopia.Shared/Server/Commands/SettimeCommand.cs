@@ -3,6 +3,7 @@ using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Server.Interfaces;
 using Utopia.Shared.Services;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Server.Commands
 {
@@ -25,7 +26,7 @@ namespace Utopia.Shared.Server.Commands
                 if (arguments == null || arguments.Length == 0)
                     return;
 
-                var time = TimeSpan.Parse(arguments[0]);
+                var time = UtopiaTimeSpan.Parse(arguments[0]);
 
                 server.Clock.SetCurrentTimeOfDay(time);
                 server.ConnectionManager.Broadcast(new DateTimeMessage { DateTime = server.Clock.Now, TimeFactor = server.Clock.TimeFactor });
