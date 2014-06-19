@@ -23,7 +23,9 @@ namespace Utopia.Worlds.Shadows
 {
     public class WorldShadowMap : DrawableGameComponent
     {
+#if DEBUG
         private int _smDrawID;
+#endif
 
         private Color4 _whiteColor = new Color4(255, 255, 255, 255);
         private bool _debugSMTextureNeedToBeSaved = false;
@@ -62,7 +64,9 @@ namespace Utopia.Worlds.Shadows
                              )
         {
             DrawOrders.UpdateIndex(0, 99, "SM_CREATION");
+#if DEBUG
             _smDrawID = DrawOrders.AddIndex(10000, "SM_DRAW");
+#endif
 
             _d3dEngine = d3dEngine;
             _camManager = camManager;
@@ -91,8 +95,10 @@ namespace Utopia.Worlds.Shadows
         {
             if (index == _smDrawID)
             {
-                //Draw the Dephbuffer texture
+                //Draw the DephtBuffer texture
+#if DEBUG
                 _shadowMap.DrawDepthBuffer(context, ref depthBufferDrawSize);
+#endif
             }
             else
             {
@@ -100,10 +106,11 @@ namespace Utopia.Worlds.Shadows
 
                 _shadowMap.Begin();
 
+                // draw players
                 DynamicEntityManager.VoxelDraw(context, LightViewProjection);
 
+                // draw chunks
                 Matrix worldFocus = Matrix.Identity;
-
                 foreach (var chunk in WorldChunks.Chunks.Where(x => x.Graphics.IsExistingMesh4Drawing))
                 {
                     _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
@@ -113,8 +120,13 @@ namespace Utopia.Worlds.Shadows
                     _shadowMapEffect.Apply(context);
 
                     chunk.Graphics.DrawSolidFaces(context);
+
+                    WorldChunks.PrepareVoxelDraw(context, LightViewProjection);
+                    WorldChunks.DrawStaticEntities(context, chunk);
                 }
+
                 
+
                 _shadowMap.End();
 
                 _d3dEngine.SetRenderTargetsAndViewPort(context);
@@ -141,7 +153,7 @@ namespace Utopia.Worlds.Shadows
                 BackUpLightDirection = SkyDome.LightDirection;
                 lastLightUpdate = _clock.ClockTime.ClockTimeNormalized2;
             }
-
+            
             BoundingSphere sphere = new BoundingSphere(Vector3.Zero, 100);
 
             const float ExtraBackup = 20.0f;
