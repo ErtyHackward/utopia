@@ -205,6 +205,7 @@ namespace Utopia.Worlds.Chunks
                 _terraEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
                 _terraEffect.CBPerDraw.Values.LightViewProjection = Matrix.Transpose(ShadowMap.LightViewProjection);
                 _terraEffect.CBPerDraw.Values.SunVector = ShadowMap.BackUpLightDirection;
+                _terraEffect.CBPerDraw.Values.ShadowMapVars = new Vector3(0.002f, 0.0002f, 0.004f);
                 _terraEffect.CBPerDraw.Values.UseShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap;
                 _terraEffect.CBPerDraw.IsDirty = true;
                 _terraEffect.Apply(context);
@@ -252,67 +253,77 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        private void DrawStaticEntities(DeviceContext context)
+        public void DrawStaticEntities(DeviceContext context, VisualChunk chunk)
         {
-            _staticEntityDrawTime = 0;
-            _staticEntityDrawCalls = 0;
+            //For Each different entity Model
+            foreach (var pair in chunk.AllPairs())
+            {
+                // For each instance of the model - update data
+                foreach (var staticEntity in pair.Value)
+                {
+                    //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
+                    var sunPart = (float)staticEntity.BlockLight.A / 255;
+                    var sunColor = Skydome.SunColor * sunPart;
+                    var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
+                    staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
 
+                    if (!DrawStaticInstanced)
+                    {
+                        if (IsEntityVisible(staticEntity.Entity.Position))
+                        {
+                            var sw = Stopwatch.StartNew();
+                            staticEntity.VisualVoxelModel.Draw(context, _voxelModelEffect, staticEntity.VoxelEntity.ModelInstance);
+                            sw.Stop();
+                            _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
+                            _staticEntityDrawCalls++;
+                        }
+                    }
+                }
+
+                if (DrawStaticInstanced)
+                {
+                    if (pair.Value.Count == 0) continue;
+                    var entity = pair.Value.First();
+                    var sw = Stopwatch.StartNew();
+                    entity.VisualVoxelModel.DrawInstanced(context, _voxelModelInstancedEffect, pair.Value.Where(ve => IsEntityVisible(ve.Entity.Position)).Select(ve => ve.VoxelEntity.ModelInstance).ToList());
+                    sw.Stop();
+                    _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
+                    _staticEntityDrawCalls++;
+                }
+            }
+        }
+
+        public void PrepareVoxelDraw(DeviceContext context, Matrix viewProjection)
+        {
             if (DrawStaticInstanced)
             {
                 _voxelModelInstancedEffect.Begin(context);
                 _voxelModelInstancedEffect.CBPerFrame.Values.LightDirection = Skydome.LightDirection;
-                _voxelModelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+                _voxelModelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
                 _voxelModelInstancedEffect.CBPerFrame.IsDirty = true;
             }
             else
             {
                 _voxelModelEffect.Begin(context);
                 _voxelModelEffect.CBPerFrame.Values.LightDirection = Skydome.LightDirection;
-                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
+                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
                 _voxelModelEffect.CBPerFrame.IsDirty = true;
             }
+        }
 
+        private void DrawStaticEntities(DeviceContext context)
+        {
+            _staticEntityDrawTime = 0;
+            _staticEntityDrawCalls = 0;
+
+            PrepareVoxelDraw(context, _camManager.ActiveCamera.ViewProjection3D);
+            
             foreach (var chunk in ChunksToDraw())
             {
                 if (chunk.DistanceFromPlayer > StaticEntityViewRange) 
                     continue;
-                
-                //For Each different entity Model
-                foreach (var pair in chunk.AllPairs())
-                {
-                    // For each instance of the model - update data
-                    foreach (var staticEntity in pair.Value)
-                    {
-                        //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
-                        var sunPart = (float)staticEntity.BlockLight.A / 255;
-                        var sunColor = Skydome.SunColor * sunPart;
-                        var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
-                        staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
 
-                        if (!DrawStaticInstanced)
-                        {
-                            if (IsEntityVisible(staticEntity.Entity.Position))
-                            {
-                                var sw = Stopwatch.StartNew();
-                                staticEntity.VisualVoxelModel.Draw(context, _voxelModelEffect, staticEntity.VoxelEntity.ModelInstance);
-                                sw.Stop();
-                                _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
-                                _staticEntityDrawCalls++;
-                            }
-                        }
-                    }
-
-                    if (DrawStaticInstanced)
-                    {
-                        if (pair.Value.Count == 0) continue;
-                        var entity = pair.Value.First();
-                        var sw = Stopwatch.StartNew();
-                        entity.VisualVoxelModel.DrawInstanced(context, _voxelModelInstancedEffect, pair.Value.Where(ve => IsEntityVisible(ve.Entity.Position)).Select(ve => ve.VoxelEntity.ModelInstance).ToList());
-                        sw.Stop();
-                        _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
-                        _staticEntityDrawCalls++;
-                    }
-                }
+                DrawStaticEntities(context, chunk);
             }
         }
 
