@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Shared.World;
 using Utopia.Worlds.Chunks.ChunkLandscape;
@@ -161,5 +162,7 @@ namespace Utopia.Worlds.Chunks
         IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true);
 
         void RebuildChunk(Vector3I position);
+        void DrawStaticEntities(DeviceContext context, VisualChunk chunk);
+        void PrepareVoxelDraw(DeviceContext context, Matrix viewProjection);
     }
 }

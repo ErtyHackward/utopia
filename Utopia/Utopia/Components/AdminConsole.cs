@@ -12,6 +12,7 @@ using S33M3DXEngine.Main;
 using Utopia.Network;
 using Utopia.Shared.Net.Messages;
 using System.Diagnostics;
+using Utopia.Worlds.GameClocks;
 
 namespace Utopia.Components
 {
@@ -28,6 +29,7 @@ namespace Utopia.Components
         private D3DEngine _engine;
         private Game _mainGameLoop;
         private ServerComponent _server;
+        private readonly IClock _gameClock;
         private Stopwatch _pingTimer = new Stopwatch();
 
         #endregion
@@ -40,7 +42,8 @@ namespace Utopia.Components
                             IWorldChunks worldChunk,
                             D3DEngine engine,
                             Game mainGameLoop,
-                            ServerComponent server)
+                            ServerComponent server,
+                            IClock gameClock)
         {
             _chatComp = chatComp;
             _chatComp.Console = this;
@@ -48,6 +51,7 @@ namespace Utopia.Components
             _engine = engine;
             _mainGameLoop = mainGameLoop;
             _server = server;
+            _gameClock = gameClock;
             _chatComp.MessageOut += _chatComp_MessageOut;
         }
 
@@ -76,36 +80,35 @@ namespace Utopia.Components
                 if (string.IsNullOrEmpty(command) == false && command[0] == '/')
                 {
                     string[] splittedCmd = command.Split(' ');
-
+                    commandProcessed = true;
                     switch (splittedCmd[0].ToLower())
                     {
                         case "/reloadtex":
                             //Refresh the texture pack values
                             TexturePackConfig.Current.Load();
                             _worldChunk.InitDrawComponents(_engine.ImmediateContext);
-                            commandProcessed = true;
                             break;
                         case "/staticinstanced": //Swith from/to static instanced drawing for static entities
                             _worldChunk.DrawStaticInstanced = !_worldChunk.DrawStaticInstanced;
-                            commandProcessed = true;
                             break;
                         case "/fpslimit":
                             _mainGameLoop.FramelimiterTime = (long)(1.0 / long.Parse(splittedCmd[1]) * 1000.0);
-                            commandProcessed = true;
                             break;
                         case "/ping": //Send a ping to the server without using the chat system
                             _pingTimer.Restart();
                             _server.ServerConnection.Send(new PingMessage() { Request = true });
-                            commandProcessed = true;
                             break;
                         case "/resync":
                             _worldChunk.ResyncChunk((Vector3I)_server.Player.Position, true);
-                            commandProcessed = true;
                             break;
                         case "/rebuild":
                             _worldChunk.RebuildChunk((Vector3I)_server.Player.Position);
                             break;
+                        case "/freezetime":
+                            _gameClock.FrozenTime = !_gameClock.FrozenTime;
+                            break;
                         default:
+                            commandProcessed = false;
                             break;
                     }
                 }

@@ -12,5 +12,6 @@ namespace Utopia.Worlds.GameClocks
     {
         VisualClockTime ClockTime { get; set; }
         UtopiaTime Now { get; }
+        bool FrozenTime { get; set; }
     }
 }
