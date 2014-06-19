@@ -60,10 +60,12 @@ PS_IN VS(VS_IN input)
     PS_IN output;
 	
 	float4 newPosition = {input.Position.xyz, 1.0f};
+    
 	if(input.Various.y > 0)
 	{
 		newPosition += (faceSpecialOffset[input.VertexInfo.y] * input.Various.y);
 	}
+	
 
 	float YOffset = 0;
 	if(input.VertexInfo.x == 1) YOffset = (input.VertexInfo.w/255.0f);

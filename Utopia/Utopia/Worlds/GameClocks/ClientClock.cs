@@ -72,13 +72,13 @@ namespace Utopia.Worlds.GameClocks
         //Allocate resources
         public override void Initialize()
         {
-            _frozenTime = false;
+            FrozenTime = false;
             ClockTime = new VisualClockTime();
         }
 
         public override void FTSUpdate(GameTime timeSpend)
         {
-            if (_frozenTime) return;
+            if (FrozenTime) return;
             if (_clockTime == -1)
             {
                 _clockTime = Now.TimeOfDay.TotalSeconds / (float)UtopiaTime.SecondsPerDay; //Assign number of second in current day / Number of second per day
@@ -121,10 +121,26 @@ namespace Utopia.Worlds.GameClocks
             _utopiaLastRealTimeUpdate = DateTime.Now;
 
             _clockTime = -1;
+            var prevFrozen = FrozenTime;
+            FrozenTime = false;
+            FTSUpdate(new GameTime());
+            FrozenTime = prevFrozen;
+
+            float y = (float)Math.Cos(ClockTime.ClockTimeNormalized * MathHelper.TwoPi);
+            float x = (float)Math.Sin(ClockTime.ClockTimeNormalized * MathHelper.TwoPi);
+            
+            logger.Info("SunLight Vector is {0}", new SharpDX.Vector3(x, y, 0));
         }
         #endregion
 
         public virtual bool ShowDebugInfo { get; set; }
+
+        public bool FrozenTime
+        {
+            get { return _frozenTime; }
+            set { _frozenTime = value; }
+        }
+
         public virtual string GetDebugInfo()
         {
             return string.Format("<Clock Info> {0}", Now.ToString());

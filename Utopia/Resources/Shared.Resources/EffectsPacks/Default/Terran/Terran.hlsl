@@ -8,6 +8,7 @@ cbuffer PerDraw
 	matrix LightViewProjection;
 	float PopUpValue;
 	float3 SunVector;
+	float3 ShadowMapVars;
 	bool UseShadowMap;
 };
 
@@ -41,6 +42,13 @@ static const float4 faceSpecialOffset[6] = { {0.0f,0.0f,0.0625f,0.0f} , {0.0f,0.
 static const float normalsX[6] = {  0,  0,  0,  0, -1,  1};
 static const float normalsY[6] = {  0,  0, -1,  1,  0,  0};
 static const float normalsZ[6] = { -1,  1,  0,  0,  0,  0};	
+
+#define FACE_BACK 0
+#define FACE_FRONT 1
+#define FACE_BOTTOM 2
+#define FACE_TOP 3
+#define FACE_LEFT 4
+#define FACE_RIGHT 5
 
 
 //--------------------------------------------------------------------------------------
@@ -140,16 +148,41 @@ PS_IN VS(VS_IN input)
 
 	if (SunVector.y < 0 && UseShadowMap)
 	{
-		// commented for debug reason
-		//if (facetype == 0 || facetype == 1)
-		//	facetype = 4;
-
 		// compute variable bias for the shadow map
 		float3 norm = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
 	
-		float cosTheta = dot(norm, SunVector);
-		float bias = tan(acos(cosTheta)) * 0.00024;
-		output.Bias = clamp( abs(bias), 0.0002, 0.006);
+		// bottom face is always dark
+		if (facetype == FACE_BOTTOM)
+		{
+			output.Bias = 0; // 0 is a special case
+			return output;
+		}
+
+	    // left and right faces will be always dark in case when the light vector is facing other side
+		if ((facetype == FACE_LEFT || facetype == FACE_RIGHT) && dot(norm, SunVector) >= 0)
+		{
+			output.Bias = 0;
+			return output;
+		}
+		
+		// back and front faces will always be perpendicular to sunVector so we will keep the bias close to zero
+		if (facetype == FACE_BACK || facetype == FACE_FRONT)
+		{
+			output.Bias = 0.00001;
+			return output;
+		}
+
+		// on early morning or late evening draw top face always dark to avoid huge moire effect
+		if (facetype == FACE_TOP && (SunVector.x > 0.99 || SunVector.x < -0.99))
+		{
+			output.Bias = 0;
+			return output;
+		}
+
+		// adjust bias according to the angle between face and Sun
+		float cosTheta = abs(dot(norm, SunVector));
+		float bias = tan(acos(cosTheta)) * ShadowMapVars.x;
+		output.Bias = clamp(abs(bias), ShadowMapVars.y, ShadowMapVars.z);				
 	}
 	
     return output;
@@ -161,7 +194,7 @@ PS_IN VS(VS_IN input)
 float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
 {
 	// if the sun is under the horisont => dark
-	if (SunVector.y > 0)
+	if (SunVector.y > 0 || shadowBias == 0)
 	{
 		return 0.0f;
 	}
