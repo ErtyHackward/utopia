@@ -23,9 +23,8 @@ namespace Utopia.Worlds.Shadows
 {
     public class WorldShadowMap : DrawableGameComponent
     {
-#if DEBUG
         private int _smDrawID;
-#endif
+
 
         private Color4 _whiteColor = new Color4(255, 255, 255, 255);
         private bool _debugSMTextureNeedToBeSaved = false;
@@ -64,9 +63,9 @@ namespace Utopia.Worlds.Shadows
                              )
         {
             DrawOrders.UpdateIndex(0, 99, "SM_CREATION");
-#if DEBUG
+
             _smDrawID = DrawOrders.AddIndex(10000, "SM_DRAW");
-#endif
+
 
             _d3dEngine = d3dEngine;
             _camManager = camManager;
@@ -96,9 +95,9 @@ namespace Utopia.Worlds.Shadows
             if (index == _smDrawID)
             {
                 //Draw the DephtBuffer texture
-#if DEBUG
+
                 _shadowMap.DrawDepthBuffer(context, ref depthBufferDrawSize);
-#endif
+
             }
             else
             {
@@ -120,6 +119,9 @@ namespace Utopia.Worlds.Shadows
                     _shadowMapEffect.Apply(context);
 
                     chunk.Graphics.DrawSolidFaces(context);
+
+                    if (chunk.DistanceFromPlayer > WorldChunks.StaticEntityViewRange)
+                        continue;
 
                     var m = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3());
 
