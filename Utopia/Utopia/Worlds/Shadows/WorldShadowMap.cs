@@ -121,7 +121,11 @@ namespace Utopia.Worlds.Shadows
 
                     chunk.Graphics.DrawSolidFaces(context);
 
-                    WorldChunks.PrepareVoxelDraw(context, LightViewProjection);
+                    var m = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3());
+
+                    m.Invert();
+
+                    WorldChunks.PrepareVoxelDraw(context, m * LightViewProjection);
                     WorldChunks.DrawStaticEntities(context, chunk);
                 }
 
