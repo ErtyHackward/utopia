@@ -350,7 +350,9 @@ namespace Utopia.Shared.Entities.Models
         /// <param name="timePassed"></param>
         public void Interpolation(float elapsedTime)
         {
-            if (!Playing) return;
+            if (!Playing) 
+                return;
+
             var ms = (int)(elapsedTime * 1000.0f);
 
             _elapsed += ms;
