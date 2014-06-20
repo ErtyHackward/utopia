@@ -299,6 +299,7 @@
     <Compile Include="Sound\SoundStreamedDataSource.cs" />
     <Compile Include="Sound\SoundVoice.cs" />
     <Compile Include="Sound\SourceCategory.cs" />
+    <Compile Include="Sprites2D\LockBitmap.cs" />
     <Compile Include="Sprites3D\Interfaces\ISprite3DProcessor.cs" />
     <Compile Include="Sprites3D\Processors\Sprite3DColorBillBoardProc.cs" />
     <Compile Include="Sprites3D\Processors\Sprite3DBillBoardProc.cs" />

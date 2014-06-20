@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
@@ -281,7 +282,7 @@ namespace Utopia.Entities.Managers
                     yield return containers.VisualVoxelEntity;
             }
 
-            foreach (var visibleChunk in _worldChunks.VisibleChunks())
+            foreach (var visibleChunk in _worldChunks.VisibleChunks().Where(c => c.DistanceFromPlayer < 32))
             {
                 foreach (var visualEntity in visibleChunk.AllEntities())
                 {

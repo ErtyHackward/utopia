@@ -29,6 +29,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         private byte _lightPropagateSteps;
         private byte _lightDecreaseStep;
 
+        private Vector3I _worldRange;
+        private Vector3I _worldRangeMax;
+
         private enum LightComponent
         {
             SunLight,
@@ -67,6 +70,10 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
         public void PropagateInnerChunkLightSources(VisualChunk chunk)
         {
+            // speed optimization
+            _worldRange = _visualWorldParameters.WorldRange.Position;
+            _worldRangeMax = _visualWorldParameters.WorldRange.Max;
+
             PropagatesLightSources(chunk);
             chunk.IsOutsideLightSourcePropagated = false;
             chunk.State = ChunkState.InnerLightsSourcePropagated;
@@ -74,6 +81,10 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
         public void PropagateOutsideChunkLightSources(VisualChunk chunk)
         {
+            // speed optimization
+            _worldRange = _visualWorldParameters.WorldRange.Position;
+            _worldRangeMax = _visualWorldParameters.WorldRange.Max;
+
             //If my Chunk is a border chunk, then don't propagate surrounding chunk light
             if (chunk.IsBorderChunk == false)
             {
@@ -251,12 +262,9 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Will force lighting from cubes passed, even if not Alpha is not 255 = borderAsLightSource = true
         private void PropagateLightSourcesForced(Vector3I cubePosition, VisualChunk chunk)
         {
-            BlockProfile blockProfile;
             int index = _cubesHolder.Index(ref cubePosition);
             TerraCube cube = _cubesHolder.Cubes[index];
 
-            blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.Id];
-            //if (blockProfile.IsBlockingLight && !blockProfile.IsEmissiveColorLightSource) return;
             PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
 
             if (cube.EmissiveColor.R > 0) PropagateLight(cubePosition.X, cubePosition.Y, cubePosition.Z, cube.EmissiveColor.R, LightComponent.Red, true, index);
@@ -267,7 +275,10 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Can only be done if surrounding chunks have their landscape initialized !
         public void PropagateLightSources(ref Range3I cubeRange, bool borderAsLightSource = false, bool withRangeEntityPropagation = false, byte maxHeight = 0)
         {
-            BlockProfile blockProfile;
+            // speed optimization
+            _worldRange = _visualWorldParameters.WorldRange.Position;
+            _worldRangeMax = _visualWorldParameters.WorldRange.Max;
+
             int index;
 
             TerraCube cube;
@@ -284,8 +295,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                     for (int Y = maxheight; Y >= cubeRange.Position.Y; Y--)
                     {
                         cube = _cubesHolder.Cubes[index];
-                        blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.Id];
-
+                        
                         if (cube.IsSunLightSource || (borderAsLightSource)) 
                             PropagateLight(X, Y, Z, cube.EmissiveColor.A, LightComponent.SunLight, true, index);
                         if (cube.EmissiveColor.R > 0 || (borderAsLightSource)) 
@@ -311,9 +321,10 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
             if (!isLightSource)
             {
-                if (LightValue <= 0) return; // No reason to propate "no light";
+                if (LightValue <= 0) 
+                    return; // No reason to propate "no light";
 
-                if (X < _visualWorldParameters.WorldRange.Position.X || X >= _visualWorldParameters.WorldRange.Max.X || Z < _visualWorldParameters.WorldRange.Position.Z || Z >= _visualWorldParameters.WorldRange.Max.Z || Y < 0 || Y >= _visualWorldParameters.WorldRange.Max.Y)
+                if (X < _worldRange.X || X >= _worldRangeMax.X || Z < _worldRange.Z || Z >= _worldRangeMax.Z || Y < 0 || Y >= _worldRangeMax.Y)
                 {
                     return;
                 }
@@ -328,19 +339,19 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
                 switch (lightComp)
                 {
                     case LightComponent.SunLight:
-                        if (cube.EmissiveColor.A >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        if (cube.EmissiveColor.A >= LightValue) return;   // Do nothing because my block color is already above the proposed one !   
                         _cubesHolder.Cubes[index].EmissiveColor.A = (byte)LightValue;
                         break;
                     case LightComponent.Red:
-                        if (cube.EmissiveColor.R >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        if (cube.EmissiveColor.R >= LightValue) return;   // Do nothing because my block color is already above the proposed one !   
                         _cubesHolder.Cubes[index].EmissiveColor.R = (byte)LightValue;
                         break;
                     case LightComponent.Green:
-                        if (cube.EmissiveColor.G >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        if (cube.EmissiveColor.G >= LightValue) return;   // Do nothing because my block color is already above the proposed one !   
                         _cubesHolder.Cubes[index].EmissiveColor.G = (byte)LightValue;
                         break;
                     case LightComponent.Blue:
-                        if (cube.EmissiveColor.B >= LightValue && isLightSource == false) return;   // Do nothing because my block color is already above the proposed one !   
+                        if (cube.EmissiveColor.B >= LightValue) return;   // Do nothing because my block color is already above the proposed one !   
                         _cubesHolder.Cubes[index].EmissiveColor.B = (byte)LightValue;
                         break;
                 }
