@@ -23,12 +23,12 @@ static float3 Dayfogcolor = {0.7, 0.7, 0.7 };
 static float3 Nightfogcolor = {0, 0, 0 };
 
 //face Types
-//Back = 0,
-//Front = 1,
-//Bottom = 2,
-//Top = 3,
-//Left = 4,
-//Right = 5
+#define FACE_BACK 0
+#define FACE_FRONT 1
+#define FACE_BOTTOM 2
+#define FACE_TOP 3
+#define FACE_LEFT 4
+#define FACE_RIGHT 5
 
 static const float texmul1[6] = { -1,  1, -1,  1,  0,  0};
 static const float texmul2[6] = {  0,  0,  0,  0, -1,  1};
@@ -43,12 +43,7 @@ static const float normalsX[6] = {  0,  0,  0,  0, -1,  1};
 static const float normalsY[6] = {  0,  0, -1,  1,  0,  0};
 static const float normalsZ[6] = { -1,  1,  0,  0,  0,  0};	
 
-#define FACE_BACK 0
-#define FACE_FRONT 1
-#define FACE_BOTTOM 2
-#define FACE_TOP 3
-#define FACE_LEFT 4
-#define FACE_RIGHT 5
+
 
 
 //--------------------------------------------------------------------------------------
@@ -65,12 +60,12 @@ SamplerState SamplerDiffuse;
 //Vertex shader Input
 struct VS_IN
 {
-	uint4 Position		 : POSITION; // X = XPosi, Y = YPosi, Z = ZPosi, W = not used
-	float4 Col			 : COLOR;
+	uint4 Position		 : POSITION;  // X = XPosi, Y = YPosi, Z = ZPosi, W = not used
+	float4 Col			 : COLOR;     // Light color, A = sun light
 	uint4 VertexInfo	 : INFO;	  // (bool)x = is Upper vertex, y = facetype, z = AOPower factor 255 = Factor of 3, w = Offset
-	float2 BiomeData     : BIOMEINFO; //X = Moisture, Y = Temperature
-	uint2 Various		 : VARIOUS;   //X = ArrayTextureID for Biome, Y SideOffset multiplier
-	uint4 Animation      : ANIMATION;  // X = Speed, Y = NbrFrames
+	float2 BiomeData     : BIOMEINFO; // X = Moisture, Y = Temperature
+	uint2 Various		 : VARIOUS;   // X = ArrayTextureID for Biome, Y SideOffset multiplier
+	uint4 Animation      : ANIMATION; // X = Speed, Y = NbrFrames
 	uint ArrayId         : ARRAYID;
 	uint Dummy           : DUMMY;
 };
@@ -80,7 +75,7 @@ struct PS_IN
 	float4 Position				: SV_POSITION;
 	float3 UVW					: TEXCOORD0;
 	float fogPower				: VARIOUS0;
-	float3 EmissiveLight		: Light0;
+	float4 EmissiveLight		: Light0;
 	float2 BiomeData			: BIOMEDATA0;
 	uint2 Various				: BIOMEDATAVARIOUS0;  
 	float4 projTexC			    : TEXCOORD1;
@@ -137,8 +132,10 @@ PS_IN VS(VS_IN input)
 		output.UVW.z += animationFrame;
 	}
 
-	output.EmissiveLight = saturate(input.Col.rgb +  SunColor * input.Col.a);
-	output.EmissiveLight *= faceshades[facetype];
+	float3 light = saturate(input.Col.rgb + SunColor * input.Col.a) * faceshades[facetype];
+
+	output.EmissiveLight = float4(light, input.Col.a);
+
 
 	output.fogPower = 1 - (clamp( ((length(worldPosition.xyz) - fogdist) / foglength), 0, 1));
 	output.BiomeData = (input.BiomeData * 0.6f) + 0.2f;
@@ -189,7 +186,7 @@ PS_IN VS(VS_IN input)
 }
 
 // ============================================================================
-// Shadow Map Creation ==> not used ATM moment, stability problems, and too much impact on the GPU ! (Need to render the scene twice !)
+// Shadow Map Creation
 // ============================================================================
 float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
 {
@@ -214,24 +211,24 @@ float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
 	
  	// Sample shadow map to get nearest depth to light.
  	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy).r;
-	float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, 0) ).r;
-	float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, SMAP_DX)).r;
-	float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, SMAP_DX)).r;
+	//float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, 0) ).r;
+	//float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, SMAP_DX)).r;
+	//float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, SMAP_DX)).r;
 	
 	// Is the pixel depth <= shadow map value?
 	float result0 = depth <= s0 + shadowBias;
-	float result1 = depth <= s1 + shadowBias;
-	float result2 = depth <= s2 + shadowBias;
-	float result3 = depth <= s3 + shadowBias;
+	//float result1 = depth <= s1 + shadowBias;
+	//float result2 = depth <= s2 + shadowBias;
+	//float result3 = depth <= s3 + shadowBias;
 		
 	// Transform to texel space
-	float2 texelPos = SMAP_SIZE * projTexC.xy;
- 
-	// Determine the interpolation amounts
-	float2 t = frac(texelPos);
+	//float2 texelPos = SMAP_SIZE * projTexC.xy;
 
- 	// Interpolate results
-	return lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y);
+	// Determine the interpolation amounts
+	//float2 t = frac(texelPos);
+
+	// Uncomment to interpolate results
+	return result0; // lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y);
 }
 
 
@@ -268,9 +265,16 @@ PS_OUT PS(PS_IN input)
 	}
 
 	color.a = 1.0f;
-	color = color * float4(input.EmissiveLight, 1);
+	color = color * float4(input.EmissiveLight.rgb, 1);
 
 	float4 finalColor = color;
+
+	if (UseShadowMap)
+	{
+		float shadowFactor = CalcShadowFactor(input.projTexC, input.Position.xy / input.Position.w, input.Bias);
+		finalColor.rbg *= 1 - (input.EmissiveLight.a * (1 - clamp(shadowFactor, 0.5, 1)));
+	}
+		
 	//To execute only when Fog is present !
 	if(fogvalue < 1){
 		float4 backBufferColor = { 0.0f, 0.0f, 0.2f, 1.0f }; //Defaulted Set to underWaterColor
@@ -298,11 +302,6 @@ PS_OUT PS(PS_IN input)
 			finalColor = color;
 		}
 
-	}
-
-	if (UseShadowMap){
-		float shadowFactor = CalcShadowFactor(input.projTexC, input.Position.xy / input.Position.w, input.Bias);
-		finalColor.rbg *= clamp(shadowFactor, 0.5, 1);
 	}
 
 	// Apply fog on output color
