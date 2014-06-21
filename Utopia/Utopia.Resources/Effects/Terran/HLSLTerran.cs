@@ -36,7 +36,7 @@ namespace Utopia.Resources.Effects.Terran
 
             [FieldOffset(132)]
             public Vector3 SunVector;
-            
+
             [FieldOffset(144)] 
             public Vector3 ShadowMapVars;
 
