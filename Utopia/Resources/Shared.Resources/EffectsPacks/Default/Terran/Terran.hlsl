@@ -108,16 +108,12 @@ PS_IN VS(VS_IN input)
 	}
 
 	float YOffset = 0;
-	if(input.VertexInfo.x == 1) YOffset = (input.VertexInfo.w/255.0f);
+	if (input.VertexInfo.x == 1) YOffset = (input.VertexInfo.w/255.0f);
 	newPosition.y -= (YOffset + (PopUpValue * 128));
 
     float4 worldPosition = mul(newPosition, World);
 	output.Position = mul(worldPosition, ViewProjection_focused);
-
-	// Generate projective tex-coords to project shadow map onto scene.
-	if (UseShadowMap)
-		output.projTexC = mul(worldPosition, LightViewProjection);
-
+	
 	int facetype = input.VertexInfo.y;
 	//Compute the texture mapping
 	output.UVW = float3(
@@ -145,6 +141,9 @@ PS_IN VS(VS_IN input)
 
 	if (SunVector.y < 0 && UseShadowMap)
 	{
+		// Generate projective tex-coords to project shadow map onto scene.
+		output.projTexC = mul(worldPosition, LightViewProjection);
+
 		// compute variable bias for the shadow map
 		float3 norm = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
 	

@@ -52,6 +52,11 @@ namespace Utopia.Shared.Entities.Models
         public Color3 LightColor { get; set; }
 
         /// <summary>
+        /// Indicates how much sun value receive the model [0;1]
+        /// </summary>
+        public float SunLightLevel { get; set; }
+
+        /// <summary>
         /// Gets or sets instance alpha transparency
         /// </summary>
         public float Alpha { get; set; }

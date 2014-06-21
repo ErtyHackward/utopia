@@ -2396,7 +2396,7 @@ namespace Utopia.Components
                 var direction = new Vector3(0f, 0f, 1f);
                 direction.Normalize();
                 _voxelInstancedEffect.Begin(context);
-                _voxelInstancedEffect.CBPerFrame.Values.LightDirection = direction;
+                _voxelInstancedEffect.CBPerFrame.Values.SunVector = direction;
                 _voxelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelInstancedEffect.CBPerFrame.IsDirty = true;
 
