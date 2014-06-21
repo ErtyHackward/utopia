@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ProtoBuf;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Enums;
 using S33M3Resources.Structs;
 using System.ComponentModel;
@@ -140,9 +141,18 @@ namespace Utopia.Shared.Settings
         [ProtoMember(26)]
         public int HealthModification { get; set; }
 
+        /// <summary>
+        /// Possible block transformations (example: ore from block)
+        /// </summary>
+        [Category("Gameplay")]
+        [Description("Allows to transform the item when it is picked")]
+        [ProtoMember(27)]
+        public List<ItemTransformation> Transformations { get; set; }
+
         public BlockProfile()
         {
             HitSounds = new List<SoundSource>();
+            Transformations = new List<ItemTransformation>();
         }
 
         [ProtoBeforeDeserialization]

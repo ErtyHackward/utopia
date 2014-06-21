@@ -72,7 +72,7 @@ namespace Utopia.Shared.Tools
                 foreach (var blockProfile in BlueprintTextHintConverter.Configuration.BlockProfiles.Skip(1))
                 {
                     Image icon;
-                    if (BlueprintTextHintConverter.Images.TryGetValue("CubeResource_" + blockProfile.Name, out icon))
+                    if (blockProfile != null && BlueprintTextHintConverter.Images.TryGetValue("CubeResource_" + blockProfile.Name, out icon))
                     {
                         imgList.Images.Add(icon);
                         var item = new ListViewItem();
