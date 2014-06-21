@@ -273,6 +273,7 @@ namespace Utopia.Worlds.Chunks
                     var sunColor = Skydome.SunColor * sunPart;
                     var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
                     staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
+                    staticEntity.VoxelEntity.ModelInstance.SunLightLevel = sunPart;
 
                     if (!DrawStaticInstanced)
                     {
@@ -304,12 +305,16 @@ namespace Utopia.Worlds.Chunks
         {
             if (DrawStaticInstanced)
             {
+                var focusMatrix = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3());
+                focusMatrix.Invert();
+                
                 _voxelModelInstancedEffect.Begin(context);
                 _voxelModelInstancedEffect.CBPerFrame.Values.SunVector = Skydome.LightDirection;
                 _voxelModelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
                 _voxelModelInstancedEffect.CBPerFrame.Values.UseShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap;
                 _voxelModelInstancedEffect.CBPerFrame.Values.LightViewProjection = Matrix.Transpose(ShadowMap.LightViewProjection);
-                _voxelModelInstancedEffect.CBPerFrame.Values.ShadowMapVars = new Vector3(0.002f, 0.0002f, 0.004f);
+                _voxelModelInstancedEffect.CBPerFrame.Values.ShadowMapVars = new Vector3(0.001f, 0.0002f, 0.004f);
+                _voxelModelInstancedEffect.CBPerFrame.Values.Focus = Matrix.Transpose(focusMatrix);
                 _voxelModelInstancedEffect.CBPerFrame.IsDirty = true;
             }
             else

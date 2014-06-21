@@ -18,7 +18,7 @@ namespace Utopia.Resources.Effects.Entities
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 160)]
+        [StructLayout(LayoutKind.Explicit, Size = 224)]
         public struct CBPerFrameStructure
         {
             [FieldOffset(0)]
@@ -42,6 +42,8 @@ namespace Utopia.Resources.Effects.Entities
             [FieldOffset(156)]
             public bool UseShadowMap;
 
+            [FieldOffset(160)]
+            public Matrix Focus;
         }
 
         [StructLayout(LayoutKind.Explicit, Size = 1024)]

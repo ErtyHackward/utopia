@@ -232,7 +232,7 @@ namespace Utopia.Entities.Voxel
                 var state = instance.State;
                 var voxelModelPartState = state.PartsStates[partIndex];
 
-                instanceData[instanceIndex].LightColor = instance.LightColor;
+                instanceData[instanceIndex].LightColor = new Color4( instance.LightColor, instance.SunLightLevel);
 
                 // apply rotations from the state and instance (if the head)
                 if (_model.Parts[partIndex].IsHead)
@@ -246,10 +246,6 @@ namespace Utopia.Entities.Voxel
                 }
 
                 instanceData[instanceIndex].Transform = Matrix.Transpose(instanceData[instanceIndex].Transform * instance.World);
-                var invWorld = instance.World;
-                invWorld.Invert();
-
-                instanceData[instanceIndex].World = Matrix.Transpose(invWorld);
             }
 
             var vb = _visualFrames[activeFrame].VertexBuffer;
@@ -333,8 +329,7 @@ namespace Utopia.Entities.Voxel
         public static readonly VertexDeclaration VertexDeclaration;
 
         public Matrix Transform;
-        public Matrix World;
-        public Color3 LightColor;
+        public Color4 LightColor;
 
         static VoxelInstanceData()
         {
@@ -346,11 +341,7 @@ namespace Utopia.Entities.Voxel
                 new InputElement("TRANSFORM", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //TRANSFORM Matrix Row1
                 new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //TRANSFORM Matrix Row2
                 new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //TRANSFORM Matrix Row3
-                new InputElement("WORLD",     0, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row0
-                new InputElement("WORLD",     1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row1
-                new InputElement("WORLD",     2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row2
-                new InputElement("WORLD",     3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row3
-                new InputElement("COLOR",     0, Format.R32G32B32_Float,    InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1)
+                new InputElement("COLOR",     0, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1)
             };
 
             VertexDeclaration = new VertexDeclaration(elements);

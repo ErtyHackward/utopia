@@ -10,6 +10,7 @@ cbuffer VoxelModelPerFrame
 	float3 SunVector;
 	float3 ShadowMapVars;
 	bool UseShadowMap;
+	matrix Focus;
 };
 
 cbuffer VoxelModel
@@ -42,8 +43,7 @@ struct VS_IN
 	uint4 Position		: POSITION;
 	uint4 faceType    	: INFO;
 	matrix Transform	: TRANSFORM;
-	matrix World    	: WORLD;
-	float3 LightColor	: COLOR; // Diffuse lighting color
+	float4 LightColor	: COLOR; // Diffuse lighting color
 };
 
 struct PS_IN
@@ -55,6 +55,7 @@ struct PS_IN
 	int colorIndex              : VARIOUS0;
 	float4 projTexC			    : TEXCOORD1;
 	float Bias					: VARIOUS1;
+	float SunLightLevel			: COLOR1;
 };
 
 struct PS_OUT
@@ -90,17 +91,16 @@ PS_IN VS(VS_IN input)
 
 	// ambient occlusion value	
 	output.Light = input.faceType.y;
-	output.LightColor = input.LightColor;
+	output.LightColor = input.LightColor.rgb;
+	output.SunLightLevel = input.LightColor.a;
 
 	// fake shadow
 	output.EmissiveLight = faceshades[facetype];
 
 	if (SunVector.y < 0 && UseShadowMap)
 	{
-
-
 		// Generate projective tex-coords to project shadow map onto scene.
-		output.projTexC = mul(mul(worldPosition, input.World), LightViewProjection);
+		output.projTexC = mul(mul(worldPosition, Focus) , LightViewProjection);
 
 		// compute variable bias for the shadow map
 		float3 norm = float3(normalsX[facetype], normalsY[facetype], normalsZ[facetype]);
@@ -108,7 +108,7 @@ PS_IN VS(VS_IN input)
 		// adjust bias according to the angle between face and Sun
 		float cosTheta = abs(dot(norm, SunVector));
 		float bias = tan(acos(cosTheta)) * ShadowMapVars.x;
-		output.Bias = 0.00001;// clamp(abs(bias), ShadowMapVars.y, ShadowMapVars.z);
+		output.Bias = clamp(abs(bias), ShadowMapVars.y, ShadowMapVars.z);
 	}
 
     return output;
@@ -161,7 +161,7 @@ PS_OUT PS(PS_IN input)
 	if (UseShadowMap)
 	{
 		float shadowFactor = CalcShadowFactor(input.projTexC, input.Position.xy / input.Position.w, input.Bias);
-		color.rbg *= clamp(shadowFactor, 0.5, 1);// 1 - (intensity * (1 - clamp(shadowFactor, 0.5, 1)));
+		color.rbg *= 1 - (input.SunLightLevel * (1 - clamp(shadowFactor, 0.5, 1)));
 	}
 
 	output.Color = float4(color,1);
