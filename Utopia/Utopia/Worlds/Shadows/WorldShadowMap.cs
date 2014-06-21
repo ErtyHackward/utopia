@@ -6,6 +6,7 @@ using S33M3CoreComponents.Maths;
 using S33M3DXEngine.Main;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Resources.VertexFormats;
+using Utopia.Shared.GameDXStates;
 using Utopia.Worlds.SkyDomes;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
@@ -86,7 +87,7 @@ namespace Utopia.Worlds.Shadows
             _shadowMapEffect = new HLSLTerranShadow(context.Device, ClientSettings.EffectPack + @"Terran/ShadowMap.hlsl", VertexCubeSolid.VertexDeclaration);
 
             _shadowMapEffect.TerraTexture.Value = WorldChunks.Terra_View;
-            _shadowMapEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(Utopia.Shared.GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
+            _shadowMapEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
         }
 
         private Vector2 depthBufferDrawSize = new Vector2(128, 128);
@@ -117,14 +118,13 @@ namespace Utopia.Worlds.Shadows
                     _shadowMapEffect.CBPerDraw.Values.LightWVP = Matrix.Transpose(worldFocus * LightViewProjection);
                     _shadowMapEffect.CBPerDraw.IsDirty = true;
                     _shadowMapEffect.Apply(context);
-
+                    
                     chunk.Graphics.DrawSolidFaces(context);
 
                     if (chunk.DistanceFromPlayer > WorldChunks.StaticEntityViewRange)
                         continue;
 
                     var m = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3());
-
                     m.Invert();
 
                     WorldChunks.PrepareVoxelDraw(context, m * LightViewProjection);
