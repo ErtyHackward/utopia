@@ -297,7 +297,7 @@ namespace Utopia.Entities.Managers
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
             _voxelModelEffect.Begin(context);
-            _voxelModelEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
+            _voxelModelEffect.CBPerFrame.Values.SunVector = _skyDome.LightDirection;
             _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
             _voxelModelEffect.CBPerFrame.IsDirty = true;
             _voxelModelEffect.Apply(context);
