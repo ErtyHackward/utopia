@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Maths;
 using S33M3CoreComponents.Sound;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -95,7 +96,8 @@ namespace Utopia.Shared.Entities
             if (cube != WorldConfiguration.CubeId.Air)
             {
                 impact.CubeId = cube;
-                var hardness = cursor.PeekProfile().Hardness;
+                var profile = cursor.PeekProfile();
+                var hardness = profile.Hardness;
 
                 if (damage == null)
                 {
@@ -119,7 +121,6 @@ namespace Utopia.Shared.Entities
 
                 if (toolBlockDamage > 0 && SoundEngine != null)
                 {
-                    var profile = EntityFactory.Config.BlockProfiles[cube];
                     if (profile.HitSounds.Count > 0)
                     {
                         var random = new Random();
@@ -141,6 +142,7 @@ namespace Utopia.Shared.Entities
                     chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.Linked && e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
                     cursor.Write(WorldConfiguration.CubeId.Air);
 
+                    #region TreeSoul remove logic
                     foreach (var treeSoul in EntityFactory.LandscapeManager.AroundEntities(owner.EntityState.PickedBlockPosition, 16).OfType<TreeSoul>())
                     {
                         var treeBp = EntityFactory.Config.TreeBluePrintsDico[treeSoul.TreeTypeId];
@@ -176,9 +178,8 @@ namespace Utopia.Shared.Entities
                             }
                         }
                     }
-
+                    #endregion
                     
-
                     if (SoundEngine != null && EntityFactory.Config.ResourceTake != null)
                     {
                         SoundEngine.StartPlay3D(EntityFactory.Config.ResourceTake, owner.EntityState.PickedBlockPosition + new Vector3(0.5f));
@@ -190,14 +191,35 @@ namespace Utopia.Shared.Entities
                         impact.Message = "Charater entity is expected";
                         return impact;
                     }
+
+                    var putItems = new List<KeyValuePair<IItem, int>>();
+                    putItems.Add(new KeyValuePair<IItem, int>((IItem)EntityFactory.CreateFromBluePrint(cube), 1));
+
+                    if (profile.Transformations != null)
+                    {
+                        var random = new FastRandom(owner.EntityState.PickedEntityPosition.GetHashCode() ^ owner.EntityState.Entropy);
+                        foreach (var itemTransformation in profile.Transformations)
+                        {
+                            if (random.NextDouble() < itemTransformation.TransformChance)
+                            {
+                                // don't give the block
+                                putItems.Clear();
+                                foreach (var slot in itemTransformation.GeneratedItems)
+                                {
+                                    putItems.Add(new KeyValuePair<IItem, int>((Item)EntityFactory.CreateFromBluePrint(slot.BlueprintId), slot.Count));
+                                }
+                                break;
+                            }
+                        }
+                    }
                     
                     // in case of infinite resources we will not add more than 1 block entity 
                     var existingSlot = charEntity.FindSlot(s => s.Item.BluePrintId == cube);
 
                     if (!EntityFactory.Config.IsInfiniteResources || existingSlot == null)
                     {
-                        if (!charEntity.Inventory.PutItem((IItem)EntityFactory.CreateFromBluePrint(cube)))
-                            impact.Message = "Can't put the item to inventory";
+                        if (!charEntity.Inventory.PutMany(putItems))
+                            impact.Message = "Can't put the item(s) to inventory";
                     }
 
                     impact.CubeId = WorldConfiguration.CubeId.Air;

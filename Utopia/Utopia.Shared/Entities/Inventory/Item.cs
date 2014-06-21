@@ -89,7 +89,7 @@ namespace Utopia.Shared.Entities.Inventory
         public string ModelState { get; set; }
 
         /// <summary>
-        /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
+        /// Possible entity transformation (grass => wheat seeds)
         /// </summary>
         [Category("Gameplay")]
         [Description("Allows to transform the item when it is picked")]
@@ -396,7 +396,7 @@ namespace Utopia.Shared.Entities.Inventory
     }
 
     [ProtoContract]
-    public struct ItemTransformation
+    public class ItemTransformation
     {
         /// <summary>
         /// Entity that will be given instead of default
@@ -411,5 +411,10 @@ namespace Utopia.Shared.Entities.Inventory
         [Description("A chance that item will transform to other entity [0;1]")]
         [ProtoMember(2)]
         public float TransformChance { get; set; }
+
+        public ItemTransformation()
+        {
+            GeneratedItems = new List<InitSlot>();
+        }
     }
 }
