@@ -235,6 +235,7 @@ PS_IN VS(VS_IN input)
     return output;
 }
 
+//[VS ENTRY POINT]
 PS_IN VSShadow(VS_IN input)
 {
 	PS_IN output;
