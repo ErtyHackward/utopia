@@ -120,6 +120,7 @@
     <Compile Include="ClassExt\CursorHelper.cs" />
     <Compile Include="ClassExt\ListExtension.cs" />
     <Compile Include="Entities\Concrete\TreeSoul.cs" />
+    <Compile Include="Entities\Concrete\TreeSoulKiller.cs" />
     <Compile Include="Entities\GrowingEntity.cs" />
     <Compile Include="Entities\Concrete\PlantGrowingEntity.cs" />
     <Compile Include="Entities\Concrete\TreeGrowingEntity.cs" />
