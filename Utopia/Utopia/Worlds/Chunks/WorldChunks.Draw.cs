@@ -55,7 +55,7 @@ namespace Utopia.Worlds.Chunks
                 chunk.Graphics.IsFrustumCulled = !_camManager.ActiveCamera.Frustum.IntersectsWithoutFar(ref chunk.ChunkWorldBoundingBox);
             }
         }
-        
+
         public override void Draw(DeviceContext context, int index)
         {
 
@@ -132,7 +132,7 @@ namespace Utopia.Worlds.Chunks
         public IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true)
         {
             //var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
-            
+
             //for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
             //{
             //    var chunk = SortedChunks[chunkIndice];
@@ -249,7 +249,7 @@ namespace Utopia.Worlds.Chunks
                     _liquidEffect.CBPerDraw.IsDirty = true;
                     _liquidEffect.Apply(context);
                     chunk.Graphics.DrawLiquidFaces(context);
-                }   
+                }
             }
         }
 
@@ -269,18 +269,18 @@ namespace Utopia.Worlds.Chunks
             //For Each different entity Model
             foreach (var pair in chunk.AllPairs())
             {
-                if (!DrawStaticInstanced)
-                {
-                    // For each instance of the model - update data
-                    foreach (var staticEntity in pair.Value)
-                    {
-                        //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
-                        var sunPart = (float)staticEntity.BlockLight.A / 255;
-                        var sunColor = Skydome.SunColor * sunPart;
-                        var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
-                        staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
-                        staticEntity.VoxelEntity.ModelInstance.SunLightLevel = sunPart;
 
+                // For each instance of the model - update data
+                foreach (var staticEntity in pair.Value)
+                {
+                    //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
+                    var sunPart = (float)staticEntity.BlockLight.A / 255;
+                    var sunColor = Skydome.SunColor * sunPart;
+                    var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
+                    staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
+                    staticEntity.VoxelEntity.ModelInstance.SunLightLevel = sunPart;
+                    if (!DrawStaticInstanced)
+                    {
                         if (IsEntityVisible(staticEntity.Entity.Position))
                         {
                             var sw = Stopwatch.StartNew();
@@ -291,8 +291,9 @@ namespace Utopia.Worlds.Chunks
                         }
                     }
                 }
-                else 
-                { 
+
+                if (DrawStaticInstanced)
+                {
                     if (pair.Value.Count == 0) continue;
                     var entity = pair.Value.First();
                     var sw = Stopwatch.StartNew();
@@ -310,7 +311,7 @@ namespace Utopia.Worlds.Chunks
             {
                 var focusMatrix = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3());
                 focusMatrix.Invert();
-                
+
                 _voxelModelInstancedEffect.Begin(context);
                 _voxelModelInstancedEffect.CBPerFrame.Values.SunVector = Skydome.LightDirection;
                 _voxelModelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
@@ -342,10 +343,10 @@ namespace Utopia.Worlds.Chunks
             _staticEntityDrawCalls = 0;
 
             PrepareVoxelDraw(context, _camManager.ActiveCamera.ViewProjection3D);
-            
+
             foreach (var chunk in ChunksToDraw())
             {
-                if (chunk.DistanceFromPlayer > StaticEntityViewRange) 
+                if (chunk.DistanceFromPlayer > StaticEntityViewRange)
                     continue;
 
                 DrawStaticEntities(context, chunk);
@@ -364,13 +365,13 @@ namespace Utopia.Worlds.Chunks
             }
 
             //Create Biomes Colors texture Array
-            
+
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"BiomesColors/", @"*.png", FilterFlags.Point, "BiomesColors_WorldChunk", out _biomesColors_View, SharpDX.DXGI.Format.BC1_UNorm);
 
             _terra_View = VisualWorldParameters.CubeTextureManager.CubeArrayTexture;
             //ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", TexturePackConfig.Current.Settings.enuSamplingFilter, "ArrayTexture_WorldChunk", out _terra_View);
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"AnimatedTextures/", @"*.png", FilterFlags.Point, "ArrayTexture_AnimatedTextures", out _textureAnimation_View, SharpDX.DXGI.Format.BC4_UNorm);
-            
+
 
             _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCb.CBPerFrame);
             _terraEffect.TerraTexture.Value = _terra_View;
