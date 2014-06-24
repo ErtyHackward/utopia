@@ -32,6 +32,7 @@ namespace Utopia.Shared.Entities.Inventory
     [ProtoInclude(106, typeof(GodHandTool))]
     [ProtoInclude(107, typeof(Extractor))]
     [ProtoInclude(108, typeof(MeleeWeapon))]
+    [ProtoInclude(109, typeof(TreeSoulKiller))]
     public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity, ISoundEmitterEntity
     {
         private VoxelModelInstance _modelInstance;
@@ -315,18 +316,7 @@ namespace Utopia.Shared.Entities.Inventory
             var charEntity = owner as CharacterEntity;
             if (charEntity != null)
             {
-                var slot = charEntity.Inventory.FirstOrDefault(s => s.Item.StackType == entity.StackType);
-
-                if (slot == null)
-                {
-                    // we have no more items in the inventory, remove from the hand
-                    slot = charEntity.Equipment[EquipmentSlotType.Hand];
-                    impact.Success = charEntity.Equipment.TakeItem(slot.GridPosition);
-                }
-                else
-                {
-                    impact.Success = charEntity.Inventory.TakeItem(slot.GridPosition);
-                }
+                impact.Success = TakeFromPlayer(owner);
 
                 if (!impact.Success)
                 {
@@ -353,6 +343,25 @@ namespace Utopia.Shared.Entities.Inventory
             
             impact.Message = "CharacterEntity owner is expected";
             return impact;
+        }
+
+        protected bool TakeFromPlayer(IDynamicEntity owner, int itemsCount = 1)
+        {
+            var charEntity = owner as CharacterEntity;
+
+            if (charEntity == null)
+                return false;
+
+            var slot = charEntity.Inventory.FirstOrDefault(s => s.Item.StackType == StackType);
+
+            if (slot == null)
+            {
+                // we have no more items in the inventory, remove from the hand
+                slot = charEntity.Equipment[EquipmentSlotType.Hand];
+                return charEntity.Equipment.TakeItem(slot.GridPosition);
+            }
+
+            return charEntity.Inventory.TakeItem(slot.GridPosition);
         }
 
         protected virtual void OnBeforePut(Item item)
