@@ -12,6 +12,11 @@ cbuffer PerDraw
 	bool UseShadowMap;
 };
 
+cbuffer PerDrawShadow
+{
+	matrix LightWVP;
+};
+
 #include <SharedFrameCB.hlsl>
 
 static const float SHADOW_EPSILON = 0.0002f;
@@ -90,6 +95,52 @@ struct PS_OUT
 //--------------------------------------------------------------------------------------
 // Fonctions
 //--------------------------------------------------------------------------------------
+
+// ============================================================================
+// Shadow Map Creation
+// ============================================================================
+float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
+{
+	// if the sun is under the horisont => dark
+	if (SunVector.y > 0 || shadowBias == 0)
+	{
+		return 0.0f;
+	}
+
+	// Complete projection by doing division by w.
+	projTexC.xyz /= projTexC.w;
+
+	// Points outside the light volume are lit.
+	if (projTexC.x < -1.0f || projTexC.x > 1.0f || projTexC.y < -1.0f || projTexC.y > 1.0f || projTexC.z < 0.0f) return 1.0f;
+
+	// Transform from NDC space to texture space.
+	projTexC.x = +0.5f*projTexC.x + 0.5f;
+	projTexC.y = -0.5f*projTexC.y + 0.5f;
+
+	// Depth in NDC space.
+	float depth = projTexC.z;
+
+	// Sample shadow map to get nearest depth to light.
+	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy).r;
+	//float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, 0) ).r;
+	//float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, SMAP_DX)).r;
+	//float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, SMAP_DX)).r;
+
+	// Is the pixel depth <= shadow map value?
+	float result0 = depth <= s0 + shadowBias;
+	//float result1 = depth <= s1 + shadowBias;
+	//float result2 = depth <= s2 + shadowBias;
+	//float result3 = depth <= s3 + shadowBias;
+
+	// Transform to texel space
+	//float2 texelPos = SMAP_SIZE * projTexC.xy;
+
+	// Determine the interpolation amounts
+	//float2 t = frac(texelPos);
+
+	// Uncomment to interpolate results
+	return result0; // lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y);
+}
 
 //--------------------------------------------------------------------------------------
 // Vertex Shaders
@@ -184,52 +235,25 @@ PS_IN VS(VS_IN input)
     return output;
 }
 
-// ============================================================================
-// Shadow Map Creation
-// ============================================================================
-float CalcShadowFactor(float4 projTexC, float2 worldPos, float shadowBias)
+PS_IN VSShadow(VS_IN input)
 {
-	// if the sun is under the horisont => dark
-	if (SunVector.y > 0 || shadowBias == 0)
+	PS_IN output;
+
+	float4 newPosition = { input.Position.xyz, 1.0f };
+
+	if (input.Various.y > 0)
 	{
-		return 0.0f;
+		newPosition += (faceSpecialOffset[input.VertexInfo.y] * input.Various.y);
 	}
 
- 	// Complete projection by doing division by w.
-	projTexC.xyz /= projTexC.w;
+	float YOffset = 0;
+	if (input.VertexInfo.x == 1) YOffset = (input.VertexInfo.w / 255.0f);
+	newPosition.y -= YOffset;
 
-	// Points outside the light volume are lit.
-	if( projTexC.x < -1.0f || projTexC.x > 1.0f || projTexC.y < -1.0f || projTexC.y > 1.0f || projTexC.z < 0.0f) return 1.0f;
- 	
- 	// Transform from NDC space to texture space.
- 	projTexC.x = +0.5f*projTexC.x + 0.5f;
- 	projTexC.y = -0.5f*projTexC.y + 0.5f;
- 	
- 	// Depth in NDC space.
- 	float depth = projTexC.z;
-	
- 	// Sample shadow map to get nearest depth to light.
- 	float s0 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy).r;
-	//float s1 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, 0) ).r;
-	//float s2 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(0, SMAP_DX)).r;
-	//float s3 = ShadowMap.Sample(SamplerBackBuffer, projTexC.xy + float2(SMAP_DX, SMAP_DX)).r;
-	
-	// Is the pixel depth <= shadow map value?
-	float result0 = depth <= s0 + shadowBias;
-	//float result1 = depth <= s1 + shadowBias;
-	//float result2 = depth <= s2 + shadowBias;
-	//float result3 = depth <= s3 + shadowBias;
-		
-	// Transform to texel space
-	//float2 texelPos = SMAP_SIZE * projTexC.xy;
+	output.Position = mul(newPosition, LightWVP);
 
-	// Determine the interpolation amounts
-	//float2 t = frac(texelPos);
-
-	// Uncomment to interpolate results
-	return result0; // lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y);
+	return output;
 }
-
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader

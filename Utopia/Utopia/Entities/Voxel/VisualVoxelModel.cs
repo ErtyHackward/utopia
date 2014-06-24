@@ -259,18 +259,13 @@ namespace Utopia.Entities.Voxel
             _voxelMeshFactory.Engine.ImmediateContext.DrawIndexedInstanced(ib.IndicesCount, instanceData.Length, 0, 0, 0);
         }
 
-        /// <summary>
-        /// Performs instanced drawing of the group of models (should be the instances of the same model)
-        /// </summary>
-        /// <param name="context"> </param>
-        /// <param name="effect"></param>
-        /// <param name="instances"></param>
+
         public void DrawInstanced(DeviceContext context, HLSLVoxelModelInstanced effect, IList<VoxelModelInstance> instances)
         {
-            if (!_initialized) 
+            if (!_initialized)
                 return;
 
-            if (instances.Count == 0) 
+            if (instances.Count == 0)
                 return;
 
             if (_model.ColorMapping != null)
@@ -281,6 +276,17 @@ namespace Utopia.Entities.Voxel
 
             effect.Apply(context);
 
+            DrawInstanced(context, instances);
+        }
+
+        /// <summary>
+        /// Performs instanced drawing of the group of models (should be the instances of the same model)
+        /// </summary>
+        /// <param name="context"> </param>
+        /// <param name="effect"></param>
+        /// <param name="instances"></param>
+        public void DrawInstanced(DeviceContext context, IList<VoxelModelInstance> instances)
+        {
             if (VoxelModel.Frames.Count == 1 && VoxelModel.Parts.Count == 1)
             {
                 // we have only one frame and part, so every model have the same VB

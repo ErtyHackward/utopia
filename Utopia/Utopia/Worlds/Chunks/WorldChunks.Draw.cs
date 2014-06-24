@@ -253,30 +253,34 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        public void DrawStaticEntities(DeviceContext context, VisualChunk chunk)
+        public void DrawStaticEntitiesShadow(DeviceContext context, VisualChunk chunk)
         {
-            if (ShadowMap.ShadowMap != null)
-            {
-                //Depth Shadow Mapping !
-                _voxelModelInstancedEffect.ShadowMap.Value = ShadowMap.ShadowMap.DepthMap;
-                _voxelModelInstancedEffect.ShadowMap.IsDirty = true;
-            }
-
             //For Each different entity Model
             foreach (var pair in chunk.AllPairs())
             {
-                // For each instance of the model - update data
-                foreach (var staticEntity in pair.Value)
-                {
-                    //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
-                    var sunPart = (float)staticEntity.BlockLight.A / 255;
-                    var sunColor = Skydome.SunColor * sunPart;
-                    var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
-                    staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
-                    staticEntity.VoxelEntity.ModelInstance.SunLightLevel = sunPart;
+                if (pair.Value.Count == 0) continue;
+                var entity = pair.Value.First();
+                entity.VisualVoxelModel.DrawInstanced(context, pair.Value.Where(ve => IsEntityVisible(ve.Entity.Position)).Select(ve => ve.VoxelEntity.ModelInstance).ToList());
+            }
+        }
 
-                    if (!DrawStaticInstanced)
+        public void DrawStaticEntities(DeviceContext context, VisualChunk chunk)
+        {
+            //For Each different entity Model
+            foreach (var pair in chunk.AllPairs())
+            {
+                if (!DrawStaticInstanced)
+                {
+                    // For each instance of the model - update data
+                    foreach (var staticEntity in pair.Value)
                     {
+                        //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
+                        var sunPart = (float)staticEntity.BlockLight.A / 255;
+                        var sunColor = Skydome.SunColor * sunPart;
+                        var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
+                        staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
+                        staticEntity.VoxelEntity.ModelInstance.SunLightLevel = sunPart;
+
                         if (IsEntityVisible(staticEntity.Entity.Position))
                         {
                             var sw = Stopwatch.StartNew();
@@ -287,9 +291,8 @@ namespace Utopia.Worlds.Chunks
                         }
                     }
                 }
-
-                if (DrawStaticInstanced)
-                {
+                else 
+                { 
                     if (pair.Value.Count == 0) continue;
                     var entity = pair.Value.First();
                     var sw = Stopwatch.StartNew();
@@ -316,6 +319,13 @@ namespace Utopia.Worlds.Chunks
                 _voxelModelInstancedEffect.CBPerFrame.Values.ShadowMapVars = new Vector3(0.001f, 0.0002f, 0.004f);
                 _voxelModelInstancedEffect.CBPerFrame.Values.Focus = Matrix.Transpose(focusMatrix);
                 _voxelModelInstancedEffect.CBPerFrame.IsDirty = true;
+
+                if (ShadowMap.ShadowMap != null)
+                {
+                    //Depth Shadow Mapping !
+                    _voxelModelInstancedEffect.ShadowMap.Value = ShadowMap.ShadowMap.DepthMap;
+                    _voxelModelInstancedEffect.ShadowMap.IsDirty = true;
+                }
             }
             else
             {
