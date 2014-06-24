@@ -84,10 +84,7 @@ namespace Utopia.Worlds.Shadows
             _shadowMap = ToDispose(new DrawableTex2D(_d3dEngine));
             _shadowMap.Init(ShadowMapSize, ShadowMapSize, false, SharpDX.DXGI.Format.R32_Float);
 
-            _shadowMapEffect = new HLSLTerranShadow(context.Device, ClientSettings.EffectPack + @"Terran/ShadowMap.hlsl", VertexCubeSolid.VertexDeclaration);
-
-            _shadowMapEffect.TerraTexture.Value = WorldChunks.Terra_View;
-            _shadowMapEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
+            _shadowMapEffect = new HLSLTerranShadow(context.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration);
         }
 
         private Vector2 depthBufferDrawSize = new Vector2(128, 128);
@@ -104,10 +101,13 @@ namespace Utopia.Worlds.Shadows
             {
                 CreateLightViewProjectionMatrix(out LightViewProjection);
 
+                var m = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3());
+                m.Invert();
+
                 _shadowMap.Begin();
 
                 // draw players
-                DynamicEntityManager.VoxelDraw(context, LightViewProjection);
+                DynamicEntityManager.VoxelDraw(context, m * LightViewProjection);
 
                 // draw chunks
                 Matrix worldFocus = Matrix.Identity;
@@ -118,20 +118,15 @@ namespace Utopia.Worlds.Shadows
                     _shadowMapEffect.CBPerDraw.Values.LightWVP = Matrix.Transpose(worldFocus * LightViewProjection);
                     _shadowMapEffect.CBPerDraw.IsDirty = true;
                     _shadowMapEffect.Apply(context);
-                    
+
                     chunk.Graphics.DrawSolidFaces(context);
-
-                    if (chunk.DistanceFromPlayer > WorldChunks.StaticEntityViewRange)
-                        continue;
-
-                    var m = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3());
-                    m.Invert();
-
-                    WorldChunks.PrepareVoxelDraw(context, m * LightViewProjection);
-                    WorldChunks.DrawStaticEntities(context, chunk);
                 }
 
-                
+                WorldChunks.PrepareVoxelDraw(context, m * LightViewProjection);
+                foreach (var chunk in WorldChunks.Chunks.Where(x => x.Graphics.IsExistingMesh4Drawing && x.DistanceFromPlayer <= WorldChunks.StaticEntityViewRange))
+                {
+                    WorldChunks.DrawStaticEntities(context, chunk);
+                }
 
                 _shadowMap.End();
 
@@ -150,7 +145,6 @@ namespace Utopia.Worlds.Shadows
 
         #region Private Methods
         private float lastLightUpdate = -100.0f;
-
 
         private void CreateLightViewProjectionMatrix(out Matrix lightProjection)
         {
