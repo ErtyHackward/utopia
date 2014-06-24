@@ -18,6 +18,11 @@ cbuffer VoxelModel
 	float4 colorMapping[64];
 }
 
+cbuffer PerDrawShadow
+{
+	matrix LightVP;
+};
+
 static const float SHADOW_EPSILON = 0.0002f;
 static const float SMAP_SIZE = 4096.0f;
 static const float SMAP_DX = 1.0f / SMAP_SIZE;
@@ -113,6 +118,19 @@ PS_IN VS(VS_IN input)
 
     return output;
 }	
+
+//[VS ENTRY POINT]
+PS_IN VSShadow(VS_IN input)
+{
+	PS_IN output;
+
+	float4 newPosition = { input.Position.xyz, 1.0f };
+	float4 worldPosition = mul(newPosition, input.Transform);
+	output.Position = mul(worldPosition, LightVP);
+
+	return output;
+}
+
 
 // ============================================================================
 // Shadow Map Creation

@@ -332,9 +332,6 @@
     <None Include="EffectsPacks\Default\Terran\Cracks.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="EffectsPacks\Default\Terran\ShadowMap.hlsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="EffectsPacks\Default\PostEffects\Ghost.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

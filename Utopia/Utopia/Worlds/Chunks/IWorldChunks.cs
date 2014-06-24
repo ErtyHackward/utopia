@@ -162,7 +162,8 @@ namespace Utopia.Worlds.Chunks
         IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true);
 
         void RebuildChunk(Vector3I position);
-        void DrawStaticEntities(DeviceContext context, VisualChunk chunk);
-        void PrepareVoxelDraw(DeviceContext context, Matrix viewProjection);
+        void DrawStaticEntitiesShadow(DeviceContext context, VisualChunk chunk);
+        //void PrepareVoxelDraw(DeviceContext context, Matrix viewProjection);
+        //void DrawStaticEntities(DeviceContext context, VisualChunk chunk);
     }
 }

@@ -86,6 +86,7 @@
     <Compile Include="Effects\Entities\HLSLLoadingCube.cs" />
     <Compile Include="Effects\Entities\HLSLStaticEntitySprite.cs" />
     <Compile Include="Effects\Entities\HLSLVoxelModel.cs" />
+    <Compile Include="Effects\Entities\HLSLVoxelModelInstancedShadow.cs" />
     <Compile Include="Effects\Entities\HLSLVoxelModelInstanced.cs" />
     <Compile Include="Effects\Particules\HLSLCubeColorParticule.cs" />
     <Compile Include="Effects\PostEffects\HLSLGhost.cs" />

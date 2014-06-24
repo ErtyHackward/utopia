@@ -264,7 +264,7 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        public void DrawStaticEntities(DeviceContext context, VisualChunk chunk)
+        private void DrawStaticEntities(DeviceContext context, VisualChunk chunk)
         {
             //For Each different entity Model
             foreach (var pair in chunk.AllPairs())
@@ -304,7 +304,7 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        public void PrepareVoxelDraw(DeviceContext context, Matrix viewProjection)
+        private void PrepareVoxelDraw(DeviceContext context, Matrix viewProjection)
         {
             if (DrawStaticInstanced)
             {
