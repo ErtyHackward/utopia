@@ -392,6 +392,16 @@ namespace Utopia.Shared.Entities
                 InjectFields(charEntity.HandTool);
             }
 
+            var container = entity as Container;
+
+            if (container != null)
+            {
+                foreach (var containedSlot in container.Slots())
+                {
+                    InjectFields(containedSlot.Item);
+                }
+            }
+            
             if (entity is GodEntity)
             {
                 var godEntity = (GodEntity)entity;
