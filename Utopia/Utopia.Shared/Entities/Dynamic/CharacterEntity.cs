@@ -436,6 +436,12 @@ namespace Utopia.Shared.Entities.Dynamic
 
             var blockPos = Position.ToCubePosition();
             var cursor = EntityFactory.LandscapeManager.GetCursor(blockPos);
+            if (cursor == null)
+            {
+                impact.Dropped = true;
+                return impact;
+            }
+
             cursor.OwnerDynamicId = DynamicId;
 
             while (cursor.GlobalPosition.Y > 0)
