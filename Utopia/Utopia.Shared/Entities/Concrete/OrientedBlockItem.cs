@@ -82,11 +82,8 @@ namespace Utopia.Shared.Entities.Concrete
                     newBlockPos = owner.EntityState.PickedEntityPosition.ToCubePosition();
                     
                     var rotation = entity.Rotation;
-                    
                     var normal = Vector3.TransformNormal(owner.EntityState.PickPointNormal, Matrix.RotationQuaternion(rotation));
-
                     var converted = new Vector3I((int)Math.Round(normal.X, MidpointRounding.ToEven), (int)Math.Round(normal.Y, MidpointRounding.ToEven), (int)Math.Round(normal.Z, MidpointRounding.ToEven));
-
                     newBlockPos += converted;
                 }
 

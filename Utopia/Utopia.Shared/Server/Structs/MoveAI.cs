@@ -128,7 +128,7 @@ namespace Utopia.Shared.Server.Structs
             if (path.Exists)
             {
                 _path = path;
-#if DEBUG
+#if DEBUGPATHFIND
                 Npc.Server.ChatManager.Broadcast(string.Format("Path found at {0} ms {1} iterations", _path.PathFindTime, _path.IterationsPerformed));
 #endif
                 IsMoving = true;

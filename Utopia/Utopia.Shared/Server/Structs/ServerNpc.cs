@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
+using SharpDX;
+using Utopia.Shared.Chunks;
+using Utopia.Shared.ClassExt;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Interfaces;
 using Utopia.Shared.Server.AStar;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Shared.Server.Structs
 {
@@ -25,6 +31,8 @@ namespace Utopia.Shared.Server.Structs
 
         private CharacterEntity _character;
         private Designation _designation;
+        private DateTime _lastWalkChange;
+
 
         /// <summary>
         /// Indicates if the npc is going to the aim (true) or alredy near it (false)
@@ -97,6 +105,7 @@ namespace Utopia.Shared.Server.Structs
             Seed = 0;
 
             _character = z;
+
             _random = new Random();
 
             Movement = new MoveAI(this);
@@ -160,7 +169,53 @@ namespace Utopia.Shared.Server.Structs
         {
             if (State != ServerNpcState.Idle)
                 return;
-          
+
+            if (Movement.IsActive && DateTime.Now < _lastWalkChange + TimeSpan.FromSeconds(30))
+            {
+                // we are moving somewhere
+                return;
+            }
+
+            _lastWalkChange = DateTime.Now;
+
+            var moveVector = _random.NextVector2IOnRadius(16);
+            var curPos = BlockHelper.EntityToBlock(Character.Position);
+            var movePos = curPos + new Vector3I(moveVector.X, 0, moveVector.Y);
+
+            var cursor = Server.LandscapeManager.GetCursor(movePos);
+
+            for (int m = 0; m < 4; m++)
+            {
+                var checkVectorUp = movePos + new Vector3I(0, m, 0);
+                var checkVectorDown = movePos + new Vector3I(0, -m, 0);
+
+                if (checkVectorUp.Y < AbstractChunk.ChunkSize.Y - 1)
+                {
+                    if (CanStandThere(cursor, checkVectorUp))
+                    {
+                        Movement.Goto(checkVectorUp);
+                        return;
+                    }
+                }
+
+                if (checkVectorDown.Y > 1)
+                {
+                    if (CanStandThere(cursor, checkVectorDown))
+                    {
+                        Movement.Goto(checkVectorDown);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private bool CanStandThere(ILandscapeCursor cursor, Vector3I pos)
+        {
+            cursor.GlobalPosition = pos;
+            
+            return  cursor.Read() == WorldConfiguration.CubeId.Air &&
+                    cursor.PeekValue(Vector3I.Up) == WorldConfiguration.CubeId.Air && 
+                    cursor.PeekValue(Vector3I.Down) != WorldConfiguration.CubeId.Air;
         }
 
         /// <summary>

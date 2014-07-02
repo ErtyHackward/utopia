@@ -31,9 +31,9 @@ namespace S33M3CoreComponents.Physics.Verlet
         bool _withCollisionBounsing = false;
         bool _onGround;
 
-        private HashSet<Impulse> _impulses = new HashSet<Impulse>();
+        private List<Impulse> _impulses = new List<Impulse>();
 
-        public HashSet<Impulse> Impulses { get { return _impulses; } }
+        public List<Impulse> Impulses { get { return _impulses; } }
         public bool WithCollisionBouncing { get { return _withCollisionBounsing; } set { _withCollisionBounsing = value; } }
         public bool SubjectToGravity { get { return _subjectToGravity; } set { _subjectToGravity = value; } }
         public bool ConstraintOnlyMode { get; set; }
@@ -169,7 +169,7 @@ namespace S33M3CoreComponents.Physics.Verlet
                 _forcesAccum.Y += -SimulatorCst.Gravity;
             }
 
-            _impulses.RemoveWhere(x => x.ApplyOnlyIfOnGround && OnGround == false);
+            _impulses.RemoveAll(x => x.ApplyOnlyIfOnGround && OnGround == false);
 
             OnGround = false;
 
@@ -183,7 +183,7 @@ namespace S33M3CoreComponents.Physics.Verlet
             }
 
             //CleanUp impulses
-            _impulses.RemoveWhere(x => x.IsActive == false);
+            _impulses.RemoveAll(x => x.IsActive == false);
         }
 
         private void Verlet(float elapsedTimeS, out Vector3D newPosition)

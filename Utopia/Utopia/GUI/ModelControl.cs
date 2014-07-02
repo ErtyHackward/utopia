@@ -1,8 +1,10 @@
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.Maths;
 using SharpDX;
+using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
 using Utopia.Resources.Effects.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Models;
 
 namespace Utopia.GUI
@@ -22,6 +24,10 @@ namespace Utopia.GUI
         public VisualVoxelModel VisualVoxelModel { get; set; }
 
         public HLSLVoxelModel VoxelEffect { get; set; }
+
+        public CubeRenderer CubeRenderer { get; set; }
+
+        public CubeResource SelectedCube { get; set; }
 
         public Quaternion Rotation { get; set; }
 
@@ -66,11 +72,23 @@ namespace Utopia.GUI
             {
                 VisualVoxelModel = _manager.GetModel(modelName);
                 ModelInstance = VisualVoxelModel.VoxelModel.CreateInstance();
+                SelectedCube = null;
             }
             else
             {
                 VisualVoxelModel = null;
                 ModelInstance = null;
+            }
+        }
+
+        public void SetCube(CubeResource cube)
+        {
+            SetModel(null);
+
+            if (CubeRenderer != null)
+            {
+                CubeRenderer.PrepareCubeRendering(cube);
+                SelectedCube = cube;
             }
         }
     }

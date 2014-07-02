@@ -39,6 +39,11 @@ namespace Utopia.Shared.Entities
         [ProtoMember(3)]
         public bool IsDestroyedOnWorldRemove { get; set; }
 
+        [Description("The entity will be destroyed when character dies")]
+        [Category("Gameplay")]
+        [ProtoMember(4)]
+        public bool IsDestroyedOnDeath { get; set; }
+        
         private IStaticContainer _container;
 
         /// <summary>

@@ -170,7 +170,7 @@ namespace Utopia.Shared.Services
             {
                 for (int i = _aliveNpc.Count - 1; i >= 0; i--)
                 {
-                    _server.AreaManager.RemoveNpc(_aliveNpc[i]);
+                    _server.AreaManager.RemoveNpc(_aliveNpc[i].Character.DynamicId);
                 }
                 _aliveNpc.Clear();
 

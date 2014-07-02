@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
+using S33M3Resources.Structs;
+using SharpDX;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
@@ -33,8 +36,9 @@ namespace Utopia.Shared.Server.Commands
 
                 if (!ushort.TryParse(arguments[0], out blueprintId))
                 {
-                    var blockProfile = Enumerable.FirstOrDefault<BlockProfile>(server.EntityFactory.Config.BlockProfiles, bp => bp.Name.Equals(arguments[0], StringComparison.CurrentCultureIgnoreCase)
-                    );
+                    var blockProfile =
+                        server.EntityFactory.Config.BlockProfiles.FirstOrDefault(
+                            bp => bp.Name.Equals(arguments[0], StringComparison.CurrentCultureIgnoreCase));
 
                     if (blockProfile != null)
                     {
@@ -43,9 +47,9 @@ namespace Utopia.Shared.Server.Commands
                     else
                     {
                         var entity =
-                            Enumerable.FirstOrDefault<Entity>(server.EntityFactory.Config.BluePrints.Values, v => string.Equals(v.Name.Replace(" ", ""), arguments[0],
-                                    StringComparison.CurrentCultureIgnoreCase)
-                                );
+                            server.EntityFactory.Config.BluePrints.Values.FirstOrDefault(
+                                v => string.Equals(v.Name.Replace(" ", ""), arguments[0],
+                                    StringComparison.CurrentCultureIgnoreCase));
 
                         if (entity == null)
                         {
@@ -60,10 +64,32 @@ namespace Utopia.Shared.Server.Commands
 
                 var charEntity = (CharacterEntity)connection.ServerEntity.DynamicEntity;
 
-                var item = (IItem)server.EntityFactory.CreateFromBluePrint(blueprintId);
+                var spawnEntity = server.EntityFactory.CreateFromBluePrint(blueprintId);
 
-                charEntity.Inventory.PutItem(item, count);
-                connection.SendChat(string.Format("Item {0} was added to the inventory", item));
+                var item = spawnEntity as IItem;
+
+                if (item != null)
+                {
+                    charEntity.Inventory.PutItem(item, count);
+                    connection.SendChat(string.Format("Item {0} was added to the inventory", item));
+                }
+
+                var npc = spawnEntity as Npc;
+
+                if (npc != null)
+                {
+                    if (connection.ServerEntity.DynamicEntity.EntityState.IsBlockPicked)
+                    {
+                        npc.Position = new Vector3D(connection.ServerEntity.DynamicEntity.EntityState.PickPoint);
+                        server.EntityManager.AddNpc(npc);
+                        connection.SendChat(string.Format("Npc {0} was created", item));
+                    }
+                    else
+                    {
+                        connection.SendChat("Please pick a point to place the npc.");
+                    }
+                }
+
             }
             catch (Exception x)
             {

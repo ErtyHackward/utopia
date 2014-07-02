@@ -4,6 +4,7 @@ using System.Text;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Network;
+using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using System.Diagnostics;
@@ -244,6 +245,14 @@ namespace Utopia.GUI
                                 msg.Action = true;
                                 msg.Message = input.Remove(0, 4);
                             }
+
+                            if (input.StartsWith("/"))
+                                _server.ServerConnection.Send(new EntityUseMessage() { 
+                                    DynamicEntityId = _server.Player.DynamicId, 
+                                    UseType  = UseType.Command, 
+                                    State = _server.Player.EntityState
+                                });
+
                             _server.ServerConnection.Send(msg);
                         }
                     }

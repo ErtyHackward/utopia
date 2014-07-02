@@ -333,12 +333,12 @@ namespace Utopia.Shared.Server.Managers
             OnEntityAdded(new AreaEntityEventArgs { Entity = entity });
         }
 
-        public void RemoveNpc(INpc npc)
+        public void RemoveNpc(uint dynamicId)
         {
             ServerDynamicEntity sde;
             lock (_dynamicEntities)
             {
-                _dynamicEntities.TryGetValue(npc.Character.DynamicId, out sde);
+                _dynamicEntities.TryGetValue(dynamicId, out sde);
             }
 
             if (sde != null)

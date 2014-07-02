@@ -10,6 +10,7 @@ using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
+using Utopia.Entities.Renderer;
 using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
@@ -65,6 +66,11 @@ namespace Utopia.GUI.Inventory
                 _resultModel.VoxelEffect = value;
                 _hostModel.VoxelEffect = value;
             }
+        }
+
+        public CubeRenderer CubeRenderer {
+            get { return _resultModel.CubeRenderer; }
+            set { _resultModel.CubeRenderer = value; }
         }
 
         public ModelControl HostModelControl
@@ -226,8 +232,13 @@ namespace Utopia.GUI.Inventory
             var bp = _player.PlayerCharacter.EntityFactory.CreateFromBluePrint(recipe.ResultBlueprintId);
 
             var voxelEntity = bp as IVoxelEntity;
+            var cube = bp as CubeResource;
 
-            if (voxelEntity != null)
+            if (cube != null)
+            {
+                _resultModel.SetCube(cube);
+            } 
+            else if (voxelEntity != null)
             {
                 _resultModel.SetModel(voxelEntity.ModelName);
             }

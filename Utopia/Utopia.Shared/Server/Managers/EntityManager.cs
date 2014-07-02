@@ -364,7 +364,21 @@ namespace Utopia.Shared.Server.Managers
             _server.AreaManager.AddEntity(npc);
             _npcs.Add(id, npc);
 
+            charEntity.HealthStateChanged += charEntity_HealthStateChanged;
+
             return npc;
+        }
+
+        void charEntity_HealthStateChanged(object sender, Entities.Events.EntityHealthStateChangeEventArgs e)
+        {
+            if (e.NewState == DynamicEntityHealthState.Dead)
+            {
+                var charEntity = (CharacterEntity)sender;
+
+                charEntity.HealthStateChanged -= charEntity_HealthStateChanged;
+                _npcs.Remove(charEntity.DynamicId);
+                _server.AreaManager.RemoveNpc(charEntity.DynamicId);
+            }
         }
     }
 }
