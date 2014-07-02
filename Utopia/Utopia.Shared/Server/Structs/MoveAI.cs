@@ -139,7 +139,9 @@ namespace Utopia.Shared.Server.Structs
             }
             else
             {
+#if DEBUGPATHFIND
                 Npc.Server.ChatManager.Broadcast("there is no path there...");
+#endif
             }
         }
 
