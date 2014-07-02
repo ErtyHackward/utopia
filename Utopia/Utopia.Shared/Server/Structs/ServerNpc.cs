@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
@@ -25,14 +26,15 @@ namespace Utopia.Shared.Server.Structs
     public class ServerNpc : ServerDynamicEntity, INpc
     {
         public static Vector3D Near = new Vector3D(0.02d);
-        private List<MapArea> _mapAreas = new List<MapArea>();
+        private readonly List<MapArea> _mapAreas = new List<MapArea>();
         private int _seed;
         private Random _random;
 
-        private CharacterEntity _character;
+        private readonly CharacterEntity _character;
         private Designation _designation;
-        private DateTime _lastWalkChange;
+        private Stopwatch _timer;
 
+        private int _randomRadius = 16;
 
         /// <summary>
         /// Indicates if the npc is going to the aim (true) or alredy near it (false)
@@ -107,6 +109,7 @@ namespace Utopia.Shared.Server.Structs
             _character = z;
 
             _random = new Random();
+            _timer = new Stopwatch();
 
             Movement = new MoveAI(this);
             Focus = new FocusAI(this);
@@ -170,20 +173,27 @@ namespace Utopia.Shared.Server.Structs
             if (State != ServerNpcState.Idle)
                 return;
 
-            if (Movement.IsActive && DateTime.Now < _lastWalkChange + TimeSpan.FromSeconds(30))
+            if (_random.NextDouble() < 0.3)
             {
-                // we are moving somewhere
+                State = ServerNpcState.Walking;
+                GoToRandomPoint();
                 return;
             }
 
-            _lastWalkChange = DateTime.Now;
+            State = ServerNpcState.LookingAround;
+            _timer.Restart();
+        }
+
+        private void GoToRandomPoint()
+        {
+            _timer.Restart();
 
             var moveVector = _random.NextVector2IOnRadius(16);
             var curPos = BlockHelper.EntityToBlock(Character.Position);
             var movePos = curPos + new Vector3I(moveVector.X, 0, moveVector.Y);
 
             var cursor = Server.LandscapeManager.GetCursor(movePos);
-
+            
             for (int m = 0; m < 4; m++)
             {
                 var checkVectorUp = movePos + new Vector3I(0, m, 0);
@@ -194,6 +204,10 @@ namespace Utopia.Shared.Server.Structs
                     if (CanStandThere(cursor, checkVectorUp))
                     {
                         Movement.Goto(checkVectorUp);
+
+                        if (_randomRadius < 16)
+                            _randomRadius++;
+
                         return;
                     }
                 }
@@ -203,10 +217,20 @@ namespace Utopia.Shared.Server.Structs
                     if (CanStandThere(cursor, checkVectorDown))
                     {
                         Movement.Goto(checkVectorDown);
+
+                        if (_randomRadius < 16)
+                            _randomRadius++;
+
                         return;
                     }
                 }
             }
+
+            if (_randomRadius > 2)
+                _randomRadius--;
+
+            
+
         }
 
         private bool CanStandThere(ILandscapeCursor cursor, Vector3I pos)
@@ -228,6 +252,48 @@ namespace Utopia.Shared.Server.Structs
 
             switch (State)
             {
+                case ServerNpcState.Walking:
+                    
+                    if (!Movement.IsActive || _timer.Elapsed.TotalSeconds > 30)
+                    {
+                        State = ServerNpcState.Idle;
+                    }
+                    
+                    break;
+                case ServerNpcState.LookingAround:
+
+                    if (Focus.Target == null || _timer.Elapsed.TotalSeconds > 10)
+                    {
+                        if (Focus.Target != null)
+                        {
+                            if (_random.NextDouble() < 0.3)
+                            {
+                                State = ServerNpcState.Idle;
+                                return;
+                            }
+                        }
+
+                        // find the entity to look at
+
+                        foreach (var serverDynamicEntity in _server.AreaManager.EnumerateAround(Character.Position, 16).Where(e => e.DynamicEntity != Character))
+                        {
+                            if (_random.NextDouble() < 0.4)
+                            {
+                                Focus.LookAt(serverDynamicEntity.DynamicEntity);
+                                return;
+                            }
+                        }
+
+                        foreach (var staticEntity in _server.LandscapeManager.AroundEntities(Character.Position, 16))
+                        {
+                            if (_random.NextDouble() < 0.2)
+                            {
+                                Focus.LookAt(staticEntity);
+                                return;
+                            }
+                        }
+                    }
+                    break;
                 case ServerNpcState.UsingItem:
                     break;
                 case ServerNpcState.UsingBlock:

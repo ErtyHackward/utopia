@@ -19,6 +19,14 @@
         /// <summary>
         /// Following other npc
         /// </summary>
-        Following
+        Following,
+        /// <summary>
+        /// Moving one way or another
+        /// </summary>
+        Walking,
+        /// <summary>
+        /// Staying and watching around
+        /// </summary>
+        LookingAround
     }
 }

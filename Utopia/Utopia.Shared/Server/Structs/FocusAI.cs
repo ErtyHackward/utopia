@@ -12,9 +12,15 @@ namespace Utopia.Shared.Server.Structs
     {
         private readonly ServerNpc _parentNpc;
 
-        private IDynamicEntity _target;
+        private IEntity _target;
 
         public ServerNpc Npc { get { return _parentNpc; } }
+
+        public IEntity Target
+        {
+            get { return _target; }
+            set { _target = value; }
+        }
 
         public FocusAI(ServerNpc parentNpc)
         {
@@ -24,9 +30,9 @@ namespace Utopia.Shared.Server.Structs
         public void Update(DynamicUpdateState gameTime)
         {
             {
-                if (_target != null)
+                if (Target != null)
                 {
-                    var lookDirection = _target.Position - Npc.DynamicEntity.Position;
+                    var lookDirection = Target.Position - Npc.DynamicEntity.Position;
                     lookDirection.Normalize();
                     Npc.DynamicEntity.HeadRotation = Quaternion.RotationMatrix(Matrix.LookAtLH(Npc.DynamicEntity.Position.AsVector3(), Npc.DynamicEntity.Position.AsVector3() + lookDirection.AsVector3(), Vector3D.Up.AsVector3()));
                 }
@@ -35,15 +41,15 @@ namespace Utopia.Shared.Server.Structs
         
         public void LookAt(Vector3D pos)
         {
-            _target = null;
+            Target = null;
             var lookDirection = pos - Npc.DynamicEntity.Position;
             lookDirection.Normalize();
             Npc.DynamicEntity.HeadRotation = Quaternion.RotationMatrix(Matrix.LookAtLH(Npc.DynamicEntity.Position.AsVector3(), Npc.DynamicEntity.Position.AsVector3() + lookDirection.AsVector3(), Vector3D.Up.AsVector3()));
         }
 
-        public void LookAt(IDynamicEntity entity)
+        public void LookAt(IEntity entity)
         {
-            _target = entity;
+            Target = entity;
         }
     }
 }
