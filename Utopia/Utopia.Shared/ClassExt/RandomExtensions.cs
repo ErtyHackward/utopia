@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using S33M3Resources.Structs;
 
 namespace Utopia.Shared.ClassExt
 {
@@ -15,6 +16,23 @@ namespace Utopia.Shared.ClassExt
         public static T Next<T>(this Random r, IList<T> list)
         {
             return list[r.Next(0, list.Count)];
+        }
+
+        public static Vector2I NextVector2IOnRadius(this Random rand, float radius)
+        {
+            var angle = rand.NextDouble() * Math.PI * 2;
+            var x = radius * Math.Cos(angle);
+            var y = radius * Math.Sin(angle);
+            return new Vector2I((int)x, (int)y);
+        }
+
+        public static Vector2I NextVector2IInRadius(this Random rand, float radius)
+        {
+            var angle = rand.NextDouble() * Math.PI * 2;
+            radius = (float)(rand.NextDouble() * radius);
+            var x = radius * Math.Cos(angle);
+            var y = radius * Math.Sin(angle);
+            return new Vector2I((int)x, (int)y);
         }
 
     }

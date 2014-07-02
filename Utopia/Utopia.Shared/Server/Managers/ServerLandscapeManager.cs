@@ -486,6 +486,7 @@ namespace Utopia.Shared.Server.Managers
         /// </summary>
         /// <param name="start"></param>
         /// <param name="goal"></param>
+        /// <param name="isGoalNode">allows to stop search at the alternative goal point</param>
         /// <returns></returns>
         public Path3D CalculatePath(Vector3I start, Vector3I goal, Predicate<AStarNode3D> isGoalNode = null)
         {

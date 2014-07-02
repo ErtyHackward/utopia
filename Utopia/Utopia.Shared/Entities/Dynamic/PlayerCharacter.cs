@@ -149,6 +149,8 @@ namespace Utopia.Shared.Entities.Dynamic
                         return PutUse();
                     case UseType.Craft:
                         return CraftUse(msg.RecipeIndex);
+                    case UseType.Command:
+                        return new ToolImpact();
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

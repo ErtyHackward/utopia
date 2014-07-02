@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using ProtoBuf;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Settings;
-using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
@@ -45,7 +41,7 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
         /// </summary>
         List<ItemTransformation> Transformations { get; set; }
-
+        
         /// <summary>
         /// Returns new entity position correspoding to the player
         /// </summary>

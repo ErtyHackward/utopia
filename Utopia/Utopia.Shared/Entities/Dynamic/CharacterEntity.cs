@@ -463,14 +463,16 @@ namespace Utopia.Shared.Entities.Dynamic
                 if (entity.BluePrintId == graveBp && entity.Position == cursor.GlobalPosition)
                     grave = entity;
             }
+            
+            var graveCreated = false;
+            var itemsTransfered = false;
 
-            // create new if not
-
+            // create new if not exists
             if (grave == null)
             {
                 grave = EntityFactory.CreateFromBluePrint(graveBp);
                 grave.Position = cursor.GlobalPosition;
-                cursor.AddEntity((IStaticEntity)grave);
+                graveCreated = true;
             }
 
             var graveContainer = grave as Container;
@@ -479,15 +481,22 @@ namespace Utopia.Shared.Entities.Dynamic
             {
                 foreach (var containedSlot in Slots())
                 {
-                    if (!graveContainer.PutItems(containedSlot.Item, containedSlot.ItemsCount))
+                    if (!containedSlot.Item.IsDestroyedOnDeath)
                     {
-                        logger.Warn("Can't put all items to the container, it is too small!");
-                        break;
+                        if (!graveContainer.PutItems(containedSlot.Item, containedSlot.ItemsCount))
+                        {
+                            logger.Warn("Can't put all items to the container, it is too small!");
+                            break;
+                        }
+                        itemsTransfered = true;
                     }
                 }
             }
 
-            // remove all items from the player
+            if (graveCreated && itemsTransfered)
+                cursor.AddEntity((IStaticEntity)grave);
+
+            // remove all items from the character
 
             foreach (var containedSlot in Slots().ToList())
             {
@@ -498,6 +507,15 @@ namespace Utopia.Shared.Entities.Dynamic
             return impact;
         }
 
+        /// <summary>
+        /// Allows to control item placement to the grave
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <returns></returns>
+        protected virtual bool OnItemToGrave(ContainedSlot slot)
+        {
+            return true;
+        }
 
         public override object Clone()
         {

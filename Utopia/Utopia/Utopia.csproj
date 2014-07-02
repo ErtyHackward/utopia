@@ -117,6 +117,7 @@
     <Compile Include="Components\FadeComponent.cs" />
     <Compile Include="Components\FadeSwitchComponent.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Energy.cs" />
+    <Compile Include="Entities\Renderer\CubeRenderer.cs" />
     <Compile Include="GUI\EnergyBar\EnergyBar.cs" />
     <Compile Include="GUI\EnergyBar\EnergyBarsContainer.cs" />
     <Compile Include="GUI\EnergyBar\EnergyBarsContainerRenderer.cs" />

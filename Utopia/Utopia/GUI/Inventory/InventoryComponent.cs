@@ -12,6 +12,7 @@ using S33M3Resources.Structs.Vertex;
 using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
+using Utopia.Entities.Renderer;
 using Utopia.GUI.Crafting;
 using Utopia.Network;
 using Utopia.Resources.Effects.Entities;
@@ -26,6 +27,7 @@ using SharpDX.Direct3D11;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.GUI;
 using Utopia.Shared.Settings;
+using Utopia.Shared.World;
 
 namespace Utopia.GUI.Inventory
 {
@@ -37,7 +39,8 @@ namespace Utopia.GUI.Inventory
         private readonly D3DEngine _engine;
         private readonly InputsManager _inputManager;
         private readonly GuiManager _guiManager;
-        
+
+        private readonly CubeRenderer _cubeRenderer;
         private readonly IconFactory _iconFactory;
         private ToolBarUi _toolBar;
         private CharacterInventory _playerInventoryWindow;
@@ -162,7 +165,8 @@ namespace Utopia.GUI.Inventory
             D3DEngine engine,
             InputsManager inputManager, 
             GuiManager guiManager, 
-            IconFactory iconFactory)
+            IconFactory iconFactory,
+            VisualWorldParameters worldParameters)
         {
 
             IsDefferedLoadContent = true;
@@ -173,7 +177,9 @@ namespace Utopia.GUI.Inventory
             _iconFactory = iconFactory;
             
             _guiManager.Screen.Desktop.Clicked += DesktopClicked;
-            
+
+            _cubeRenderer = new CubeRenderer(engine, worldParameters);
+
             _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
         }
 
@@ -260,6 +266,9 @@ namespace Utopia.GUI.Inventory
         {
             _infoWindow = new ItemInfoWindow(_iconFactory, _inputManager);
 
+            _cubeRenderer.LoadContent(context);
+
+            ContainerInventoryWindow.CubeRenderer = _cubeRenderer;
             ContainerInventoryWindow.VoxelEffect = ToDispose(new HLSLVoxelModel(_engine.Device, Path.Combine(ClientSettings.EffectPack, @"Entities\VoxelModel.hlsl"), VertexVoxel.VertexDeclaration));
             
             _dragControl = new InventoryCell(null, _iconFactory, new Vector2I(), _inputManager)
@@ -269,6 +278,13 @@ namespace Utopia.GUI.Inventory
                 IsClickTransparent = true, 
                 DrawGroupId = 1
             };
+        }
+
+        protected override void Dispose(bool disposeManagedResources)
+        {
+            _cubeRenderer.Dispose();
+
+            base.Dispose(disposeManagedResources);
         }
 
         private void DesktopClicked(object sender, EventArgs e)
