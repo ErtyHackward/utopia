@@ -172,7 +172,7 @@ namespace Utopia.GUI
 
         private void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)
         {
-            if (e.Message.OwnerDynamicId == _server.Player.DynamicId && !e.Message.Impact.Success)
+            if (e.Message.OwnerDynamicId == _server.Player.DynamicId && !e.Message.Impact.Success && !string.IsNullOrEmpty(e.Message.Impact.Message))
             {
                 AddMessage(string.Format(" -- {0}", e.Message.Impact.Message));
             }
