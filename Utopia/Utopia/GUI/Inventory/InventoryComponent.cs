@@ -398,9 +398,26 @@ namespace Utopia.GUI.Inventory
             {
                 // taking item
                 var slot = e.Container.PeekSlot(e.SlotPosition);
-
+                
                 if (slot != null)
                 {
+                    if (ContainerInventoryWindow != null && e.MouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed && keyboard.IsKeyDown(Keys.ShiftKey))
+                    {
+                        var targetContainer = e.Container != PlayerInventoryWindow.Content ? PlayerInventoryWindow.Content : ContainerInventoryWindow.Content;
+
+                        // quick transfer
+                            
+                        if (targetContainer.CanPut(slot.Item, slot.ItemsCount) && e.Container.TakeItem(slot.GridPosition, slot.ItemsCount))
+                        {
+                            OnSlotTaken(slot);
+                            targetContainer.PutItem(slot.Item, slot.ItemsCount);
+                            OnSlotPut(slot);
+                        }
+
+
+                        return;
+                    }
+
                     var itemsCount = slot.ItemsCount;
 
                     if (e.MouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)

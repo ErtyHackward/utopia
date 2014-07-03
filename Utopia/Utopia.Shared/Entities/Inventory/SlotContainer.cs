@@ -235,7 +235,7 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
-        /// Determines if item can be put or exchanged to slot 
+        /// Determines if item can be put or stacked to slot 
         /// </summary>
         /// <param name="item"></param>
         /// <param name="position"></param>
@@ -255,6 +255,45 @@ namespace Utopia.Shared.Entities.Inventory
             return slot == null || slot.CanStackWith(newSlot);
         }
 
+        public bool CanPut(IItem item, int count = 1)
+        {
+            return FindSlotFor(item, count) != null;
+        }
+
+        private T FindSlotFor(IItem item, int count = 1)
+        {
+            if (item.MaxStackSize > 1)
+            {
+                var slot = this.FirstOrDefault(s => s.Item.StackType == item.StackType && s.ItemsCount + count <= item.MaxStackSize && ValidateItem(item, s.GridPosition));
+
+                if (slot != null)
+                    return slot;
+            }
+
+            for (int x = 0; x < _gridSize.X; x++)
+            {
+                for (int y = 0; y < _gridSize.Y; y++)
+                {
+                    if (_items[x, y] == null)
+                    {
+                        var pos = new Vector2I(x, y);
+
+                        if (!ValidateItem(item, pos))
+                            continue;
+
+                        var slot = new T { 
+                            GridPosition = pos
+                        };
+
+                        return slot;
+                    }
+
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Tries to put item into the inventory
         /// </summary>
@@ -269,59 +308,29 @@ namespace Utopia.Shared.Entities.Inventory
             // inventory is full?
             if (item.MaxStackSize == 1 && _slotsCount == _gridSize.X * _gridSize.Y)
                 return false;
-            
-            if (item.MaxStackSize > 1)
+
+            var slot = FindSlotFor(item, count);
+
+            if (slot == null)
+                return false;
+
+            if (slot.ItemsCount == 0)
             {
-                // need to find uncomplete stack if exists
-
-                var e = this.Any(s =>
-                               {
-                                   if (s.Item.StackType == item.StackType && s.ItemsCount + count <= item.MaxStackSize)
-                                   {
-                                       if (!ValidateItem(item, s.GridPosition))
-                                           return false;
-                                       _items[s.GridPosition.X, s.GridPosition.Y].ItemsCount += count;
-
-                                       var t = new T {
-                                           GridPosition = s.GridPosition,
-                                           ItemsCount = count,
-                                           Item = s.Item
-                                       };
-
-                                       OnItemPut(new EntityContainerEventArgs<T> { Slot = t });
-                                       return true;
-                                   }
-                                   return false;
-                               });
-
-                if (e) return true;
-
+                // new slot
+                _slotsCount++;
+                ValidateId(ref item);
+                slot.Item = item;
+                slot.ItemsCount = count;
+                _items[slot.GridPosition.X, slot.GridPosition.Y] = slot;
+            }
+            else
+            {
+                // stacking
+                slot.ItemsCount += count;
             }
 
-            // take first free cell and put the item
-            for (int x = 0; x < _gridSize.X; x++)
-            {
-                for (int y = 0; y < _gridSize.Y; y++)
-                {
-                    if (_items[x, y] == null)
-                    {
-                        var pos = new Vector2I(x, y);
-
-                        if (!ValidateItem(item, pos))
-                            continue;
-                        
-                        ValidateId(ref item);
-
-                        var addSlot = new T { Item = item, GridPosition = pos, ItemsCount = count };
-                        _items[x, y] = addSlot;
-                        
-                        _slotsCount ++;
-                        OnItemPut(new EntityContainerEventArgs<T> { Slot = _items[x, y] });
-                        return true;
-                    }
-                }
-            }
-            return false;
+            OnItemPut(new EntityContainerEventArgs<T> { Slot = (T)slot.Clone() });
+            return true;
         }
 
         /// <summary>
