@@ -326,10 +326,13 @@ namespace Utopia.Shared.Entities.Inventory
             else
             {
                 // stacking
-                slot.ItemsCount += count;
+                _items[slot.GridPosition.X, slot.GridPosition.Y].ItemsCount += count;
             }
 
-            OnItemPut(new EntityContainerEventArgs<T> { Slot = (T)slot.Clone() });
+            slot = (T)slot.Clone();
+            slot.ItemsCount = count;
+
+            OnItemPut(new EntityContainerEventArgs<T> { Slot = slot });
             return true;
         }
 
