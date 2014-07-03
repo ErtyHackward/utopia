@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using S33M3DXEngine;
 using S33M3DXEngine.Textures;
@@ -97,19 +98,41 @@ namespace Utopia.Editor
             _iconFactory.Configuration = configuration;
             _iconFactory.LoadContent(_engine.ImmediateContext);
 
+            var iconsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Realms", "Common", "Icons");
+
+            if (!Directory.Exists(iconsDir))
+                Directory.CreateDirectory(iconsDir);
+
             //Create Items icons
             foreach (var visualVoxelModel in _modelManager.Enumerate())
             {
                 foreach (var voxelModelState in visualVoxelModel.VoxelModel.States)
                 {
 
-                    using (var dxIcon = _iconFactory.CreateVoxelIcon(visualVoxelModel, IconSize, voxelModelState))
+                    var iconId = visualVoxelModel.VoxelModel.Name +
+                                 (voxelModelState.IsMainState ? "" : ":" + voxelModelState.Name);
+
+                    var fileName = iconId.Replace(':', '_') + ".png";
+
+                    var path = Path.Combine(iconsDir, fileName);
+
+                    if (File.Exists(path))
                     {
-                        var memStr = new MemoryStream();
-                        Resource.ToStream(_engine.ImmediateContext, dxIcon, ImageFileFormat.Png, memStr);
-                        memStr.Position = 0;
-                        result.Add(visualVoxelModel.VoxelModel.Name + (voxelModelState.IsMainState?"":":"+voxelModelState.Name) , new Bitmap(memStr));
-                        memStr.Dispose();
+                        result.Add(iconId, Image.FromFile(path));
+                    }
+                    else
+                    {
+                        using (var dxIcon = _iconFactory.CreateVoxelIcon(visualVoxelModel, IconSize, voxelModelState))
+                        {
+                            var memStr = new MemoryStream();
+                            Resource.ToStream(_engine.ImmediateContext, dxIcon, ImageFileFormat.Png, memStr);
+                            memStr.Position = 0;
+                            var bmp = new Bitmap(memStr);
+                            result.Add(iconId, bmp);
+                            memStr.Dispose();
+
+                            bmp.Save(path, ImageFormat.Png);
+                        }
                     }
                 }
             }
@@ -119,12 +142,30 @@ namespace Utopia.Editor
             List<Texture2D> cubeIcons = _iconFactory.Get3DBlockIcons(_engine.ImmediateContext, IconSize, _cubeTextureView);
             foreach (var cubeprofiles in configuration.GetAllCubesProfiles())
             {
-                if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) continue;
-                var memStr = new MemoryStream();
-                Resource.ToStream(_engine.ImmediateContext, cubeIcons[i], ImageFileFormat.Png, memStr);
-                memStr.Position = 0;
-                result.Add("CubeResource_" + cubeprofiles.Name, new Bitmap(memStr));
-                memStr.Dispose();
+                if (cubeprofiles.Id == WorldConfiguration.CubeId.Air) 
+                    continue;
+
+                var blockId = "CubeResource_" + cubeprofiles.Name;
+
+                                    var fileName = blockId.Replace(':', '_') + ".png";
+
+                    var path = Path.Combine(iconsDir, fileName);
+
+                if (File.Exists(path))
+                {
+                    result.Add(blockId, Image.FromFile(path));
+                }
+                else
+                {
+
+                    var memStr = new MemoryStream();
+                    Resource.ToStream(_engine.ImmediateContext, cubeIcons[i], ImageFileFormat.Png, memStr);
+                    memStr.Position = 0;
+                    var bmp = new Bitmap(memStr);
+                    result.Add(blockId, bmp);
+                    memStr.Dispose();
+                    bmp.Save(path, ImageFormat.Png);
+                }
                 i++;
             }
 

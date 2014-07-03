@@ -66,10 +66,13 @@ namespace Utopia.Shared.Server.Structs
             set { 
                 _leader = value;
 
+#if DEBUGPATHFIND
                 if (_leader != null)
                 {
+
                     Npc.Server.ChatManager.Broadcast("Following " + _leader.Name);
                 }
+#endif
             }
         }
 
