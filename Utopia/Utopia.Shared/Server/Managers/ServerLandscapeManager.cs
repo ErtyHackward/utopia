@@ -40,7 +40,7 @@ namespace Utopia.Shared.Server.Managers
         private readonly Timer _cleanUpTimer;
         private readonly Timer _saveTimer;
 
-        private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal, Predicate<AStarNode3D> isGoal = null);
+        private delegate Path3D CalculatePathDelegate(Vector3I start, Vector3I goal, Predicate<AStarNode3D> isGoal = null, Func<AStarNode3D, double> costModify = null);
         public delegate void PathCalculatedDeleagte(Path3D path);
 
         /// <summary>
@@ -467,10 +467,12 @@ namespace Utopia.Shared.Server.Managers
         /// <param name="start"></param>
         /// <param name="goal"></param>
         /// <param name="callback"></param>
-        public void CalculatePathAsync(Vector3I start, Vector3I goal, PathCalculatedDeleagte callback, Predicate<AStarNode3D> isGoal = null)
+        /// <param name="isGoal">allows to stop search at the alternative goal point</param>
+        /// <param name="costModify">allows to modify cost of each step. Usefull to avoid dangerous target. Positive value indicates difficulty increase</param>
+        public void CalculatePathAsync(Vector3I start, Vector3I goal, PathCalculatedDeleagte callback, Predicate<AStarNode3D> isGoal = null, Func<AStarNode3D, double> costModify = null)
         {
             var d = new CalculatePathDelegate(CalculatePath);
-            d.BeginInvoke(start, goal, isGoal, PathCalculated, callback);
+            d.BeginInvoke(start, goal, isGoal, costModify, PathCalculated, callback);
         }
 
         private void PathCalculated(IAsyncResult result)
@@ -487,8 +489,9 @@ namespace Utopia.Shared.Server.Managers
         /// <param name="start"></param>
         /// <param name="goal"></param>
         /// <param name="isGoalNode">allows to stop search at the alternative goal point</param>
+        /// <param name="costModify">allows to modify cost of each step. Usefull to avoid dangerous target. Positive value indicates difficulty increase</param>
         /// <returns></returns>
-        public Path3D CalculatePath(Vector3I start, Vector3I goal, Predicate<AStarNode3D> isGoalNode = null)
+        public Path3D CalculatePath(Vector3I start, Vector3I goal, Predicate<AStarNode3D> isGoalNode = null, Func<AStarNode3D, double> costModify = null)
         {
             AStar<AStarNode3D> calculator = null;
             lock (_pathPool)
@@ -506,7 +509,7 @@ namespace Utopia.Shared.Server.Managers
 #if DEBUG
             var sw = Stopwatch.StartNew();
 #endif
-            calculator.FindPath(startNode, isGoalNode);
+            calculator.FindPath(startNode, isGoalNode, costModify);
 #if DEBUG
             sw.Stop();
 #endif
@@ -518,12 +521,7 @@ namespace Utopia.Shared.Server.Managers
 
             if (calculator.Solution != null)
             {
-                var list = new List<Vector3I>();
-                
-                foreach (var node3D in calculator.Solution)
-                {
-                    list.Add(node3D.Cursor.GlobalPosition);
-                }
+                var list = calculator.Solution.Select(node3D => node3D.Cursor.GlobalPosition).ToList();
 
                 path.Points = list;
             }

@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using S33M3CoreComponents.Maths;
 using S33M3Resources.Structs;
-using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.ClassExt;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
+using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
@@ -32,7 +31,7 @@ namespace Utopia.Shared.Server.Structs
 
         private readonly CharacterEntity _character;
         private Designation _designation;
-        private Stopwatch _timer;
+        private readonly Stopwatch _timer;
 
         private int _randomRadius = 16;
 
@@ -62,6 +61,11 @@ namespace Utopia.Shared.Server.Structs
         /// Gets wrapped character
         /// </summary>
         public CharacterEntity Character { get { return _character; } }
+
+        /// <summary>
+        /// Entity will try to avoid get close to these entities
+        /// </summary>
+        public List<IDynamicEntity> DangerousEntities { get; private set; }
 
         /// <summary>
         /// Gets or sets current designation
@@ -107,14 +111,25 @@ namespace Utopia.Shared.Server.Structs
             Seed = 0;
 
             _character = z;
+            _character.HealthChanged += CharacterOnHealthChanged;
 
             _random = new Random();
             _timer = new Stopwatch();
 
             Movement = new MoveAI(this);
             Focus = new FocusAI(this);
+            DangerousEntities = new List<IDynamicEntity>();
         }
-        
+
+        private void CharacterOnHealthChanged(object sender, EntityHealthChangeEventArgs e)
+        {
+            if (e.SourceEntity != null)
+            {
+                if (!DangerousEntities.Contains(e.SourceEntity))
+                    DangerousEntities.Add(e.SourceEntity);
+            }
+        }
+
         public override void AddArea(MapArea area)
         {
             _mapAreas.Add(area);
@@ -170,6 +185,22 @@ namespace Utopia.Shared.Server.Structs
         /// </summary>
         private void AISelect()
         {
+            if (State != ServerNpcState.RunAway)
+            {
+                if (DangerousEntities.Count > 0)
+                {
+                    var entity = DangerousEntities.OrderBy(e => Vector3D.DistanceSquared(Character.Position, e.Position)).First();
+
+                    var direction = entity.Position - Character.Position;
+                    direction.Normalize();
+
+                    var pointToGo = Character.Position + direction * 16;
+
+                    
+
+                }
+            }
+
             if (State != ServerNpcState.Idle)
                 return;
 
@@ -252,6 +283,7 @@ namespace Utopia.Shared.Server.Structs
 
             switch (State)
             {
+                case ServerNpcState.RunAway:
                 case ServerNpcState.Walking:
                     
                     if (!Movement.IsActive || _timer.Elapsed.TotalSeconds > 30)
