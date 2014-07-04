@@ -27,6 +27,10 @@
         /// <summary>
         /// Staying and watching around
         /// </summary>
-        LookingAround
+        LookingAround,
+        /// <summary>
+        /// Entity tries to run away from the danger
+        /// </summary>
+        RunAway
     }
 }

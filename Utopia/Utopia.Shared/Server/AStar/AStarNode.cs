@@ -97,12 +97,13 @@ namespace Utopia.Shared.Server.AStar
         /// Calculates the estimated cost for the remaining trip to the goal.
         /// </summary>
         public abstract double Estimate();
-        
+
         /// <summary>
         /// Gets all successors nodes from the current node and adds them to the successor list
         /// </summary>
         /// <param name="aSuccessors">List in which the successors will be added</param>
-        public abstract void GetSuccessors(List<T> aSuccessors);
+        /// <param name="costModify"></param>
+        public abstract void GetSuccessors(List<T> aSuccessors, Func<T, double> costModify);
 		
         #endregion
 

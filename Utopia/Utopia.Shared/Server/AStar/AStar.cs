@@ -23,8 +23,9 @@ namespace Utopia.Shared.Server.AStar {
         public int IterationsLimit { get; set; }
 
         private int _iterations;
+        private Func<T, double> _costModify;
 
-		#endregion
+        #endregion
 
 		#region Properties
 
@@ -59,8 +60,10 @@ namespace Utopia.Shared.Server.AStar {
         /// </summary>
         /// <param name="aStartNode">Start node</param>
         /// <param name="isGoalNode"></param>
-        public void FindPath(T aStartNode, Predicate<T> isGoalNode = null)
+        /// <param name="costModify"></param>
+        public void FindPath(T aStartNode, Predicate<T> isGoalNode = null, Func<T, double> costModify = null)
 		{
+            _costModify = costModify;
             Solution = null;
             _fClosedList.Clear();
             _fOpenList.Clear();
@@ -95,7 +98,7 @@ namespace Utopia.Shared.Server.AStar {
 
 				// Get successors to the current node
                 _fSuccessors.Clear();
-				nodeCurrent.GetSuccessors(_fSuccessors);
+                nodeCurrent.GetSuccessors(_fSuccessors, _costModify);
 				foreach (var nodeSuccessor in _fSuccessors) 
 				{
 					// Test if the current successor node is on the open list, if it is and

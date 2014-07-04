@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using S33M3Resources.Structs;
 using Utopia.Shared.Interfaces;
@@ -25,7 +26,7 @@ namespace Utopia.Shared.Server.AStar
             return Vector3I.Distance(Cursor.GlobalPosition, GoalNode.Cursor.GlobalPosition);
         }
 
-        public override void GetSuccessors(List<AStarNode3D> aSuccessors)
+        public override void GetSuccessors(List<AStarNode3D> aSuccessors, Func<AStarNode3D, double> costModify)
         {
             // we need to find all possible moves from this point
             // frequently there is only 8 possible moves, and only ladders can offer to go up and down
@@ -37,12 +38,12 @@ namespace Utopia.Shared.Server.AStar
                 {
                     if (x == 0 && y == 0) 
                         continue;
-                    AddSuccessor(aSuccessors, new Vector3I(x, 0, y));
+                    AddSuccessor(aSuccessors, new Vector3I(x, 0, y), costModify);
                 }
             }
         }
 
-        private void AddSuccessor(List<AStarNode3D> aSuccessors, Vector3I move)
+        private void AddSuccessor(List<AStarNode3D> aSuccessors, Vector3I move, Func<AStarNode3D, double> costModify)
         {
             // get landscape cursor of possible position
             var cursor = Cursor.Clone().Move(move);
@@ -69,26 +70,30 @@ namespace Utopia.Shared.Server.AStar
                 // simple move?
                 if (cursor.PeekProfile(Vector3I.Down).IsSolidToEntity)
                 {
-                    CreateNode(aSuccessors, cursor, 1);
+                    CreateNode(aSuccessors, cursor, 1, costModify);
                     return;
                 }
 
                 // or jump down?
                 if (cursor.PeekProfile(new Vector3I(0, -2, 0)).IsSolidToEntity)
                 {
-                    CreateNode(aSuccessors, cursor.Move(Vector3I.Down), 2);
+                    CreateNode(aSuccessors, cursor.Move(Vector3I.Down), 2, costModify);
                 }
             }
             else if (!cursor.PeekProfile(new Vector3I(0, 2, 0)).IsSolidToEntity)
             {
                 // jump up!
-                CreateNode(aSuccessors, cursor.Move(Vector3I.Up), 3);
+                CreateNode(aSuccessors, cursor.Move(Vector3I.Up), 3, costModify);
             }
         }
 
-        private void CreateNode(List<AStarNode3D> aSuccessors, ILandscapeCursor cursor, double relativeCost)
+        private void CreateNode(List<AStarNode3D> aSuccessors, ILandscapeCursor cursor, double relativeCost, Func<AStarNode3D, double> costModify)
         {
             var node = new AStarNode3D(cursor, this, GoalNode, Cost + relativeCost);
+
+            if (costModify != null)
+                node.Cost += costModify(node);
+
             aSuccessors.Add(node);
         }
 
