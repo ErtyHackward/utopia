@@ -48,6 +48,10 @@ namespace Utopia.Shared.Server.Managers
             RegisterCommand(new MotdCommand());
             RegisterCommand(new DefaultRoleCommand());
             RegisterCommand(new WipeChunkCommand());
+            RegisterCommand(new NpcSelect());
+            RegisterCommand(new NpcAddActivity());
+            RegisterCommand(new NpcAddPoint());
+            RegisterCommand(new NpcComehere());
         }
 
         public void RegisterCommand(IChatCommand command)

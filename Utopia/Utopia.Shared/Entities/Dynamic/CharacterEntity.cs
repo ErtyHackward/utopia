@@ -169,6 +169,17 @@ namespace Utopia.Shared.Entities.Dynamic
             if (HealthChanged != null) HealthChanged(this, e);
         }
 
+        /// <summary>
+        /// Occurs when internal state of the entity is updated. Save is required
+        /// </summary>
+        public event EventHandler NeedSave;
+
+        public virtual void OnNeedSave()
+        {
+            var handler = NeedSave;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         protected CharacterEntity()
         {
             Initialize();
@@ -206,6 +217,7 @@ namespace Utopia.Shared.Entities.Dynamic
         private void EquipmentOnItemEvent(object sender, EntityContainerEventArgs<ContainedSlot> entityContainerEventArgs)
         {
             OnInventoryUpdated();
+            OnNeedSave();
         }
 
         /// <summary>

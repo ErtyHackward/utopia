@@ -127,8 +127,19 @@
     <Compile Include="Entities\GrowingEntity.designer.cs">
       <DependentUpon>GrowingEntity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AssemblyHelper.cs" />
+    <Compile Include="Server\AStar\AStarFunc.cs" />
+    <Compile Include="Server\AStar\AStarNodeFunc.cs" />
+    <Compile Include="Server\AStar\AStarNodeFunc3D.cs" />
+    <Compile Include="Server\Commands\NpcAddActivity.cs" />
+    <Compile Include="Server\Commands\NpcAddPoint.cs" />
+    <Compile Include="Server\Commands\NpcComehere.cs" />
+    <Compile Include="Server\Commands\NpcSelect.cs" />
     <Compile Include="Server\Commands\WipeChunkCommand.cs" />
     <Compile Include="Server\Managers\EntityGrowingManager.cs" />
+    <Compile Include="Server\Structs\AnimalAI.cs" />
+    <Compile Include="Server\Structs\GeneralAI.cs" />
+    <Compile Include="Server\Structs\HumanAI.cs" />
     <Compile Include="Services\Season.designer.cs">
       <DependentUpon>Season.cs</DependentUpon>
     </Compile>

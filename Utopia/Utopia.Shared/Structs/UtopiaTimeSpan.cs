@@ -6,7 +6,7 @@ using Utopia.Shared.Services;
 namespace Utopia.Shared.Structs
 {
     [ProtoContract]
-    public struct UtopiaTimeSpan
+    public struct UtopiaTimeSpan : IComparable
     {
         private const int SecondsPerMinute = 60;
         private const int SecondsPerHour = SecondsPerMinute * 60;
@@ -241,6 +241,12 @@ namespace Utopia.Shared.Structs
                 var ts = TimeSpan.Parse(s);
                 return FromSeconds(ts.TotalSeconds);
             }
+        }
+
+        public int CompareTo(object obj)
+        {
+            var other = (UtopiaTimeSpan)obj;
+            return TotalSeconds.CompareTo(other.TotalSeconds);
         }
     }
 }

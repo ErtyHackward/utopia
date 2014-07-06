@@ -102,8 +102,7 @@ namespace Utopia.Shared.Server.AStar
         /// Gets all successors nodes from the current node and adds them to the successor list
         /// </summary>
         /// <param name="aSuccessors">List in which the successors will be added</param>
-        /// <param name="costModify"></param>
-        public abstract void GetSuccessors(List<T> aSuccessors, Func<T, double> costModify);
+        public abstract void GetSuccessors(List<T> aSuccessors);
 		
         #endregion
 
