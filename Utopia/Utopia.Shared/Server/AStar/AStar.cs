@@ -1,9 +1,10 @@
-using System;
 using System.Collections.Generic;
 
-namespace Utopia.Shared.Server.AStar {
+namespace Utopia.Shared.Server.AStar 
+{
+
     /// <summary>
-	/// Class for performing generic A* algorithm
+	/// Class for performing generic A* algorithm (algorithm lies in the generic class)
 	/// </summary>
 	public sealed class AStar<T> where T : AStarNode<T>
 	{
@@ -15,7 +16,6 @@ namespace Utopia.Shared.Server.AStar {
         private readonly List<T> _fSuccessors = new List<T>();
 
         private readonly Dictionary<T, T> _fClosedList = new Dictionary<T, T>();
-        private readonly Dictionary<T, T> _fOpenSet = new Dictionary<T, T>();
 
         /// <summary>
         /// Maximum amount of iterations before say "there is no way"
@@ -23,7 +23,6 @@ namespace Utopia.Shared.Server.AStar {
         public int IterationsLimit { get; set; }
 
         private int _iterations;
-        private Func<T, double> _costModify;
 
         #endregion
 
@@ -59,20 +58,15 @@ namespace Utopia.Shared.Server.AStar {
         /// Finds the shortest path from the start node to the goal node
         /// </summary>
         /// <param name="aStartNode">Start node</param>
-        /// <param name="isGoalNode"></param>
-        /// <param name="costModify"></param>
-        public void FindPath(T aStartNode, Predicate<T> isGoalNode = null, Func<T, double> costModify = null)
+        public void FindPath(T aStartNode)
 		{
-            _costModify = costModify;
             Solution = null;
             _fClosedList.Clear();
             _fOpenList.Clear();
-            _fOpenSet.Clear();
             _iterations = 0;
 			_fStartNode = aStartNode;
 
 			_fOpenList.Add(_fStartNode);
-            _fOpenSet.Add(_fStartNode, _fStartNode);
 
 			while (_fOpenList.Count > 0) 
 			{
@@ -81,10 +75,9 @@ namespace Utopia.Shared.Server.AStar {
 
 				// Get the node with the lowest TotalCost
                 var nodeCurrent = _fOpenList.Pop();
-                _fOpenSet.Remove(nodeCurrent);
 
 				// If the node is the goal copy the path to the solution array
-                if (nodeCurrent.IsGoal() || (isGoalNode != null && isGoalNode(nodeCurrent)))
+                if (nodeCurrent.IsGoal())
                 {
                     Solution = new List<T>();
                     while (nodeCurrent != null) 
@@ -98,16 +91,16 @@ namespace Utopia.Shared.Server.AStar {
 
 				// Get successors to the current node
                 _fSuccessors.Clear();
-                nodeCurrent.GetSuccessors(_fSuccessors, _costModify);
+                nodeCurrent.GetSuccessors(_fSuccessors);
 				foreach (var nodeSuccessor in _fSuccessors) 
 				{
 					// Test if the current successor node is on the open list, if it is and
 					// the TotalCost is higher, we will throw away the current successor.
 					T nodeOpen;
-                    if (_fOpenSet.TryGetValue(nodeSuccessor, out nodeOpen))
+                    if (_fOpenList.TryGetValue(nodeSuccessor, out nodeOpen))
                     {
                         if (nodeOpen.Cost > nodeSuccessor.Cost)
-                            _fOpenSet[nodeSuccessor] = nodeSuccessor;
+                            _fOpenList[nodeSuccessor] = nodeSuccessor;
                         continue;
                     }
 					
@@ -123,7 +116,6 @@ namespace Utopia.Shared.Server.AStar {
 					
 					// Add the current successor to the open list
 					_fOpenList.Add(nodeSuccessor);
-                    _fOpenSet.Add(nodeSuccessor, nodeSuccessor);
 				}
 				// Add the current node to the closed list
 				_fClosedList.Add(nodeCurrent, nodeCurrent);

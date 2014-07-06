@@ -248,6 +248,16 @@ namespace Realms.Server
         {
             var exception = (Exception)e.ExceptionObject;
             logger.Fatal("Unhandled exception {0}\n{1}", exception.Message, exception.StackTrace);
+
+            var aggregate = e.ExceptionObject as AggregateException;
+
+            if (aggregate != null)
+            {
+                foreach (var innerException in aggregate.Flatten().InnerExceptions)
+                {
+                    logger.Fatal("Unhandled exception {0}\n{1}", innerException.Message, innerException.StackTrace);   
+                }
+            }
         }
 
         static void CommitServerInfo(object state)

@@ -68,7 +68,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyHelper.cs" />
     <Compile Include="DataPipe\DataPipe.cs" />
     <Compile Include="Forms\FrmBlueprintChoose.cs">
       <SubType>Form</SubType>

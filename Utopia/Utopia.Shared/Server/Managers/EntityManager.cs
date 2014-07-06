@@ -18,6 +18,8 @@ namespace Utopia.Shared.Server.Managers
         private readonly Dictionary<EntityLink, uint> _lockedStaticEntities = new Dictionary<EntityLink, uint>();
         private readonly Dictionary<uint, ServerNpc> _npcs = new Dictionary<uint, ServerNpc>();
 
+        private readonly Queue<ServerNpc> _npcToSave = new Queue<ServerNpc>();
+
         /// <summary>
         /// Occurs on success lock/unlock of an entity
         /// </summary>
@@ -39,6 +41,20 @@ namespace Utopia.Shared.Server.Managers
             _server = server;
             _server.ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
             _server.ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
+
+            _server.Scheduler.AddPeriodic(TimeSpan.FromSeconds(10), SaveEntities);
+        }
+
+        private void SaveEntities()
+        {
+            lock (_npcToSave)
+            {
+                using (new PerfLimit("NPC Save", 200))
+                while (_npcToSave.Count > 0)
+                {
+                    _npcToSave.Dequeue().Save();
+                }
+            }
         }
 
         void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
@@ -365,8 +381,24 @@ namespace Utopia.Shared.Server.Managers
             _npcs.Add(id, npc);
 
             charEntity.HealthStateChanged += charEntity_HealthStateChanged;
+            charEntity.NeedSave += charEntity_NeedSave;
 
             return npc;
+        }
+
+        void charEntity_NeedSave(object sender, EventArgs e)
+        {
+            var npc = (CharacterEntity)sender;
+            
+            ServerDynamicEntity entity;
+            if (_server.AreaManager.TryFind(npc.DynamicId, out entity))
+            {
+                lock (_npcToSave)
+                {
+                    _npcToSave.Enqueue((ServerNpc)entity);
+                }
+            }
+            
         }
 
         void charEntity_HealthStateChanged(object sender, Entities.Events.EntityHealthStateChangeEventArgs e)

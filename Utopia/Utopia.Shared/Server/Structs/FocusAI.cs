@@ -1,4 +1,5 @@
-﻿using S33M3Resources.Structs;
+﻿using System.Linq;
+using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
@@ -46,10 +47,33 @@ namespace Utopia.Shared.Server.Structs
             lookDirection.Normalize();
             Npc.DynamicEntity.HeadRotation = Quaternion.RotationMatrix(Matrix.LookAtLH(Npc.DynamicEntity.Position.AsVector3(), Npc.DynamicEntity.Position.AsVector3() + lookDirection.AsVector3(), Vector3D.Up.AsVector3()));
         }
-
+        
         public void LookAt(IEntity entity)
         {
             Target = entity;
+        }
+
+        public void LookAtRandomEntity()
+        {
+            // find the entity to look at
+
+            foreach (var serverDynamicEntity in Npc.Server.AreaManager.EnumerateAround(Npc.Character.Position, 16).Where(e => e.DynamicEntity != Npc.Character))
+            {
+                if (Npc.Random.NextDouble() < 0.4)
+                {
+                    LookAt(serverDynamicEntity.DynamicEntity);
+                    return;
+                }
+            }
+
+            foreach (var staticEntity in Npc.Server.LandscapeManager.AroundEntities(Npc.Character.Position, 16))
+            {
+                if (Npc.Random.NextDouble() < 0.2)
+                {
+                    LookAt(staticEntity);
+                    return;
+                }
+            }
         }
     }
 }
