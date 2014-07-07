@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
@@ -13,11 +15,12 @@ namespace Utopia.Shared.Server.Managers
 {
     public class EntityManager
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly ServerCore _server;
         private readonly Dictionary<uint, uint> _lockedDynamicEntities = new Dictionary<uint, uint>();
         private readonly Dictionary<EntityLink, uint> _lockedStaticEntities = new Dictionary<EntityLink, uint>();
         private readonly Dictionary<uint, ServerNpc> _npcs = new Dictionary<uint, ServerNpc>();
-
         private readonly Queue<ServerNpc> _npcToSave = new Queue<ServerNpc>();
 
         /// <summary>
@@ -410,7 +413,35 @@ namespace Utopia.Shared.Server.Managers
                 charEntity.HealthStateChanged -= charEntity_HealthStateChanged;
                 _npcs.Remove(charEntity.DynamicId);
                 _server.AreaManager.RemoveNpc(charEntity.DynamicId);
+                _server.EntityStorage.RemoveEntity(charEntity.DynamicId);
             }
+        }
+
+        public void SaveAll()
+        {
+            logger.Info("Saving all npcs...");
+            lock (_npcToSave)
+            {
+                foreach (var serverNpc in _npcs.Values)
+                {
+                    serverNpc.Save();
+                }
+            }
+        }
+
+        public void LoadNpcs()
+        {
+            logger.Info("Loading npcs...");
+
+            foreach (var npc in _server.EntityStorage.AllEntities().OfType<Npc>())
+            {
+                AddNpc(npc);
+            }
+        }
+
+        public void Dispose()
+        {
+            SaveAll();
         }
     }
 }
