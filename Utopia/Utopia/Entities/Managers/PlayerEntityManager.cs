@@ -86,7 +86,7 @@ namespace Utopia.Entities.Managers
         private VerletSimulator _physicSimu;
         private float _gravityInfluence;
         private float _moveDelta;
-        private IEntityPickingManager _entityPickingManager;
+        private IPickingManager _entityPickingManager;
         private bool _stopMovedAction = false;
 
         private VisualWorldParameters _visualWorldParameters;
@@ -106,6 +106,7 @@ namespace Utopia.Entities.Managers
         private Faction _faction;
         private PlayerCharacter _playerCharacter;
         private GuiManager _guiManager;
+        private IEntityCollisionManager _entityCollisionManager;
 
         #endregion
 
@@ -220,16 +221,25 @@ namespace Utopia.Entities.Managers
 
         #region Dependenices
         [Inject]
-        public IEntityPickingManager EntityPickingManager
+        public IPickingManager EntityPickingManager
         {
             get { return _entityPickingManager; }
             set
             {
                 _entityPickingManager = value;
-                _entityPickingManager.Player = this;
             }
         }
-        
+
+        [Inject]
+        public IEntityCollisionManager CollisionManager
+        {
+            get { return _entityCollisionManager; }
+            set { 
+                _entityCollisionManager = value; 
+            }
+        } 
+
+
         [Inject]
         public ItemMessageTranslator EntityMessageTranslator
         {
@@ -468,7 +478,7 @@ namespace Utopia.Entities.Managers
 
             // Init Velret physic simulator
             _physicSimu = new VerletSimulator(ref VisualVoxelEntity.LocalBBox) { WithCollisionBouncing = false };
-            _physicSimu.ConstraintFct += EntityPickingManager.isCollidingWithEntity;       //Check against entities first
+            _physicSimu.ConstraintFct += _entityCollisionManager.IsCollidingWithEntity;       //Check against entities first
             _physicSimu.ConstraintFct += _landscapeManager.IsCollidingWithTerrain;         //Landscape checking after
 
             _entityRotations = new EntityRotations(_inputsManager, _physicSimu);
@@ -506,8 +516,7 @@ namespace Utopia.Entities.Managers
             // Input handling
             inputHandler();
 
-            // Picking
-            GetSelectedEntity();
+            _entityCollisionManager.Update();
 
             // Refresh player Movement + rotation
             UpdateEntityMovementAndRotation(ref timeSpend);   

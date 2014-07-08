@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utopia.Entities.Voxel;
-using S33M3DXEngine.Main.Interfaces;
+﻿using S33M3DXEngine.Main.Interfaces;
 using SharpDX.Direct3D11;
 using Utopia.Components;
+using Utopia.Entities.Voxel;
 
-namespace Utopia.Entities.Renderer.Interfaces
+namespace Utopia.Entities.Managers.Interfaces
 {
     public interface IEntitiesRenderer : IDrawable
     {

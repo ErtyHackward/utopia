@@ -1,24 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SharpDX;
+﻿using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Models;
 
 namespace Utopia.Entities
 {
-    public class VisualDynamicEntity : IVisualVoxelEntityContainer, IDisposable
+    /// <summary>
+    /// Provides interpolation possibility to dynamicEntities
+    /// </summary>
+    public class VisualDynamicEntity : VisualVoxelEntity
     {
         #region Private variables
         //Server interpolated variables
         private NetworkValue<Vector3D> _netLocation;
         private double _interpolationRate = 0.035;
+        private bool _moving;
         #endregion
 
         #region Public variables/properties
@@ -26,53 +25,35 @@ namespace Utopia.Entities
         /// The Player
         /// </summary>
         public ICharacterEntity DynamicEntity;
-
-        /// <summary>
-        /// The Player Voxel body
-        /// </summary>
-        public VisualVoxelEntity VisualVoxelEntity { get; set; }
-
-        public FTSValue<Vector3D> WorldPosition = new FTSValue<Vector3D>();         //World Position
+        
+        public FTSValue<Vector3D>   WorldPosition   = new FTSValue<Vector3D>();     //World Position
         public FTSValue<Quaternion> LookAtDirection = new FTSValue<Quaternion>();   //LookAt angle
-        public FTSValue<Quaternion> MoveDirection = new FTSValue<Quaternion>();     //Real move direction (derived from LookAt, but will depend the mode !)
+        public FTSValue<Quaternion> MoveDirection   = new FTSValue<Quaternion>();   //Real move direction (derived from LookAt, but will depend the mode !)
 
         public FTSValue<Color3> ModelLight = new FTSValue<Color3>();
 
-        public VoxelModelInstance ModelInstance { get { return VisualVoxelEntity.VoxelEntity.ModelInstance; } }
+        public VoxelModelInstance ModelInstance { get { return VoxelEntity.ModelInstance; } }
 
         public bool WithNetworkInterpolation { get; set; }
-
-        private bool _moving = false;
-
+        
         #endregion
 
-        public VisualDynamicEntity(ICharacterEntity dynamicEntity, VisualVoxelEntity visualEntity)
+        public VisualDynamicEntity(ICharacterEntity dynEntity, VoxelModelManager manager)
+            : base(dynEntity, manager)
         {
-            this.DynamicEntity = dynamicEntity;
-            this.VisualVoxelEntity = visualEntity;
-            
-            Initialize();
-        }
+            DynamicEntity = dynEntity;
 
-        public void Dispose()
-        {
-            VisualVoxelEntity.Dispose();
-        }
-
-        #region Private Methods
-        private void Initialize()
-        {
             //Will be used to update the bounding box with world coordinate when the entity is moving
-            VisualVoxelEntity.LocalBBox.Minimum = new Vector3(-(DynamicEntity.DefaultSize.X / 2.0f), 0, -(DynamicEntity.DefaultSize.Z / 2.0f));
-            VisualVoxelEntity.LocalBBox.Maximum = new Vector3(+(DynamicEntity.DefaultSize.X / 2.0f), DynamicEntity.DefaultSize.Y, +(DynamicEntity.DefaultSize.Z / 2.0f));
+            LocalBBox.Minimum = new Vector3(-(DynamicEntity.DefaultSize.X / 2.0f), 0,                           -(DynamicEntity.DefaultSize.Z / 2.0f));
+            LocalBBox.Maximum = new Vector3(+(DynamicEntity.DefaultSize.X / 2.0f), DynamicEntity.DefaultSize.Y, +(DynamicEntity.DefaultSize.Z / 2.0f));
 
             //Set Position
             //Set the entity world position following the position received from server
-            WorldPosition.Value = DynamicEntity.Position;
+            WorldPosition.Value     = DynamicEntity.Position;
             WorldPosition.ValuePrev = DynamicEntity.Position;
 
             //Compute the initial Player world bounding box
-            VisualVoxelEntity.RefreshWorldBoundingBox(ref WorldPosition.Value);
+            RefreshWorldBoundingBox(ref WorldPosition.Value);
 
             //Set LookAt
             LookAtDirection.Value = DynamicEntity.HeadRotation;
@@ -87,14 +68,15 @@ namespace Utopia.Entities
                 _interpolationRate = 0.1;
             }
 
-            _netLocation = new NetworkValue<Vector3D>() { Value = WorldPosition.Value, Interpolated = WorldPosition.Value };
+            _netLocation = new NetworkValue<Vector3D> { Value = WorldPosition.Value, Interpolated = WorldPosition.Value };
 
             WithNetworkInterpolation = true;
         }
 
+        #region Private Methods
+
         private void RefreshEntityMovementAndRotation()
         {
-
             var moveDirection = DynamicEntity.Position - _netLocation.Value;
             moveDirection.Normalize();
 
@@ -170,7 +152,7 @@ namespace Utopia.Entities
                 _netLocation.Interpolated += _netLocation.DeltaValue * _interpolationRate;
 
                 //Refresh World Entity bounding box - only if entity did move !
-                VisualVoxelEntity.RefreshWorldBoundingBox(ref _netLocation.Interpolated);
+                RefreshWorldBoundingBox(ref _netLocation.Interpolated);
             }
 
             WorldPosition.Value = _netLocation.Interpolated;

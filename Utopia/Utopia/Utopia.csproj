@@ -116,6 +116,7 @@
     <Compile Include="Components\EditorMode.cs" />
     <Compile Include="Components\FadeComponent.cs" />
     <Compile Include="Components\FadeSwitchComponent.cs" />
+    <Compile Include="Entities\Managers\IPickingManager.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Energy.cs" />
     <Compile Include="Entities\Renderer\CubeRenderer.cs" />
     <Compile Include="GUI\EnergyBar\EnergyBar.cs" />
@@ -172,12 +173,11 @@
     <Compile Include="Entities\EntityMovement\EntityRotations.cs" />
     <Compile Include="Entities\FileModelStorage.cs" />
     <Compile Include="Entities\IconFactory.cs" />
-    <Compile Include="Entities\Managers\EntityPickAndCollisManager.cs" />
-    <Compile Include="Entities\Managers\Interfaces\IEntityPickingManager.cs" />
+    <Compile Include="Entities\Managers\EntityCollisionManager.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IEntityCollisionManager.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Input.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Move.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Move.Physic.cs" />
-    <Compile Include="Entities\Managers\PlayerEntityManager.Picking.cs" />
     <Compile Include="Entities\Renderer\FirstPersonToolRenderer.cs" />
     <Compile Include="Entities\Renderer\GhostedEntityRenderer.cs" />
     <Compile Include="Entities\TerraCubes.cs" />

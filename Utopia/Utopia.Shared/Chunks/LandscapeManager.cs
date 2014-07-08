@@ -163,10 +163,12 @@ namespace Utopia.Shared.Chunks
         /// <param name="physicSimu"></param>
         /// <param name="localEntityBoundingBox"></param>
         /// <param name="newPosition2Evaluate"></param>
+        /// <param name="previousPosition"></param>
+        /// <param name="originalPosition"></param>
         public void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition)
         {
             Vector3D newPositionWithColliding = previousPosition;
-            TerraCubeWithPosition _collidingCube;
+            TerraCubeWithPosition collidingCube;
 
             //Create a Bounding box with my new suggested position, taking only the X that has been changed !
             //X Testing =====================================================
@@ -174,21 +176,21 @@ namespace Utopia.Shared.Chunks
             BoundingBox boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
             //If my new X position, make me placed "inside" a block, then invalid the new position
-            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
             {
                 //logger.Debug("ModelCollisionDetection X detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.X, previousPosition.X);
 
                 newPositionWithColliding.X = previousPosition.X;
-                if (_collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
+                if (collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
                 {
-                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
+                    float offsetValue = (float)((1 - collidingCube.BlockProfile.YBlockOffset));
                     if (physicSimu.OnOffsettedBlock > 0) offsetValue -= (1 - physicSimu.OnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
-                        if (_collidingCube.BlockProfile.YBlockOffset == 0 && _collidingCube.Position.Y + 1 < AbstractChunk.ChunkSize.Y)
+                        if (collidingCube.BlockProfile.YBlockOffset == 0 && collidingCube.Position.Y + 1 < AbstractChunk.ChunkSize.Y)
                         {
                             //Check if an other block is place over the hitted one
-                            var overcube = GetCubeAt(new Vector3I(_collidingCube.Position.X, _collidingCube.Position.Y + 1, _collidingCube.Position.Z));
+                            var overcube = GetCubeAt(new Vector3I(collidingCube.Position.X, collidingCube.Position.Y + 1, collidingCube.Position.Z));
                             if (overcube.Id == WorldConfiguration.CubeId.Air)
                             {
                                 physicSimu.OffsetBlockHitted = offsetValue;
@@ -205,21 +207,21 @@ namespace Utopia.Shared.Chunks
             boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
             //If my new Z position, make me placed "inside" a block, then invalid the new position
-            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
             {
                 //logger.Debug("ModelCollisionDetection Z detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Z, previousPosition.Z);
 
                 newPositionWithColliding.Z = previousPosition.Z;
-                if (_collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
+                if (collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
                 {
-                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
+                    float offsetValue = (float)((1 - collidingCube.BlockProfile.YBlockOffset));
                     if (physicSimu.OnOffsettedBlock > 0) offsetValue -= (1 - physicSimu.OnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
-                        if (_collidingCube.BlockProfile.YBlockOffset == 0 && _collidingCube.Position.Y + 1 < AbstractChunk.ChunkSize.Y)
+                        if (collidingCube.BlockProfile.YBlockOffset == 0 && collidingCube.Position.Y + 1 < AbstractChunk.ChunkSize.Y)
                         {
                             //Check if an other block is place over the hitted one
-                            var overcube = GetCubeAt(new Vector3I(_collidingCube.Position.X, _collidingCube.Position.Y + 1, _collidingCube.Position.Z));
+                            var overcube = GetCubeAt(new Vector3I(collidingCube.Position.X, collidingCube.Position.Y + 1, collidingCube.Position.Z));
                             if (overcube.Id == WorldConfiguration.CubeId.Air)
                             {
                                 physicSimu.OffsetBlockHitted = offsetValue;
@@ -239,7 +241,7 @@ namespace Utopia.Shared.Chunks
             boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
             //If my new Y position, make me placed "inside" a block, then invalid the new position
-            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
             {
                 //If was Jummping "before" entering inside the cube
                 if (previousPosition.Y >= newPositionWithColliding.Y)
@@ -252,9 +254,9 @@ namespace Utopia.Shared.Chunks
                     else
                     {
                         //Raise Up until the Ground, next the previous position
-                        if (_collidingCube.BlockProfile.YBlockOffset > 0)
+                        if (collidingCube.BlockProfile.YBlockOffset > 0)
                         {
-                            previousPosition.Y = MathHelper.Floor(previousPosition.Y + 1) - _collidingCube.BlockProfile.YBlockOffset;
+                            previousPosition.Y = MathHelper.Floor(previousPosition.Y + 1) - collidingCube.BlockProfile.YBlockOffset;
                         }
                         else
                         {
@@ -274,7 +276,7 @@ namespace Utopia.Shared.Chunks
             {
                 //No collision with Y, is the block below me solid to entity ?
                 boundingBox2Evaluate.Minimum.Y -= 0.01f;
-                if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+                if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
                 {
                     physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
                 }
@@ -282,7 +284,7 @@ namespace Utopia.Shared.Chunks
             
             //Check to see if new destination is not blocking me
             boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
             {
                 //logger.Debug("Block STUCK tested {0}, assigned {1}", newPositionWithColliding, previousPosition);
                 newPositionWithColliding = originalPosition;
