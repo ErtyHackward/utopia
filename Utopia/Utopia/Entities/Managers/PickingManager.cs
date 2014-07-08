@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
+using Ninject;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
@@ -26,16 +26,16 @@ namespace Utopia.Entities.Managers
     /// <summary>
     /// Provides entity and block picking by the player
     /// </summary>
-    public class PickingManager : GameComponent, IDebugInfo
+    public class PickingManager : GameComponent, IDebugInfo, IPickingManager
     {
-        private readonly IPlayerManager _playerManager;
-        private readonly IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly IWorldChunks _worldChunks;
         private readonly ICameraManager _cameraManager;
         private readonly InputsManager _inputsManager;
-        private readonly IPickingRenderer _pickingRenderer;
+        private IPickingRenderer _pickingRenderer;
         private readonly SingleArrayChunkContainer _cubesHolder;
         private readonly WorldConfiguration _worldConfiguration;
+        private IVisualDynamicEntityManager _dynamicEntityManager;
+        private IPlayerManager _playerManager;
 
         private VisualEntity _pickedUpEntity;
         private Vector3D _pickedUpEntityPosition;
@@ -44,33 +44,48 @@ namespace Utopia.Entities.Managers
 
         private TerraCubeWithPosition _pickedCube;
         private TerraCubeWithPosition _newCube;
+
+        public bool ShowDebugInfo { get; set; }
+
+        #region DI
+        [Inject]
+        public IPickingRenderer PickingRenderer
+        {
+            get { return _pickingRenderer; }
+            set { _pickingRenderer = value; }
+        }
+
+
+        [Inject]
+        public IPlayerManager PlayerManager { 
+            get { return _playerManager; }
+            set { _playerManager = value; }
+        }
         
-        public IPlayerManager PlayerManager { get { return _playerManager; } }
+        [Inject]
+        public IVisualDynamicEntityManager DynamicEntityManager
+        {
+            get { return _dynamicEntityManager; }
+            set { _dynamicEntityManager = value; }
+        }
         
-        public PickingManager(IPlayerManager playerManager,
-                              IVisualDynamicEntityManager dynamicEntityManager,
-                              IWorldChunks worldChunks,
+        #endregion
+
+        public PickingManager(IWorldChunks worldChunks,
                               ICameraManager cameraManager,
                               InputsManager inputsManager,
-                              IPickingRenderer pickingRenderer,
                               SingleArrayChunkContainer cubesHolder,
                               WorldConfiguration worldConfiguration)
         {
-            if (playerManager == null) throw new ArgumentNullException("playerManager");
-            if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             if (worldChunks == null) throw new ArgumentNullException("worldChunks");
             if (cameraManager == null) throw new ArgumentNullException("cameraManager");
             if (inputsManager == null) throw new ArgumentNullException("inputsManager");
-            if (pickingRenderer == null) throw new ArgumentNullException("pickingRenderer");
             if (cubesHolder == null) throw new ArgumentNullException("cubesHolder");
             if (worldConfiguration == null) throw new ArgumentNullException("worldConfiguration");
 
-            _playerManager = playerManager;
-            _dynamicEntityManager = dynamicEntityManager;
             _worldChunks = worldChunks;
             _cameraManager = cameraManager;
             _inputsManager = inputsManager;
-            _pickingRenderer = pickingRenderer;
             _cubesHolder = cubesHolder;
             _worldConfiguration = worldConfiguration;
 
@@ -83,13 +98,13 @@ namespace Utopia.Entities.Managers
 
             base.FTSUpdate(timeSpent);
         }
-
+        
         /// <summary>
         /// Checks nearby entities intersection with the pickingRay
         /// </summary>
         /// <param name="pickingRay">Ray to check intersection</param>
         /// <returns></returns>
-        private EntityPickResult CheckEntityPicking(Ray pickingRay)
+        public EntityPickResult CheckEntityPicking(Ray pickingRay)
         {
             var result = new EntityPickResult { Distance = float.MaxValue };
 
@@ -123,6 +138,7 @@ namespace Utopia.Entities.Managers
                         if (dynamicEntity != null)
                         {
                             rotation = dynamicEntity.BodyRotation;
+                            rotation.Invert();
                         }
 
 
@@ -276,7 +292,7 @@ namespace Utopia.Entities.Managers
         /// <returns></returns>
         private IEnumerable<VisualVoxelEntity> PossibleEntities()
         {
-            foreach (var containers in _dynamicEntityManager.DynamicEntities)
+            foreach (var containers in DynamicEntityManager.DynamicEntities)
             {
                 if (_worldChunks.IsEntityVisible(containers.VisualVoxelEntity.Entity.Position))
                     yield return containers.VisualVoxelEntity;
@@ -339,13 +355,13 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (PlayerManager.Player.EntityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref PlayerManager.Player.EntityState.PickedBlockPosition, _worldConfiguration.BlockProfiles[_pickedCube.Cube.Id].YBlockOffset);
+                    PickingRenderer.SetPickedBlock(ref PlayerManager.Player.EntityState.PickedBlockPosition, _worldConfiguration.BlockProfiles[_pickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
                     if (_cameraManager.ActiveBaseCamera.CameraType == CameraType.ThirdPerson && _pickedUpEntity.Entity == PlayerManager.Player)
                         return;
-                    _pickingRenderer.SetPickedEntity(_pickedUpEntity);
+                    PickingRenderer.SetPickedEntity(_pickedUpEntity);
                 }
             }
         }
@@ -528,7 +544,6 @@ namespace Utopia.Entities.Managers
             return PlayerManager.Player.EntityState.IsBlockPicked || PlayerManager.Player.EntityState.IsEntityPicked;
         }
 
-        public bool ShowDebugInfo { get; set; }
         public string GetDebugInfo()
         {
             if (PlayerManager.Player.EntityState.IsBlockPicked)

@@ -411,6 +411,7 @@ namespace Utopia.Shared.Server.Managers
                 var charEntity = (CharacterEntity)sender;
 
                 charEntity.HealthStateChanged -= charEntity_HealthStateChanged;
+                charEntity.NeedSave -= charEntity_NeedSave;
                 _npcs.Remove(charEntity.DynamicId);
                 _server.AreaManager.RemoveNpc(charEntity.DynamicId);
                 _server.EntityStorage.RemoveEntity(charEntity.DynamicId);
