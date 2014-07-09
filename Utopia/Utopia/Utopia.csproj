@@ -193,7 +193,6 @@
     <Compile Include="Entities\Managers\PlayerEntityManager.cs" />
     <Compile Include="Entities\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\ColorLookup.cs" />
-    <Compile Include="Entities\Voxel\IVisualVoxelEntityContainer.cs" />
     <Compile Include="Entities\Voxel\VisualVoxelEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
     <Compile Include="Editor\PaletteButtonControl.cs" />

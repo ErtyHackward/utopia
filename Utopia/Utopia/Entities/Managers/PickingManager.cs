@@ -294,8 +294,8 @@ namespace Utopia.Entities.Managers
         {
             foreach (var containers in DynamicEntityManager.DynamicEntities)
             {
-                if (_worldChunks.IsEntityVisible(containers.VisualVoxelEntity.Entity.Position))
-                    yield return containers.VisualVoxelEntity;
+                if (_worldChunks.IsEntityVisible(containers.Entity.Position))
+                    yield return containers;
             }
 
             foreach (var visibleChunk in _worldChunks.VisibleChunks().Where(c => c.DistanceFromPlayer < 32))

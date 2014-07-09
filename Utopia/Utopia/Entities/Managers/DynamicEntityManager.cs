@@ -109,7 +109,7 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region Public Properties
-        public List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
+        public List<VisualVoxelEntity> DynamicEntities { get; set; }
         #endregion
 
         public event EventHandler<DynamicEntityEventArgs> EntityAdded;
@@ -149,7 +149,7 @@ namespace Utopia.Entities.Managers
 
             _playerEntityManager.PlayerEntityChanged += _playerEntityManager_PlayerEntityChanged;
 
-            DynamicEntities = new List<IVisualVoxelEntityContainer>();
+            DynamicEntities = new List<VisualVoxelEntity>();
 
             DrawOrders.UpdateIndex(VOXEL_DRAW, 99, "VOXEL_DRAW");
             SPRITENAME_DRAW = DrawOrders.AddIndex(1060, "NAME_DRAW");
@@ -312,7 +312,7 @@ namespace Utopia.Entities.Managers
                     var modelInstance = pairs.Value;
                     //Draw only the entities that are in Client view range
                     //if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
-                    bool isInRenderingRange = MVector3.Distance2D(entityToRender.VisualVoxelEntity.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange;
+                    bool isInRenderingRange = MVector3.Distance2D(entityToRender.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange;
                     //Can only see dead persons if your are dead yourself or if its your own body !
                     bool showCharacters = entityToRender.DynamicEntity.HealthState != DynamicEntityHealthState.Dead || IsLocalPlayer(entityToRender.DynamicEntity.DynamicId) || _playerEntityManager.Player.HealthState == DynamicEntityHealthState.Dead;
                     if (isInRenderingRange && showCharacters)
@@ -462,7 +462,7 @@ namespace Utopia.Entities.Managers
             if (_dynamicEntitiesDico.TryGetValue(entityId, out entity))
             {
                 ModelAndInstances instances;
-                if (!_models.TryGetValue(entity.VisualVoxelEntity.VoxelEntity.ModelInstance.VoxelModel.Name, out instances))
+                if (!_models.TryGetValue(entity.VoxelEntity.ModelInstance.VoxelModel.Name, out instances))
                 {
                     throw new InvalidOperationException("we have no such model");
                 }
@@ -538,7 +538,7 @@ namespace Utopia.Entities.Managers
             entity.ModelInstance = oldEntity.ModelInstance;
 
             visualEntity.DynamicEntity = entity;
-            visualEntity.VisualVoxelEntity.Entity = entity;
+            visualEntity.Entity = entity;
         }
 
         #endregion
@@ -687,7 +687,7 @@ namespace Utopia.Entities.Managers
         //Dynamic Entity management
         private VisualDynamicEntity CreateVisualEntity(ICharacterEntity entity)
         {
-            return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, null, _voxelModelManager));
+            return new VisualDynamicEntity(entity, _voxelModelManager);
         }
 
 

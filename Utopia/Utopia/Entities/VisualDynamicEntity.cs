@@ -182,6 +182,12 @@ namespace Utopia.Entities
             CheckMovingAnimation(ref WorldPosition.ValuePrev, ref WorldPosition.Value, 0.0001);
         }
 
+        public override void SetEntityVoxelBB(BoundingBox bb)
+        {
+            base.SetEntityVoxelBB(bb);
+            RefreshWorldBoundingBox(WorldPosition.ValueInterp);
+        }
+
         //Draw interpolation (Before each Drawing)
         public void Interpolation(double interpolationHd, float interpolationLd, float elapsedTime)
         {
