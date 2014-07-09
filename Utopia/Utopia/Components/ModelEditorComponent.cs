@@ -479,12 +479,12 @@ namespace Utopia.Components
 
         private void InitPlanes(Vector3I chunkSize)
         {
-            _gridBackPlane = new Plane(new Vector3(), _gridBackNormal);
-            _gridFrontPlane = new Plane(chunkSize, _gridFrontNormal);
-            _gridTopPlane = new Plane(chunkSize, _gridTopNormal);
+            _gridBackPlane   = new Plane(new Vector3(), _gridBackNormal);
+            _gridFrontPlane  = new Plane(chunkSize, _gridFrontNormal);
+            _gridTopPlane    = new Plane(chunkSize, _gridTopNormal);
             _gridBottomPlane = new Plane(new Vector3(), _gridBottomNormal);
-            _gridLeftPlane = new Plane(new Vector3(), _gridLeftNormal);
-            _gridRightPlane = new Plane(chunkSize, _gridRightNormal);
+            _gridLeftPlane   = new Plane(new Vector3(), _gridLeftNormal);
+            _gridRightPlane  = new Plane(chunkSize, _gridRightNormal);
 
             _gridPlanes = new[] { _gridBackPlane, _gridFrontPlane, _gridTopPlane, _gridBottomPlane, _gridLeftPlane, _gridRightPlane };
         }
@@ -1828,14 +1828,15 @@ namespace Utopia.Components
                                             frame.BlockData.SetBlock(cubePos, 0);
                                             break;
                                         case FrameEditorTools.ColorBrush:
-                                            frame.BlockData.SetBlock(cubePos, (byte) (_selectedColorIndex + 1));
+                                            frame.BlockData.SetBlock(cubePos, (byte)( _selectedColorIndex + 1 ));
+                                            break;
+                                        case FrameEditorTools.BlockFillBrush:
+                                            FillTool(frame, cubePos, 0);
                                             break;
                                         case FrameEditorTools.ColorFillBrush:
-                                            {
-                                                FillTool(frame, cubePos);
-                                            }
+                                            FillTool(frame, cubePos, (byte)( _selectedColorIndex + 1 ));
                                             break;
-                                        case FrameEditorTools.Selection : // selection tool
+                                        case FrameEditorTools.Selection: // selection tool
 
                                             if (_selectionEnd.HasValue || !_selectionStart.HasValue)
                                             {
@@ -1870,7 +1871,7 @@ namespace Utopia.Components
                                         case FrameEditorTools.ColorBrush:
                                             break;
                                         case FrameEditorTools.BlockFillBrush:
-                                            FillTool(frame, cubePos);
+                                            FillTool(frame, cubePos, (byte)(_selectedColorIndex + 1));
                                             break;
                                         case FrameEditorTools.Selection: // selection tool
 
@@ -1901,10 +1902,9 @@ namespace Utopia.Components
             base.FTSUpdate(timeSpent);
         }
 
-        private void FillTool(VoxelFrame frame, Vector3I cubePos)
+        private void FillTool(VoxelFrame frame, Vector3I cubePos, byte fillWith)
         {
             var fillIndex = frame.BlockData.GetBlock(cubePos);
-            var fillWith = (byte)( _selectedColorIndex + 1 );
 
             if (fillIndex == fillWith)
                 return;
