@@ -30,8 +30,8 @@ namespace Utopia.Entities.Managers.Interfaces
 
         ICharacterEntity GetEntityById(uint p);
 
-    
-        List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
+
+        List<VisualVoxelEntity> DynamicEntities { get; set; }
 
         /// <summary>
         /// Updates existing entity object (in case of visual or equipment changes)

@@ -7,7 +7,7 @@ namespace Utopia.Entities.Managers.Interfaces
 {
     public interface IEntitiesRenderer : IDrawable
     {
-        IVisualVoxelEntityContainer VoxelEntityContainer { set; }
+        VisualVoxelEntity VoxelEntityContainer { set; }
         void Initialize();
         void LoadContent(DeviceContext context);
         SharedFrameCB SharedFrameCB { get; set; } 

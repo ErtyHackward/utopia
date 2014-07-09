@@ -373,7 +373,7 @@ namespace Utopia.Worlds.Chunks
                     voxelEntity.ModelInstance.SetState(growingEntity.GrowLevels[growingEntity.CurrentGrowLevelIndex].ModelState);
                 }
 
-                var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, model, _voxelModelManager);
+                var visualVoxelEntity = new VisualVoxelEntity(voxelEntity, _voxelModelManager);
                 //Get default world translation
                 Matrix instanceTranslation = Matrix.Translation(voxelEntity.Position.AsVector3());
 

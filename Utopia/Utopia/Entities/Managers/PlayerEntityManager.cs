@@ -45,7 +45,7 @@ namespace Utopia.Entities.Managers
     /// 2) player movement input handling
     /// 3) picking of the block
     /// </summary>
-    public partial class PlayerEntityManager : GameComponent, IPlayerManager, IVisualVoxelEntityContainer, IDebugInfo
+    public partial class PlayerEntityManager : GameComponent, IPlayerManager, IDebugInfo
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -343,7 +343,7 @@ namespace Utopia.Entities.Managers
             ShowDebugInfo = true;
 
             // Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
-            VisualVoxelEntity = new VisualVoxelEntity(PlayerCharacter, null, voxelModelManager);
+            VisualVoxelEntity = new VisualVoxelEntity(PlayerCharacter, voxelModelManager);
 
             //Add a new Timer trigger
             _energyUpdateTimer = timerManager.AddTimer(1000); //A timer that will be raised every second

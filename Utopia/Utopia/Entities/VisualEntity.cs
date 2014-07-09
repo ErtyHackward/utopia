@@ -51,7 +51,7 @@ namespace Utopia.Entities
             return scale;
         }
 
-        public void SetEntityVoxelBB(BoundingBox bb)
+        public virtual void SetEntityVoxelBB(BoundingBox bb)
         {
             var scale = GetModelScale(Entity);
             LocalBBox = new BoundingBox(bb.Minimum * scale, bb.Maximum * scale);

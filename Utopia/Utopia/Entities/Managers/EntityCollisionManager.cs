@@ -104,9 +104,9 @@ namespace Utopia.Entities.Managers
 
                 if (entity != null)
                 {
-                    if (Vector3D.Distance(entity.VisualVoxelEntity.VoxelEntity.Position, _player.Player.Position) <= _entityDistance)
+                    if (Vector3D.Distance(entity.VoxelEntity.Position, _player.Player.Position) <= _entityDistance)
                     {
-                        _entitiesNearPlayer.Add(entity.VisualVoxelEntity);
+                        _entitiesNearPlayer.Add(entity);
                     }
                 }
                 else
