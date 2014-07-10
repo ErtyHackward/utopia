@@ -1046,9 +1046,13 @@ namespace Utopia.Components
             }
 
             VisualVoxelModel = newModel;
-            if (VisualVoxelModel != null && !VisualVoxelModel.Initialized)
+            if (VisualVoxelModel != null)
             {
-                VisualVoxelModel.BuildMesh();
+                VisualVoxelModel.VoxelModel.Validate();
+                if (!VisualVoxelModel.Initialized)
+                {
+                    VisualVoxelModel.BuildMesh();
+                }
             }
             UpdateCamera();
         }
@@ -2795,6 +2799,8 @@ namespace Utopia.Components
                 _gui.MessageBox("No model is selected to be saved.", "Error");
                 return;
             }
+
+            _visualVoxelModel.VoxelModel.Validate();
 
             _manager.SaveModel(_visualVoxelModel);
             _needSave = false;
