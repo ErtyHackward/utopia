@@ -377,6 +377,8 @@ namespace Utopia.Shared.Server.Managers
 
         public ServerNpc AddNpc(CharacterEntity charEntity)
         {
+            charEntity.EntityFactory = _server.EntityFactory;
+
             var npc = new ServerNpc(_server, charEntity);
             var id = DynamicIdHelper.GetNextUniqueId();
             npc.DynamicEntity.DynamicId = id;
@@ -387,6 +389,15 @@ namespace Utopia.Shared.Server.Managers
             charEntity.NeedSave += charEntity_NeedSave;
 
             return npc;
+        }
+
+        public void RemoveNpc(CharacterEntity charEntity)
+        {
+            charEntity.HealthStateChanged -= charEntity_HealthStateChanged;
+            charEntity.NeedSave -= charEntity_NeedSave;
+            _npcs.Remove(charEntity.DynamicId);
+            _server.AreaManager.RemoveNpc(charEntity.DynamicId);
+            _server.EntityStorage.RemoveEntity(charEntity.DynamicId);
         }
 
         void charEntity_NeedSave(object sender, EventArgs e)
@@ -410,11 +421,7 @@ namespace Utopia.Shared.Server.Managers
             {
                 var charEntity = (CharacterEntity)sender;
 
-                charEntity.HealthStateChanged -= charEntity_HealthStateChanged;
-                charEntity.NeedSave -= charEntity_NeedSave;
-                _npcs.Remove(charEntity.DynamicId);
-                _server.AreaManager.RemoveNpc(charEntity.DynamicId);
-                _server.EntityStorage.RemoveEntity(charEntity.DynamicId);
+                RemoveNpc(charEntity);
             }
         }
 
