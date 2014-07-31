@@ -52,6 +52,7 @@ namespace Utopia.Shared.Server.Managers
             RegisterCommand(new NpcAddActivity());
             RegisterCommand(new NpcAddPoint());
             RegisterCommand(new NpcComehere());
+            RegisterCommand(new WipeNpcsCommand());
         }
 
         public void RegisterCommand(IChatCommand command)
