@@ -131,10 +131,11 @@
     <Compile Include="Server\AStar\AStarFunc.cs" />
     <Compile Include="Server\AStar\AStarNodeFunc.cs" />
     <Compile Include="Server\AStar\AStarNodeFunc3D.cs" />
-    <Compile Include="Server\Commands\NpcAddActivity.cs" />
-    <Compile Include="Server\Commands\NpcAddPoint.cs" />
-    <Compile Include="Server\Commands\NpcComehere.cs" />
-    <Compile Include="Server\Commands\NpcSelect.cs" />
+    <Compile Include="Server\Commands\NpcAddActivityCommand.cs" />
+    <Compile Include="Server\Commands\NpcAddPointCommand.cs" />
+    <Compile Include="Server\Commands\NpcComehereCommand.cs" />
+    <Compile Include="Server\Commands\NpcSelectCommand.cs" />
+    <Compile Include="Server\Commands\NpcSpawnCommand.cs" />
     <Compile Include="Server\Commands\WipeChunkCommand.cs" />
     <Compile Include="Server\Commands\WipeNpcsCommand.cs" />
     <Compile Include="Server\Managers\EntityGrowingManager.cs" />
