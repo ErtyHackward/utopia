@@ -44,13 +44,13 @@ namespace Utopia.Components
         {
             _engine = engine;
             _inputsManager = inputsManager;
-            _engine.ViewPort_Updated += _engine_ViewPort_Updated;
+            _engine.ScreenSize_Updated += _engine_ScreenSize_Updated;
             ResizeSlideDim(_engine.ViewPort);
         }
 
         public override void BeforeDispose()
         {
-            _engine.ViewPort_Updated -= _engine_ViewPort_Updated;
+            _engine.ScreenSize_Updated -= _engine_ScreenSize_Updated;
         }
  
         #region Public methods
@@ -133,7 +133,7 @@ namespace Utopia.Components
         #endregion
 
         #region Private methods
-        private void _engine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBuffer)
+        private void _engine_ScreenSize_Updated(ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             ResizeSlideDim(viewport);
         }

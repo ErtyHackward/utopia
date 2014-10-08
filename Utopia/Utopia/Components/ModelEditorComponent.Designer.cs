@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Entities.Voxel;
 using Utopia.GUI.NuclexUIPort.Controls.Desktop;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Models;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
@@ -22,6 +25,7 @@ namespace Utopia.Components
         private struct DialogAnimationEditStruct
         {
             public string Name;
+            public int StartFrame;
         }
 
         private struct DialogAnimationStepStruct
@@ -40,6 +44,110 @@ namespace Utopia.Components
             public string Name;
         }
 
+        private struct DialogPartEffectStruct
+        {
+            public bool EnableEffect;
+            public string AccelerationForces;
+            public float AlphaFadingPowBase;
+            public bool ApplyWindForce;
+            public ByteColor ColorModifier;
+            public float EmitRate;
+            public int EmitAmount;
+            public string EmitVelocity;
+            public string EmitVelocityRnd;
+            public int ParticuleId;
+            public float ParticuleLifeTime;
+            public float ParticuleLifeTimeRnd;
+            public string PositionRnd;
+            public string Size;
+            public float SizeGrowSpeed;
+
+            public DialogPartEffectStruct(StaticEntityParticule particule)
+            {
+                EnableEffect = true;
+                AccelerationForces = ConvertHelper.ToString(particule.AccelerationForces);
+                AlphaFadingPowBase = (float)particule.AlphaFadingPowBase;
+                ApplyWindForce = particule.ApplyWindForce;
+                ColorModifier = particule.ParticuleColor;
+                EmitRate = particule.EmittedParticuleRate;
+                EmitAmount = particule.EmittedParticulesAmount;
+                EmitVelocity = ConvertHelper.ToString(particule.EmitVelocity);
+                EmitVelocityRnd = ConvertHelper.ToString(particule.EmitVelocityRandomness);
+                ParticuleId = particule.ParticuleId;
+                ParticuleLifeTime = particule.ParticuleLifeTime;
+                ParticuleLifeTimeRnd = particule.ParticuleLifeTimeRandomness;
+                PositionRnd = ConvertHelper.ToString(particule.PositionRandomness);
+                Size = ConvertHelper.ToString(particule.Size);
+                SizeGrowSpeed = particule.SizeGrowSpeed;
+            }
+
+            public StaticEntityParticule ToStaticParticule()
+            {
+                StaticEntityParticule particule = new StaticEntityParticule();
+
+                particule.AccelerationForces = ConvertHelper.ToVector3(AccelerationForces);
+                particule.AlphaFadingPowBase = AlphaFadingPowBase;
+                particule.ApplyWindForce = ApplyWindForce;
+                particule.ParticuleColor = ColorModifier;
+                particule.EmittedParticuleRate = EmitRate;
+                particule.EmittedParticulesAmount = EmitAmount;
+                particule.EmitVelocity = ConvertHelper.ToVector3(EmitVelocity);
+                particule.EmitVelocityRandomness = ConvertHelper.ToVector3(EmitVelocityRnd);
+                particule.ParticuleId = ParticuleId;
+                particule.ParticuleLifeTime = ParticuleLifeTime;
+                particule.ParticuleLifeTimeRandomness = ParticuleLifeTimeRnd;
+                particule.PositionRandomness = ConvertHelper.ToVector3(PositionRnd);
+                particule.Size = ConvertHelper.ToVector2(Size);
+                particule.SizeGrowSpeed = SizeGrowSpeed;
+
+                return particule;
+            }
+
+        }
+
+        public static class ConvertHelper
+        {
+            public static string ToString(Vector3 vector)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "{0}; {1}; {2}", vector.X, vector.Y, vector.Z);
+            }
+
+            public static string ToString(Vector2 vector)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "{0}; {1}", vector.X, vector.Y);
+            }
+
+            public static Vector3 ToVector3(string vec)
+            {
+                var spl = vec.Split(';');
+                Vector3 v;
+
+                if (spl.Length < 3)
+                    return new Vector3();
+
+                float.TryParse(spl[0], NumberStyles.Float, CultureInfo.InvariantCulture, out v.X);
+                float.TryParse(spl[1], NumberStyles.Float, CultureInfo.InvariantCulture, out v.Y);
+                float.TryParse(spl[2], NumberStyles.Float, CultureInfo.InvariantCulture, out v.Z);
+
+                return v;
+            }
+
+            public static Vector2 ToVector2(string vec)
+            {
+                var spl = vec.Split(';');
+                Vector2 v;
+
+                if (spl.Length < 2)
+                    return new Vector2();
+
+                float.TryParse(spl[0], out v.X);
+                float.TryParse(spl[1], out v.Y);
+
+                return v;
+            }
+        }
+
+
         private struct DialogPartsEditStruct
         {
             public string Name;
@@ -53,6 +161,18 @@ namespace Utopia.Components
             public int SizeX;
             public int SizeY;
             public int SizeZ;
+            public bool MirrorLeft;
+            public bool MirrorRight;
+            public bool MirrorTop;
+            public bool MirrorBottom;
+            public bool MirrorFront;
+            public bool MirrorBack;
+            public bool TileLeft;
+            public bool TileRight;
+            public bool TileTop;
+            public bool TileBottom;
+            public bool TileFront;
+            public bool TileBack;
         }
 
         private ButtonControl _backButton;
@@ -64,6 +184,7 @@ namespace Utopia.Components
         private DialogControl<DialogStateEditStruct> _stateEditDialog;
         private DialogControl<DialogModelEditStruct> _modelEditDialog;
         private DialogControl<DialogPartsEditStruct> _partEditDialog;
+        private DialogControl<DialogPartEffectStruct> _partEffectDialog;
         private DialogControl<DialogFrameEditStruct> _frameEditDialog;
         private DialogControl<DialogImportModelStruct> _importDialog; 
         private LabelControl _infoLabel;
@@ -122,6 +243,7 @@ namespace Utopia.Components
             _stateEditDialog = new DialogControl<DialogStateEditStruct>();
             _modelEditDialog = new DialogControl<DialogModelEditStruct>();
             _partEditDialog = new DialogControl<DialogPartsEditStruct>();
+            _partEffectDialog = new DialogControl<DialogPartEffectStruct>();
             _frameEditDialog = new DialogControl<DialogFrameEditStruct>();
             _importDialog = new DialogControl<DialogImportModelStruct>();
             _infoLabel = new LabelControl { Bounds = new UniRectangle(300, 20, 600, 20) };
@@ -223,11 +345,11 @@ namespace Utopia.Components
             var statesAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 35, 20) };
             var statesEditButton = new ButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 35, 20) };
             var statesDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 35, 20) };
-
+            
             statesAddButton.Pressed += delegate { OnStateAddButtonPressed(); };
             statesEditButton.Pressed += delegate { OnStateEditButtonPressed(); };
             statesDeleteButton.Pressed += delegate { OnStateDeleteButtonPressed(); };
-
+            
             _statesList = new ListControl { Name = "statesList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             _statesList.Bounds = new UniRectangle(0, 0, 180, 20);
             _statesList.SelectionMode = ListSelectionMode.Single;
@@ -242,10 +364,10 @@ namespace Utopia.Components
 
 
 
-            var partsLabel = new LabelControl { Text = "Parts" };
-            partsLabel.Bounds = new UniRectangle(0, 0, 60, 20);
+            var partsLabel = new LabelControl { Text = "Parts", Bounds = new UniRectangle(0, 0, 25, 20) };
             var partsAddButton = new ButtonControl { Text = "Add", Bounds = new UniRectangle(0, 0, 35, 20) };
             var partsEditButton = new ButtonControl { Text = "Edit", Bounds = new UniRectangle(0, 0, 35, 20) };
+            var partsEffectButton = new ButtonControl { Text = "Eff", Bounds = new UniRectangle(0, 0, 35, 20) };
             var partsDeleteButton = new ButtonControl { Text = "Del", Bounds = new UniRectangle(0, 0, 35, 20) };
             _partsList = new ListControl { Name = "partsList", LayoutFlags = ControlLayoutFlags.WholeRow | ControlLayoutFlags.FreeHeight };
             _partsList.Bounds = new UniRectangle(0, 0, 180, 20);
@@ -254,12 +376,14 @@ namespace Utopia.Components
 
             partsAddButton.Pressed += delegate { OnPartsAddPressed(); };
             partsEditButton.Pressed += delegate { OnPartsEditPressed(); };
+            partsEffectButton.Pressed += delegate { OnPartsEffectButtonPressed(); };
             partsDeleteButton.Pressed += delegate { OnPartsDeletePressed(); };
 
             _partsGroup = new Control { Bounds = new UniRectangle(0, 0, 180, 0), LayoutFlags = ControlLayoutFlags.FreeHeight | ControlLayoutFlags.WholeRow };
             _partsGroup.Children.Add(partsLabel);
             _partsGroup.Children.Add(partsAddButton);
             _partsGroup.Children.Add(partsEditButton);
+            _partsGroup.Children.Add(partsEffectButton);
             _partsGroup.Children.Add(partsDeleteButton);
             _partsGroup.Children.Add(_partsList);
 
@@ -334,9 +458,14 @@ namespace Utopia.Components
             _modelNavigationWindow.Children.Clear();
             _modelNavigationWindow.Children.Add(_framesGroup);
 
-            OnFrameToolSelected(FrameEditorTools.Edit);
-            
+            if (_framesList.SelectedItems.Count == 0 && _framesList.Items.Count > 0)
+                _framesList.SelectItem(0);
 
+            if (_frameEditorTool == FrameEditorTools.None)
+                _frameEditorTool = FrameEditorTools.Edit;
+
+            OnFrameToolSelected(_frameEditorTool);
+            
             UpdateLayout();
         }
 
@@ -418,15 +547,42 @@ namespace Utopia.Components
 
             var layoutModeButton = new StickyButtonControl { Text = "Layout" };
             layoutModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
-            layoutModeButton.Pressed += delegate { Mode = EditorMode.ModelLayout; OnLayoutMode(); };
+            layoutModeButton.Pressed += delegate {
+                if (VisualVoxelModel == null)
+                {
+                    _gui.MessageBox("Select or create a model before entering");
+                    layoutModeButton.Release();
+                    mainModeButton.Sticked = true;
+                    return;
+                }
+                Mode = EditorMode.ModelLayout; OnLayoutMode(); 
+            };
 
             var frameModeButton = new StickyButtonControl { Text = "Frame" };
             frameModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
-            frameModeButton.Pressed += delegate { Mode = EditorMode.FrameEdit; OnFrameMode(); };
+            frameModeButton.Pressed += delegate {
+                if (VisualVoxelModel == null)
+                {
+                    _gui.MessageBox("Select or create a model before entering");
+                    frameModeButton.Release();
+                    mainModeButton.Sticked = true;
+                    return;
+                }
+                Mode = EditorMode.FrameEdit; OnFrameMode(); 
+            };
 
             var animationModeButton = new StickyButtonControl { Text = "Anim" };
             animationModeButton.Bounds = new UniRectangle(0, 0, 45, 45);
-            animationModeButton.Pressed += delegate { Mode = EditorMode.MainView; OnAnimationMode(); };
+            animationModeButton.Pressed += delegate {
+                if (VisualVoxelModel == null)
+                {
+                    _gui.MessageBox("Select or create a model before entering");
+                    animationModeButton.Release();
+                    mainModeButton.Sticked = true;
+                    return;
+                }
+                Mode = EditorMode.MainView; OnAnimationMode(); 
+            };
 
             _modesButtonsGroup.Children.Add(mainModeButton);
             _modesButtonsGroup.Children.Add(layoutModeButton);
@@ -446,6 +602,12 @@ namespace Utopia.Components
 
             var exportButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Export" };
             exportButton.Pressed += delegate { OnExport(); };
+
+            var renderButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Render png" };
+            renderButton.Pressed += delegate { OnRenderPng(); };
+
+#if DEBUG
+
             var importButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Import" };
             importButton.Pressed += delegate { OnImport(); };
 
@@ -454,19 +616,27 @@ namespace Utopia.Components
             var importAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Import all" };
             importAllButton.Pressed += delegate { OnImportAll(); };
 
+            var publishAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Publish All" };
+            publishAllButton.Pressed += delegate { OnPublishAll(); };
+#endif
             var publishButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Publish" };
             publishButton.Pressed += delegate { OnPublish(); };
 
-            var publishAllButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 70, 20), Text = "Publish All" };
-            publishAllButton.Pressed += delegate { OnPublishAll(); };
+            var downloadButton = new ButtonControl { Bounds = new UniRectangle(0, 0, 140, 20), Text = "Load from server" };
+            downloadButton.Pressed += delegate { OnLoadServerModels(); };
+            
 
             _mainToolsGroup.Children.Add(_saveButton);
-            _mainToolsGroup.Children.Add(importButton);
             _mainToolsGroup.Children.Add(exportButton);
+#if DEBUG
+            _mainToolsGroup.Children.Add(importButton);
             _mainToolsGroup.Children.Add(importAllButton);
             _mainToolsGroup.Children.Add(exportAllButton);
-            _mainToolsGroup.Children.Add(publishButton);
             _mainToolsGroup.Children.Add(publishAllButton);
+#endif
+            _mainToolsGroup.Children.Add(renderButton);
+            _mainToolsGroup.Children.Add(publishButton);
+            _mainToolsGroup.Children.Add(downloadButton);
 
             #endregion
 
@@ -482,10 +652,10 @@ namespace Utopia.Components
             toolColorBrushButton.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.ColorBrush); };
 
             var toolColorFillButton = new StickyButtonControl { Text = "Color fill", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolColorFillButton.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.FillBrush); };
+            toolColorFillButton.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.ColorFillBrush); };
 
-            var toolSliceColorBrush = new StickyButtonControl { Text = "Slice color", Bounds = new UniRectangle(0, 0, 70, 20) };
-            toolSliceColorBrush.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.SliceBrush); };
+            var toolBlockFillBrush = new StickyButtonControl { Text = "Block fill", Bounds = new UniRectangle(0, 0, 70, 20) };
+            toolBlockFillBrush.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.BlockFillBrush); };
 
             var presetTool = new StickyButtonControl { Text = "Preset", Bounds = new UniRectangle(0, 0, 70, 20) };
             presetTool.Pressed += delegate { OnFrameToolSelected(FrameEditorTools.Preset); };
@@ -496,7 +666,7 @@ namespace Utopia.Components
             _frameToolsGroup.Children.Add(toolEditButton);
             _frameToolsGroup.Children.Add(toolColorBrushButton);
             _frameToolsGroup.Children.Add(toolColorFillButton);
-            _frameToolsGroup.Children.Add(toolSliceColorBrush);
+            _frameToolsGroup.Children.Add(toolBlockFillBrush);
             _frameToolsGroup.Children.Add(presetTool);
             _frameToolsGroup.Children.Add(selectionTool);
             
@@ -538,18 +708,26 @@ namespace Utopia.Components
 
             _tpSliceBrush.Children.Add(new LabelControl { Text = "Slice axis:", Bounds = new UniRectangle(0, 0, 50, 20), LayoutFlags = ControlLayoutFlags.WholeRow });
 
-            var xSlice = new StickyButtonControl { Text = "X", Bounds = new UniRectangle(0, 0, 20, 20) };
-            xSlice.Pressed += delegate { _sliceAxis = EditorAxis.X; };
+            var xSlice = new StickyButtonControl { Text = "X", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
+            xSlice.Pressed += delegate { _sliceAxis ^= EditorAxis.X; if (!_sliceAxis.HasFlag(EditorAxis.X)) xSlice.Release(); };
 
-            var ySlice = new StickyButtonControl { Text = "Y", Bounds = new UniRectangle(0, 0, 20, 20), Sticked = true };
-            ySlice.Pressed += delegate { _sliceAxis = EditorAxis.Y; };
+            var ySlice = new StickyButtonControl { Text = "Y", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
+            ySlice.Pressed += delegate { _sliceAxis ^= EditorAxis.Y; if (!_sliceAxis.HasFlag(EditorAxis.Y)) ySlice.Release(); };
 
-            var zSlice = new StickyButtonControl { Text = "Z", Bounds = new UniRectangle(0, 0, 20, 20) };
-            zSlice.Pressed += delegate { _sliceAxis = EditorAxis.Z; };
-            
+            var zSlice = new StickyButtonControl { Text = "Z", Bounds = new UniRectangle(0, 0, 20, 20), Separate = true };
+            zSlice.Pressed += delegate { _sliceAxis ^= EditorAxis.Z; if (!_sliceAxis.HasFlag(EditorAxis.Z)) zSlice.Release(); };
+
+            var wholeSlice = new StickyButtonControl { Text = "Go through", Bounds = new UniRectangle(0, 0, 60, 20), Separate = true };
+            wholeSlice.Pressed += delegate { _wholeSlice = !_wholeSlice; if (!_wholeSlice) wholeSlice.Release(); };
+
+            var diagonalTouch = new StickyButtonControl { Text = "Diag", Bounds = new UniRectangle(0, 0, 60, 20), Separate = true };
+            diagonalTouch.Pressed += delegate { _diagonalTouch = !_diagonalTouch; if (!_diagonalTouch) diagonalTouch.Release(); };
+
             _tpSliceBrush.Children.Add(xSlice);
             _tpSliceBrush.Children.Add(ySlice);
             _tpSliceBrush.Children.Add(zSlice);
+            _tpSliceBrush.Children.Add(wholeSlice);
+            _tpSliceBrush.Children.Add(diagonalTouch);
             _tpSliceBrush.UpdateLayout();
 
             #endregion
@@ -840,10 +1018,10 @@ namespace Utopia.Components
                 case FrameEditorTools.ColorBrush:
                     _toolsWindow.Children.Add(_tpMirror);
                     break;
-                case FrameEditorTools.FillBrush:
-                    _toolsWindow.Children.Add(_tpMirror);
+                case FrameEditorTools.ColorFillBrush:
+                    _toolsWindow.Children.Add(_tpSliceBrush);
                     break;
-                case FrameEditorTools.SliceBrush:
+                case FrameEditorTools.BlockFillBrush:
                     _toolsWindow.Children.Add(_tpSliceBrush);
                     break;
                 case FrameEditorTools.Preset:
@@ -883,10 +1061,10 @@ namespace Utopia.Components
         None,
         Edit,
         ColorBrush,
-        FillBrush,
-        SliceBrush,
+        ColorFillBrush,
         Preset,
-        Selection
+        Selection,
+        BlockFillBrush
     }
 }
 

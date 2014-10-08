@@ -12,21 +12,15 @@ namespace Utopia.Shared.Entities.Concrete
     [Description("Use this class for the plants.")]
     public class Plant : BlockLinkedItem, IRndYRotation
     {
+        [Category("Gameplay")]
         [Description("Create a randome Rotation around the Y axis of the item")]
         [ProtoMember(1)]
         public bool RndRotationAroundY { get; set; }
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.Plant; }
-        }
-        
         public Plant()
         {
             Name = "Plant";
             MountPoint = BlockFace.Top;
-            IsPlayerCollidable = false;
-            IsPickable = true;
         }
     }
 }

@@ -1,6 +1,4 @@
-using System.IO;
 using ProtoBuf;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
 {
@@ -8,7 +6,7 @@ namespace Utopia.Shared.Entities.Models
     /// Represents a part of a voxel model. Model parts consists of frames
     /// </summary>
     [ProtoContract]
-    public class VoxelModelPart : IBinaryStorable
+    public class VoxelModelPart
     {
         /// <summary>
         /// Gets or sets voxel model part name, example "Head"
@@ -27,24 +25,7 @@ namespace Utopia.Shared.Entities.Models
         /// </summary>
         [ProtoMember(3)]
         public bool IsArm { get; set; }
-
-        public void Save(BinaryWriter writer)
-        {
-            if (string.IsNullOrEmpty(Name))
-                Name = "unnamed";
-
-            writer.Write(Name);
-            writer.Write(IsHead);
-            writer.Write(IsArm);
-        }
-
-        public void Load(BinaryReader reader)
-        {
-            Name = reader.ReadString();
-            IsHead = reader.ReadBoolean();
-            IsArm = reader.ReadBoolean();
-        }
-
+        
         public override string ToString()
         {
             return Name;

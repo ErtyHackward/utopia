@@ -15,6 +15,11 @@ namespace Utopia.Shared.Net.Connections
         readonly ConcurrentQueue<IBinaryMessage> _incomingMessages = new ConcurrentQueue<IBinaryMessage>();
 
         /// <summary>
+        /// Modify this constant to actual value
+        /// </summary>
+        public const int ProtocolVersion = 12;
+
+        /// <summary>
         /// Gets or sets current client version
         /// </summary>
         public int ClientVersion { get; set; }
@@ -65,7 +70,12 @@ namespace Utopia.Shared.Net.Connections
         /// </summary>
         public void Authenticate()
         {
-            Send(new LoginMessage { Login = Login, DisplayName = DisplayName, Password = Password, Register = Register, Version = ClientVersion });
+            Send(new LoginMessage { 
+                Login = Login, 
+                DisplayName = DisplayName, 
+                Password = Password, 
+                Version = ClientVersion 
+            });
         }
 
         protected override void OnMessage(IBinaryMessage msg)

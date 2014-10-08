@@ -26,16 +26,20 @@ namespace Utopia.Shared.Settings
         [ProtoMember(4)]
         public float Power { get; set; }
 
-        [Category("General")]
-        [Browsable(false)]
+        [Description("Sound category, each category has a maximum pool of 32 sounds that can play at the same time"), Category("General")]
+        [Browsable(true)]
         [ProtoMember(5)]
         public SourceCategory Category { get; set; }
 
-        [Category("General")]
-        [Browsable(false)]
+        [Description("For using with large sound file, will reduce RAM needed"), Category("General")]
+        [Browsable(true)]
         [ProtoMember(6)]
         public bool isStreamed  { get; set; }
 
+        [Description("Sound playing priority (Higher = Most chance to have it played in situation where lot of sound are played at the same time"), Category("General")]
+        [Browsable(true)]
+        [ProtoMember(7)]
+        public int Priority { get; set; }
 
         public SoundSource()
         {
@@ -43,6 +47,7 @@ namespace Utopia.Shared.Settings
             Power = 16.0f;
             Category = SourceCategory.FX;
             isStreamed = false;
+            Priority = 0;
         }
     }
 }

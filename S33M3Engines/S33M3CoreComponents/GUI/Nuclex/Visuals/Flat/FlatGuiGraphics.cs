@@ -380,7 +380,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             int height = (int)(destination.Size.Y.Offset);
             height += (int)(bounds.Height * destination.Size.Y.Fraction);
 
-            return new Rectangle(x, y, x + width, y + height);
+            return new Rectangle(x, y, width, height);
         }
 
         /// <summary>Looks up the frame with the specified name</summary>

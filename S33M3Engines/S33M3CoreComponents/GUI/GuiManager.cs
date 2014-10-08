@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using S33M3DXEngine.Main;
@@ -45,6 +47,7 @@ namespace S33M3CoreComponents.GUI
             }
         }
 
+        private ConcurrentQueue<Action> _guiActions = new ConcurrentQueue<Action>();
 
         /// <summary>Draws the GUI</summary>
         private IGuiVisualizer _guiVisualizer;
@@ -88,7 +91,7 @@ namespace S33M3CoreComponents.GUI
             _d3DEngine.GameWindow.KeyDown += GameWindowKeyDown;
             _d3DEngine.GameWindow.KeyUp += GameWindowKeyUp;
 
-            _d3DEngine.ViewPort_Updated += _d3DEngine_ViewPort_Updated;
+            _d3DEngine.ScreenSize_Updated += _d3DEngine_ScreenSize_Updated;
 
             _screen.Width = _d3DEngine.ViewPort.Width;
             _screen.Height = _d3DEngine.ViewPort.Height;
@@ -143,7 +146,12 @@ namespace S33M3CoreComponents.GUI
             });
         }
 
-        void _d3DEngine_ViewPort_Updated(SharpDX.ViewportF viewport, Texture2DDescription newBackBuffer)
+        public void RunInGuiThread(Action action)
+        {
+            _guiActions.Enqueue(action);
+        }
+
+        void _d3DEngine_ScreenSize_Updated(SharpDX.ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             _screen.Width = viewport.Width;
             _screen.Height = viewport.Height;
@@ -219,6 +227,12 @@ namespace S33M3CoreComponents.GUI
 
         public override void FTSUpdate(GameTime timeSpend)
         {
+            Action action;
+            while (_guiActions.TryDequeue(out action))
+            {
+                action();
+            }
+
             //Check for Mouse Overing states on the gui
             if (_screen.IsMouseOverGui == true && this.CatchExclusiveActions == false)
             {
@@ -240,6 +254,11 @@ namespace S33M3CoreComponents.GUI
             _screen.Update();
         }
 
+        public bool ScreenIsLocked
+        {
+            get { return _screen.Desktop.Children.Contains(DialogHelper.DialogBg); }
+        }
+
         public void MessageBox(string message, string title = "", string[] buttonsText = null, System.Action<string> action = null)
         {
             var screenWidth = _d3DEngine.ViewPort.Width;
@@ -251,9 +270,12 @@ namespace S33M3CoreComponents.GUI
             if (buttonsText == null)
                 buttonsText = new[] { "Ok" };
 
+            var mouseCapture = _inputManager.MouseManager.MouseCapture;
+
+            _inputManager.MouseManager.MouseCapture = false;
             var mbWindow = new WindowControl { Title = title, Bounds = new UniRectangle((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2, windowWidth, windowHeight) };
 
-            mbWindow.Children.Add(new LabelControl { Text = message, Bounds = new UniRectangle(15, 25, windowWidth - 40, 40) });
+            mbWindow.Children.Add(new LabelControl { Text = message, Autosizing = true, Bounds = new UniRectangle(15, 25, windowWidth - 40, 40) });
 
             var buttonsPlace = new Control { Bounds = new UniRectangle(0, 0, 0, 20), LayoutFlags = ControlLayoutFlags.WholeRowCenter, LeftTopMargin = new SharpDX.Vector2() };
 
@@ -262,16 +284,17 @@ namespace S33M3CoreComponents.GUI
                 var button = new ButtonControl { Text = text, Bounds = new UniRectangle((windowWidth - 50) / 2, windowHeight - 30, 20 + 5 * text.Length, 20) };
 
                 buttonsPlace.Bounds.Size.X += button.Bounds.Size.X + 5;
-
-
+                
                 var text1 = text;
                 button.Pressed += delegate
                 {
-
                     _screen.Desktop.Children.Remove(DialogHelper.DialogBg);
                     mbWindow.Close();
                     DialogClosed = true;
-                    if (action != null) action(text1);
+                    if (action != null) 
+                        action(text1);
+
+                    _inputManager.MouseManager.MouseCapture = mouseCapture;
                 };
 
                 buttonsPlace.Children.Add(button);
@@ -294,6 +317,7 @@ namespace S33M3CoreComponents.GUI
 
         public void SetDialogMode(bool dialogMode)
         {
+            if (_screen.Desktop.Children.Contains(DialogHelper.DialogBg)) _screen.Desktop.Children.Remove(DialogHelper.DialogBg);
             ForceExclusiveMode = dialogMode;
             _inputManager.ActionsManager.IsMouseExclusiveMode = dialogMode;
             _inputManager.MouseManager.MouseCapture = !dialogMode;

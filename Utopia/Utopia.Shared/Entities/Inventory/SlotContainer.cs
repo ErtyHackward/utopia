@@ -4,6 +4,7 @@ using System.Linq;
 using ProtoBuf;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Inventory
 {
@@ -39,9 +40,24 @@ namespace Utopia.Shared.Entities.Inventory
             get { return _gridSize; }
             set
             {
+                var prevSize = _gridSize;
+
                 _gridSize = value;
-                //todo: copy of items to new container from old
-                _items = new T[_gridSize.X, _gridSize.Y];
+
+                var newSlots = new T[_gridSize.X, _gridSize.Y];
+
+                if (_items != null)
+                {
+                    var copySize = Vector2I.Min(prevSize, _gridSize);
+                    var range = new Range2I(Vector2I.Zero, copySize);
+
+                    foreach (var pos in range)
+                    {
+                        newSlots[pos.X, pos.Y] = _items[pos.X, pos.Y];
+                    }
+                }
+
+                _items = newSlots;
             }
         }
 
@@ -123,7 +139,7 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="parentEntity"></param>
         /// <param name="containerGridSize"></param>
-        public SlotContainer(IEntity parentEntity , Vector2I containerGridSize)
+        public SlotContainer(IEntity parentEntity, Vector2I containerGridSize)
         {
             _parentEntity = parentEntity;
             GridSize = containerGridSize;
@@ -199,6 +215,8 @@ namespace Utopia.Shared.Entities.Inventory
 
             if (item.StaticId == 0 || Find(item.StaticId) != null)
                 item.StaticId = GetFreeId();
+            else
+                _maxId = Math.Max(_maxId, item.StaticId);
         }
 
         /// <summary>
@@ -217,7 +235,7 @@ namespace Utopia.Shared.Entities.Inventory
         }
 
         /// <summary>
-        /// Determines if item can be put or exchanged to slot 
+        /// Determines if item can be put or stacked to slot 
         /// </summary>
         /// <param name="item"></param>
         /// <param name="position"></param>
@@ -237,47 +255,21 @@ namespace Utopia.Shared.Entities.Inventory
             return slot == null || slot.CanStackWith(newSlot);
         }
 
-        /// <summary>
-        /// Tries to put item into the inventory
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="count"></param>
-        /// <returns>True if item put into the inventory otherwise false</returns>
-        public bool PutItem(IItem item, int count = 1)
+        public bool CanPut(IItem item, int count = 1)
         {
-            // inventory is full?
-            if (item.MaxStackSize == 1 && _slotsCount == _gridSize.X * _gridSize.Y)
-                return false;
-            
+            return FindSlotFor(item, count) != null;
+        }
+
+        private T FindSlotFor(IItem item, int count = 1)
+        {
             if (item.MaxStackSize > 1)
             {
-                // need to find uncomplete stack if exists
+                var slot = this.FirstOrDefault(s => s.Item.StackType == item.StackType && s.ItemsCount + count <= item.MaxStackSize && ValidateItem(item, s.GridPosition));
 
-                var e = this.Any(s =>
-                               {
-                                   if (s.Item.StackType == item.StackType && s.ItemsCount + count <= item.MaxStackSize)
-                                   {
-                                       if (!ValidateItem(item, s.GridPosition))
-                                           return false;
-                                       _items[s.GridPosition.X, s.GridPosition.Y].ItemsCount += count;
-
-                                       var t = new T {
-                                           GridPosition = s.GridPosition,
-                                           ItemsCount = count,
-                                           Item = s.Item
-                                       };
-
-                                       OnItemPut(new EntityContainerEventArgs<T> { Slot = t });
-                                       return true;
-                                   }
-                                   return false;
-                               });
-
-                if (e) return true;
-
+                if (slot != null)
+                    return slot;
             }
 
-            // take first free cell and put the item
             for (int x = 0; x < _gridSize.X; x++)
             {
                 for (int y = 0; y < _gridSize.Y; y++)
@@ -288,19 +280,60 @@ namespace Utopia.Shared.Entities.Inventory
 
                         if (!ValidateItem(item, pos))
                             continue;
-                        
-                        ValidateId(ref item);
 
-                        var addSlot = new T { Item = item, GridPosition = pos, ItemsCount = count };
-                        _items[x, y] = addSlot;
-                        
-                        _slotsCount ++;
-                        OnItemPut(new EntityContainerEventArgs<T> { Slot = _items[x, y] });
-                        return true;
+                        var slot = new T { 
+                            GridPosition = pos
+                        };
+
+                        return slot;
                     }
+
                 }
             }
-            return false;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Tries to put item into the inventory
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="count"></param>
+        /// <returns>True if item put into the inventory otherwise false</returns>
+        public bool PutItem(IItem item, int count = 1)
+        {
+            if (count == 0)
+                return true;
+
+            // inventory is full?
+            if (item.MaxStackSize == 1 && _slotsCount == _gridSize.X * _gridSize.Y)
+                return false;
+
+            var slot = FindSlotFor(item, count);
+
+            if (slot == null)
+                return false;
+
+            if (slot.ItemsCount == 0)
+            {
+                // new slot
+                _slotsCount++;
+                ValidateId(ref item);
+                slot.Item = item;
+                slot.ItemsCount = count;
+                _items[slot.GridPosition.X, slot.GridPosition.Y] = slot;
+            }
+            else
+            {
+                // stacking
+                _items[slot.GridPosition.X, slot.GridPosition.Y].ItemsCount += count;
+            }
+
+            slot = (T)slot.Clone();
+            slot.ItemsCount = count;
+
+            OnItemPut(new EntityContainerEventArgs<T> { Slot = slot });
+            return true;
         }
 
         /// <summary>
@@ -338,8 +371,6 @@ namespace Utopia.Shared.Entities.Inventory
             }
             else
             {
-                
-                
                 ValidateId(ref  item);
 
                 // adding new slot
@@ -365,7 +396,8 @@ namespace Utopia.Shared.Entities.Inventory
             var currentItem = _items[position.X, position.Y];
 
             // unable to take items from empty slot
-            if (currentItem == null) return false;
+            if (currentItem == null) 
+                return false;
 
             // unable to take more items than container have
             if (currentItem.ItemsCount < itemsCount)
@@ -605,6 +637,55 @@ namespace Utopia.Shared.Entities.Inventory
 
             // check our container
             return Find(staticId) == null;
+        }
+
+        /// <summary>
+        /// Allows to put many items at once or nothing (transaction way)
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        public bool PutMany(IEnumerable<KeyValuePair<IItem, int>> items)
+        {
+            var put = new List<KeyValuePair<IItem, int>>();
+            bool success = true;
+            foreach (var keyValuePair in items)
+            {
+                if (!PutItem(keyValuePair.Key, keyValuePair.Value))
+                {
+                    success = false;
+                    break;
+                }
+                put.Add(keyValuePair);
+            }
+
+            if (!success)
+            {
+                foreach (var keyValuePair in put)
+                {
+                    TakeItem(keyValuePair.Key.BluePrintId, keyValuePair.Value);
+                }
+            }
+
+            return success;
+        }
+
+        internal bool TakeItem(ushort blueprintId, int count)
+        {
+            while (count > 0)
+            {
+                var slot = this.LastOrDefault(s => s.Item.BluePrintId == blueprintId);
+
+                if (slot == null)
+                    break;
+
+                var takeItems = Math.Min(slot.ItemsCount, count);
+
+                TakeItem(slot.GridPosition, takeItems);
+
+                count -= takeItems;
+            }
+
+            return count == 0;
         }
     }
 }

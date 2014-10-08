@@ -192,7 +192,7 @@ namespace Utopia.Editor
     //                btn.Bounds = new UniRectangle(x0 + x*btnSize, y0 + y*btnSize, btnSize, btnSize);
     //                btn.Texture = new SpriteTexture(btnSize, btnSize, arrayResourceView, Vector2.Zero);
 
-    //                btn.Texture.Index = profile.Tex_Front;
+    //                btn.Texture.Index = profile.Tex_Front.TextureArrayId;
     //                int associatedindex = profile.Id; //new variable for access inside btn.pressed closure 
     //                btn.Pressed += (sender, e) =>
     //                                   {

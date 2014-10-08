@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using ProtoBuf;
 using S33M3CoreComponents.Inputs.Actions;
@@ -23,10 +24,9 @@ namespace Utopia.Shared.Entities.Concrete
 
         private Vector3I _selectionStart;
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.GodHand; }
-        }
+        [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
+        [ProtoMember(1)]
+        public bool RepeatedActionsAllowed { get; set; }
 
         public override PickType CanPickBlock(BlockProfile blockProfile)
         {

@@ -1,7 +1,7 @@
 ﻿namespace Utopia.Shared
 {
     /// <summary>
-    /// Contains various runtime game variables
+    /// Contains various runtime game variables for cross-state communications
     /// </summary>
     public class RuntimeVariables
     {
@@ -14,6 +14,11 @@
         /// Gets selected server address
         /// </summary>
         public string CurrentServerAddress { get; set; }
+
+        /// <summary>
+        /// Gets selected server local address (for the case if connecting from the intranet)
+        /// </summary>
+        public string CurrentServerLocalAddress { get; set; }
 
         /// <summary>
         /// Logged user email

@@ -8,7 +8,7 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Services.Interfaces;
+using Utopia.Shared.Server;
 using Container = Utopia.Shared.Entities.Concrete.Container;
 
 namespace Utopia.Shared.Services
@@ -19,7 +19,7 @@ namespace Utopia.Shared.Services
     [ProtoContract]
     public class NpcService : Service
     {
-        private IServer _server;
+        private ServerCore _server;
         private string[] _names = new[] { "Bob", "Ivan", "Steve", "Sayid", "Chuck", "Matvey", "Mattias", "George", "Master Yoda", "Homer" };
         //private string[] _names = new[] { "Katia", "Sveta", "Lena", "Dasha" };
 
@@ -52,12 +52,12 @@ namespace Utopia.Shared.Services
             }
 
             npc.Position = position;
-            var srvNpc = _server.AreaManager.CreateNpc(npc);
+            var srvNpc = _server.EntityManager.AddNpc(npc);
             _aliveNpc.Add(srvNpc);
             return srvNpc;
         }
 
-        public override void Initialize(IServer server)
+        public override void Initialize(ServerCore server)
         {
             _server = server;
 
@@ -97,8 +97,11 @@ namespace Utopia.Shared.Services
                     {
                         var n = (Npc)item;
 
-                        n.Name = r.Next(_names);
-
+                        if (!(item is Animal))
+                        {
+                            n.Name = r.Next(_names);
+                        }
+                        
                         var npc = CreateNpc(n, _server.LandscapeManager.GetHighestPoint(new Vector3D(-50 + move, 72, 30)));
                         npc.Faction = faction;
                     }
@@ -111,7 +114,7 @@ namespace Utopia.Shared.Services
 
                         var cursor = _server.LandscapeManager.GetCursor(pos);
 
-                        var chunk = _server.LandscapeManager.GetChunk(new Vector3I(-50 + move, 72, 30));
+                        var chunk = _server.LandscapeManager.GetChunkFromBlock(new Vector3I(-50 + move, 72, 30));
 
                         if (!chunk.Entities.EnumerateFast().Any(e => e.Position == pos))
                         {
@@ -167,7 +170,7 @@ namespace Utopia.Shared.Services
             {
                 for (int i = _aliveNpc.Count - 1; i >= 0; i--)
                 {
-                    _server.AreaManager.RemoveNpc(_aliveNpc[i]);
+                    _server.AreaManager.RemoveNpc(_aliveNpc[i].Character.DynamicId);
                 }
                 _aliveNpc.Clear();
 

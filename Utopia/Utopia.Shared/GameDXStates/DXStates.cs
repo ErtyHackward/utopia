@@ -185,6 +185,7 @@ namespace Utopia.Shared.GameDXStates
 
         public static class Samplers
         {
+            public static int UVClamp_MinMagMipLinear;
             public static int UVClamp_MinMagMipPoint;
             public static int UVWrap_MinLinearMagPointMipLinear;
             public static int UVWrap_MinMagMipPoint;
@@ -196,6 +197,18 @@ namespace Utopia.Shared.GameDXStates
 
         private static void CreateSamplerStatesCollection()
         {
+            //Samplers.UVClamp_MinMagMipLinear
+            Samplers.UVClamp_MinMagMipLinear = RenderStatesRepo.AddSamplerStates(new SamplerStateDescription()
+            {
+                AddressU = TextureAddressMode.Clamp,
+                AddressV = TextureAddressMode.Clamp,
+                AddressW = TextureAddressMode.Clamp,
+                Filter = Filter.MinMagMipLinear,
+                MaximumLod = float.MaxValue,
+                MinimumLod = 0
+            }
+                                );
+
             //Samplers.UVClamp_MinMagMipPoint
             Samplers.UVClamp_MinMagMipPoint = RenderStatesRepo.AddSamplerStates(new SamplerStateDescription()
             {

@@ -8,9 +8,14 @@ namespace Utopia.Shared.Entities.Interfaces
     public interface IVoxelEntity : IEntity
     {
         /// <summary>
-        /// Gets current voxel model name
+        /// Gets or sets current voxel model name
         /// </summary>
-        string ModelName { get; }
+        string ModelName { get; set; }
+
+        /// <summary>
+        /// Gets or sets voxel model state to use
+        /// </summary>
+        string ModelState { get; set; }
 
         /// <summary>
         /// Gets or sets voxel model instance

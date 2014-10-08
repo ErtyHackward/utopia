@@ -16,6 +16,7 @@ using System.IO;
 using S33M3CoreComponents.Config;
 using Utopia.Components;
 using Utopia.Sounds;
+using Utopia.Shared.GraphicManagers;
 
 namespace Realms.Client.States
 {

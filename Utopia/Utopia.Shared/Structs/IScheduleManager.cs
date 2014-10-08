@@ -5,11 +5,6 @@ namespace Utopia.Shared.Structs
     public interface IScheduleManager
     {
         /// <summary>
-        /// Gets or sets scheduler clock
-        /// </summary>
-        Clock Clock { get; set; }
-
-        /// <summary>
         /// Removes task from manager
         /// </summary>
         /// <param name="scheduleTask"></param>

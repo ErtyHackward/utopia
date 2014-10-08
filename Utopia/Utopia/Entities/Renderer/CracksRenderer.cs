@@ -11,15 +11,18 @@ using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.RenderStates;
 using S33M3DXEngine.Textures;
+using S33M3Resources.Structs;
 using S33M3Resources.Structs.Vertex;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Resources.Effects.Entities;
+using Utopia.Shared.Chunks;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs.Helpers;
 using Utopia.Worlds.Chunks;
+using Utopia.Worlds.SkyDomes;
 
 namespace Utopia.Entities.Renderer
 {
@@ -31,6 +34,9 @@ namespace Utopia.Entities.Renderer
         private readonly D3DEngine _engine;
         private readonly CameraManager<ICameraFocused> _cameraManager;
         private readonly IWorldChunks2D _worldChunks;
+        private readonly SingleArrayChunkContainer _cubesHolder;
+        private readonly ISkyDome _skyDome;
+
         private ShaderResourceView _cracksArray;
 
         private HLSLCracks _cubeEffect;
@@ -41,7 +47,11 @@ namespace Utopia.Entities.Renderer
 
         public CracksRenderer(D3DEngine engine,
                               CameraManager<ICameraFocused> cameraManager,
-                              IWorldChunks2D worldChunks)
+                              IWorldChunks2D worldChunks,
+                              SingleArrayChunkContainer cubesHolder,
+                              ISkyDome skyDome
+            )
+
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (cameraManager == null) throw new ArgumentNullException("cameraManager");
@@ -50,6 +60,8 @@ namespace Utopia.Entities.Renderer
             _engine = engine;
             _cameraManager = cameraManager;
             _worldChunks = worldChunks;
+            _cubesHolder = cubesHolder;
+            _skyDome = skyDome;
 
             this.DrawOrders.UpdateIndex(0, 1010);
         }
@@ -85,19 +97,33 @@ namespace Utopia.Entities.Renderer
         {
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled);
             
-            foreach (var chunk in _worldChunks.ChunksToDraw())
+            foreach(var chunk in _worldChunks.GetChunks(WorldChunks.GetChunksFilter.VisibleWithinStaticObjectRange))
             {
+                if (chunk.DistanceFromPlayer > _worldChunks.StaticEntityViewRange) break; //Limit the crack drawing to the same zone as the static entity visualization
+      
                 foreach (var pair in chunk.BlockData.GetTags().Where(p => p.Value is DamageTag && _worldChunks.IsEntityVisible(p.Key)))
                 {
                     var tag = (DamageTag)pair.Value;
 
                     var pos = BlockHelper.ConvertToGlobal(chunk.Position, pair.Key);
 
+                    var list = new List<Vector3I>(new[] { new Vector3I(1, 0, 0), new Vector3I(-1, 0, 0), new Vector3I(0, 1, 0), new Vector3I(0, -1, 0), new Vector3I(0, 0, 1), new Vector3I(0, 0, -1) });
+
+                    var result = list.Select( v => v + pos ).Select( v => _cubesHolder.GetCube(v).Cube.EmissiveColor.ToColor4() ).Aggregate((s,c) => s + c );
+                    result.Red   /= 6;
+                    result.Green /= 6;
+                    result.Blue  /= 6;
+                    result.Alpha /= 6;
+                    
+                    result.Red = Math.Max(result.Red, result.Alpha * _skyDome.SunColor.Red);
+                    result.Green = Math.Max(result.Green, result.Alpha * _skyDome.SunColor.Green);
+                    result.Blue = Math.Max(result.Blue, result.Alpha * _skyDome.SunColor.Blue);
+
                     _cubeEffect.Begin(context);
                     _cubeEffect.CBPerDraw.Values.TextureIndex = 5 - 5 * tag.Strength / tag.TotalStrength;
                     _cubeEffect.CBPerDraw.Values.World = Matrix.Transpose(Matrix.Scaling(1.01f) * Matrix.Translation(pos + new Vector3(0.5f)));
-                    _cubeEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);                   
-                    _cubeEffect.CBPerDraw.Values.LightColor = Color3.White;
+                    _cubeEffect.CBPerDraw.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
+                    _cubeEffect.CBPerDraw.Values.LightColor = new Color3(result.ToVector3()); // Color3.White;
                     _cubeEffect.CBPerDraw.IsDirty = true;
                     _cubeEffect.Apply(context);
 
@@ -109,12 +135,6 @@ namespace Utopia.Entities.Renderer
             }
             
             base.Draw(context, index);
-        }
-
-        public override void BeforeDispose()
-        {
-            _cracksArray.Dispose();
-            base.BeforeDispose();
         }
     }
 }

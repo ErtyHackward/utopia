@@ -15,8 +15,7 @@ namespace Realms.Client.States
     /// </summary>
     public class InGameMenuState : GameState
     {
-        private readonly IKernel _iocContainer;
-        private bool _isGameExited;
+        private readonly IKernel _ioc;
         private ISoundEngine _soundEngine;
 
         // do we need to capture mouse on continue?
@@ -30,16 +29,16 @@ namespace Realms.Client.States
         public InGameMenuState(GameStatesManager stateManager, IKernel iocContainer, ISoundEngine soundEngine)
             :base(stateManager)
         {
-            _iocContainer = iocContainer;
+            _ioc = iocContainer;
             AllowMouseCaptureChange = false;
             _soundEngine = soundEngine;
         }
 
         public override void Initialize(SharpDX.Direct3D11.DeviceContext context)
         {
-            var gui = _iocContainer.Get<GuiManager>();
-            var menu = _iocContainer.Get<InGameMenuComponent>();
-            var fade = _iocContainer.Get<FadeComponent>();
+            var gui = _ioc.Get<GuiManager>();
+            var menu = _ioc.Get<InGameMenuComponent>();
+            var fade = _ioc.Get<FadeComponent>();
 
             fade.Color = new SharpDX.Color4(0, 0, 0, 0.85f);
 
@@ -56,7 +55,7 @@ namespace Realms.Client.States
 
         void MenuContinuePressed(object sender, EventArgs e)
         {
-            var inputManager = _iocContainer.Get<InputsManager>();
+            var inputManager = _ioc.Get<InputsManager>();
             inputManager.MouseManager.MouseCapture = _captureMouse;
 
             StatesManager.ActivateGameStateAsync("Gameplay");
@@ -69,51 +68,34 @@ namespace Realms.Client.States
         
         void MenuExitPressed(object sender, EventArgs e)
         {
-            _isGameExited = true;
+            var vars = _ioc.Get<RealmRuntimeVariables>();
+            vars.DisposeGameComponents = true;
+            vars.MessageOnExit = null;
+
             WithPreservePreviousStates = false;
             StatesManager.ActivateGameStateAsync("MainMenu");
         }
 
         public override void OnEnabled(GameState previousState)
         {
-            var fade = _iocContainer.Get<FadeComponent>();
+            var fade = _ioc.Get<FadeComponent>();
             fade.Color = new SharpDX.Color4(0, 0, 0, 0.85f);
             fade.Visible = true;
 
-            var inputManager = _iocContainer.Get<InputsManager>();
-            //_captureMouse = inputManager.MouseManager.MouseCapture;
-            //inputManager.MouseManager.MouseCapture = false;
-
-            inputManager.MouseManager.StrategyMode = false;
-
-            //var inventory = _iocContainer.Get<InventoryComponent>();
-            //inventory.DisableComponent();
+            var inputManager = _ioc.Get<InputsManager>();
+            _captureMouse = inputManager.MouseManager.MouseCapture;
+            inputManager.MouseManager.MouseCapture = false;
 
             base.OnEnabled(previousState);
         }
 
         public override void OnDisabled(GameState nextState)
         {
-            var fade = _iocContainer.Get<FadeComponent>();
+            var fade = _ioc.Get<FadeComponent>();
             fade.Visible = false;
-
-            if (_isGameExited)
-            {
-                //Disconnect in a clean way from the server
-                _soundEngine.StopAllSounds();
-
-                //Dispose all components related to the Game scope
-                GameScope.CurrentGameScope.Dispose();
-                //Create a new Scope
-                GameScope.CreateNewScope();
-                _isGameExited = false;
-            }
-            else
-            {
-                var inputManager = _iocContainer.Get<InputsManager>();
-                //inputManager.MouseManager.MouseCapture = _captureMouse;
-                inputManager.MouseManager.StrategyMode = true;
-            }
+            
+            var inputManager = _ioc.Get<InputsManager>();
+            inputManager.MouseManager.MouseCapture = _captureMouse;
         }
 
     }

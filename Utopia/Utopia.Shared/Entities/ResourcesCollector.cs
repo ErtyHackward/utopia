@@ -1,10 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing.Design;
+using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Maths;
+using S33M3CoreComponents.Sound;
+using S33M3Resources.Structs;
+using SharpDX;
 using Utopia.Shared.Chunks.Tags;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Structs;
+using Utopia.Shared.LandscapeEntities.Trees;
+using Utopia.Shared.Settings;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities
 {
@@ -12,12 +24,31 @@ namespace Utopia.Shared.Entities
     /// The base class use to collect things in the world (= Removed them and put them in the inventory)
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(BasicCollector))]
     public abstract class ResourcesCollector : Item, ITool
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        /// <summary>
+        /// Tool block damage
+        /// negative values will repair blocks
+        /// </summary>
+        [Category("Gameplay")]
+        [ProtoMember(1)]
+        public int Damage { get; set; }
 
-        private IDynamicEntity _owner;
-        private ScheduleTask _task;
+        [Category("Gameplay")]
+        [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
+        [ProtoMember(2)]
+        public bool RepeatedActionsAllowed { get; set; }
+
+        [Category("Gameplay")]
+        [Description("Allows to set damage for specified types of blocks")]
+        [ProtoMember(3, OverwriteList = true)]
+        public List<CubeDamage> SpecialDamages { get; set; }
+
+        protected ResourcesCollector()
+        {
+            SpecialDamages = new List<CubeDamage>();
+        }
 
         /// <summary>
         /// Using a Collector type Tool Item will start to hit block from world an place it into own bag.
@@ -26,60 +57,37 @@ namespace Utopia.Shared.Entities
         /// <returns></returns>
         public IToolImpact Use(IDynamicEntity owner)
         {
-            var impact = new ToolImpact { Success = false };
+            IToolImpact impact;
+
+            if (!CanDoBlockAction(owner, out impact))
+            {
+                return impact;
+            }
             
-            if (!EntityFactory.ServerSide)
-            {
-                // client run
-                if (owner.ModelInstance != null)
-                {
-                    if (owner.EntityState.MouseUp)
-                    {
-                        owner.ModelInstance.Stop("Dig"); 
-                    }
-                    else if (owner.EntityState.IsBlockPicked)
-                    {
-                        owner.ModelInstance.TryPlayForced("Dig", true);                        
-                    }
-                }
-                return impact;
-            }
-
-            // server side logic
-
-            _owner = owner;
-
-            if (owner.EntityState.MouseUp)
-            {
-                if (_task != null)
-                {
-                    EntityFactory.ScheduleManager.RemoveTask(_task);
-                    _task = null;
-                }
-                
-                return impact;
-            }
-
-            if (owner.EntityState.IsBlockPicked)
-            {
-                // tool will start to hit the block each second
-                _task = EntityFactory.ScheduleManager.AddPeriodic(EntityFactory.ScheduleManager.Clock.RealToGameSpan(TimeSpan.FromSeconds(1)), BlockHit);
-                
-                return impact;
-            }
-
-            impact.Message = "No target selected for use";
-            return impact;
+            return BlockHit(owner);
         }
 
-        private void BlockHit()
+        private IToolImpact BlockHit(IDynamicEntity owner)
         {
-            var cursor = LandscapeManager.GetCursor(_owner.EntityState.PickedBlockPosition);
-
-            if (cursor.PeekProfile().Hardness == 0)
+            var impact = new BlockToolImpact {
+                SrcBlueprintId = BluePrintId,
+                Position = owner.EntityState.PickedBlockPosition
+            };
+            
+            var cursor = LandscapeManager.GetCursor(owner.EntityState.PickedBlockPosition);
+            if (cursor == null)
             {
-                //Indestrutible cube, cannot be removed !
-                return;
+                //Impossible to find chunk, chunk not existing, event dropped
+                impact.Message = "Block not existing, event dropped";
+                impact.Dropped = true;
+                return impact;
+            }
+            cursor.OwnerDynamicId = owner.DynamicId;
+
+            if (cursor.PeekProfile().Indestructible)
+            {
+                impact.Message = "Indestrutible cube, cannot be removed !";
+                return impact;
             }
 
             DamageTag damage;
@@ -87,26 +95,176 @@ namespace Utopia.Shared.Entities
             var cube = cursor.Read(out damage);
             if (cube != WorldConfiguration.CubeId.Air)
             {
+                impact.CubeId = cube;
+                var profile = cursor.PeekProfile();
+                var hardness = profile.Hardness;
+
                 if (damage == null)
                 {
-                    damage = new DamageTag { Strength = 15, TotalStrength = 15 };
+                    damage = new DamageTag {
+                        Strength = (int)hardness,
+                        TotalStrength = (int)hardness
+                    };
                 }
 
-                damage.Strength--;
+                var toolBlockDamage = Damage;
+
+                if (SpecialDamages != null)
+                {
+                    var index = SpecialDamages.FindIndex(cd => cd.CubeId == cube);
+
+                    if (index != -1)
+                        toolBlockDamage = SpecialDamages[index].Damage;
+                }
+
+                damage.Strength -= toolBlockDamage;
+
+                if (toolBlockDamage > 0 && SoundEngine != null)
+                {
+                    if (profile.HitSounds.Count > 0)
+                    {
+                        var random = new Random();
+                        var sound = profile.HitSounds[random.Next(0, profile.HitSounds.Count)];
+                        SoundEngine.StartPlay3D(sound, owner.EntityState.PickedBlockPosition + new Vector3(0.5f));
+                    }
+                }
 
                 if (damage.Strength <= 0)
                 {
-                    var chunk = LandscapeManager.GetChunk(_owner.EntityState.PickedBlockPosition);
-                    
-                    chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.LinkedCube == _owner.EntityState.PickedBlockPosition);
+                    var chunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.PickedBlockPosition);
+                    if (chunk == null)
+                    {
+                        //Impossible to find chunk, chunk not existing, event dropped
+                        impact.Message = "Chunk is not existing, event dropped";
+                        impact.Dropped = true;
+                        return impact;
+                    }
+                    chunk.Entities.RemoveAll<BlockLinkedItem>(e => e.Linked && e.LinkedCube == owner.EntityState.PickedBlockPosition, owner.DynamicId);
+                    cursor.Write(WorldConfiguration.CubeId.Air);
 
-                    cursor.Write(WorldConfiguration.CubeId.Air); //===> Need to do this AFTER Because this will trigger chunk Rebuilding in the Client ... need to change it.
+                    #region TreeSoul remove logic
+                    foreach (var treeSoul in EntityFactory.LandscapeManager.AroundEntities(owner.EntityState.PickedBlockPosition, 16).OfType<TreeSoul>())
+                    {
+                        var treeBp = EntityFactory.Config.TreeBluePrintsDico[treeSoul.TreeTypeId];
+
+                        if (cube != treeBp.FoliageBlock && cube != treeBp.TrunkBlock)
+                            continue;
+
+                        var treeLSystem = new TreeLSystem();
+
+                        var treeBlocks = treeLSystem.Generate(treeSoul.TreeRndSeed, (Vector3I)treeSoul.Position, treeBp);
+
+                        // did we remove the block of the tree?
+                        if (treeBlocks.Exists(b => b.WorldPosition == owner.EntityState.PickedBlockPosition))
+                        {
+                            treeSoul.IsDamaged = true;
+
+                            // count removed trunk blocks
+                            var totalTrunks = treeBlocks.Count(b => b.BlockId == treeBp.TrunkBlock);
+
+                            var existsTrunks = treeBlocks.Count(b =>
+                            {
+                                if (b.BlockId == treeBp.TrunkBlock)
+                                {
+                                    cursor.GlobalPosition = b.WorldPosition;
+                                    return cursor.Read() == treeBp.TrunkBlock;
+                                }
+                                return false;
+                            });
+
+                            if (existsTrunks < totalTrunks / 2)
+                            {
+                                treeSoul.IsDying = true;
+                            }
+                        }
+                    }
+                    #endregion
+                    
+                    if (SoundEngine != null && EntityFactory.Config.ResourceTake != null)
+                    {
+                        SoundEngine.StartPlay3D(EntityFactory.Config.ResourceTake, owner.EntityState.PickedBlockPosition + new Vector3(0.5f));
+                    }
+                    
+                    var charEntity = owner as CharacterEntity;
+                    if (charEntity == null)
+                    {
+                        impact.Message = "Charater entity is expected";
+                        return impact;
+                    }
+
+                    var putItems = new List<KeyValuePair<IItem, int>>();
+                    putItems.Add(new KeyValuePair<IItem, int>((IItem)EntityFactory.CreateFromBluePrint(cube), 1));
+
+                    if (profile.Transformations != null)
+                    {
+                        var random = new FastRandom(owner.EntityState.PickedEntityPosition.GetHashCode() ^ owner.EntityState.Entropy);
+                        foreach (var itemTransformation in profile.Transformations)
+                        {
+                            if (random.NextDouble() < itemTransformation.TransformChance)
+                            {
+                                // don't give the block
+                                putItems.Clear();
+                                foreach (var slot in itemTransformation.GeneratedItems)
+                                {
+                                    putItems.Add(new KeyValuePair<IItem, int>((Item)EntityFactory.CreateFromBluePrint(slot.BlueprintId), slot.Count));
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // in case of infinite resources we will not add more than 1 block entity 
+                    var existingSlot = charEntity.FindSlot(s => s.Item.BluePrintId == cube);
+
+                    if (!EntityFactory.Config.IsInfiniteResources || existingSlot == null)
+                    {
+                        if (!charEntity.Inventory.PutMany(putItems))
+                            impact.Message = "Can't put the item(s) to inventory";
+                    }
+
+                    impact.CubeId = WorldConfiguration.CubeId.Air;
+                }
+                else if (damage.Strength >= hardness)
+                {
+                    cursor.Write(cube);
                 }
                 else
                 {
                     cursor.Write(cube, damage);
                 }
+
+                impact.Success = true;
+                return impact;
             }
+
+            impact.Message = "Cannot hit air block";
+            return impact;
+        }
+
+        public override object Clone()
+        {
+            var collector = (ResourcesCollector)base.Clone();
+
+            collector.SpecialDamages = new List<CubeDamage>(SpecialDamages);
+
+            return collector;
+        }
+    }
+
+    [ProtoContract]
+    public struct CubeDamage
+    {
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
+        [ProtoMember(1)]
+        public byte CubeId { get; set; }
+
+        [ProtoMember(2)]
+        public int Damage { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("{0} => {1}", CubeId, Damage);
         }
     }
 }

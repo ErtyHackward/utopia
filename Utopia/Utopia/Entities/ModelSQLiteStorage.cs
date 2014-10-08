@@ -96,7 +96,6 @@ namespace Utopia.Entities
         public void Save(VoxelModel model)
         {
             CheckName(model.Name);
-
             using (var ms= new MemoryStream() )
             {
                 Serializer.Serialize(ms, model);
@@ -107,8 +106,6 @@ namespace Utopia.Entities
 
                 InsertBlob(string.Format("INSERT INTO models (id, updated, data) VALUES ('{0}', datetime('now'), @blob)", model.Name), bytes);
             }
-
-
         }
 
         /// <summary>

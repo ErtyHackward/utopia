@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Utopia.Network;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Structs;
+using Utopia.Shared.Interfaces;
 
 namespace Utopia.Entities.Managers
 {

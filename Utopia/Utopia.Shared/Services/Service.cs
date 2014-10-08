@@ -1,6 +1,6 @@
 ﻿using System;
 using ProtoBuf;
-using Utopia.Shared.Services.Interfaces;
+using Utopia.Shared.Server;
 
 namespace Utopia.Shared.Services
 {
@@ -10,6 +10,7 @@ namespace Utopia.Shared.Services
     [ProtoContract]
     [ProtoInclude(100, typeof(NpcService))]
     [ProtoInclude(101, typeof(WaterDynamicService))]
+    [ProtoInclude(102, typeof(WeatherService))]
     public abstract class Service : IDisposable
     {
         /// <summary>
@@ -20,6 +21,6 @@ namespace Utopia.Shared.Services
             
         }
 
-        public abstract void Initialize(IServer server);
+        public abstract void Initialize(ServerCore server);
     }
 }

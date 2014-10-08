@@ -6,6 +6,13 @@ using System.Linq;
 using System.Text;
 using ProtoBuf;
 using S33M3Resources.Structs;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Services;
+using Utopia.Shared.Settings;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Tools;
+using System.Drawing.Design;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Shared.LandscapeEntities.Trees
 {
@@ -33,11 +40,13 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         public LSystemRule Rules_d { get; set; }
         [Category("Configuration")]
         [ProtoMember(7)]
-        [Browsable(false)]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte TrunkBlock { get; set; }
         [Category("Configuration")]
         [ProtoMember(8)]
-        [Browsable(false)]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte FoliageBlock { get; set; }
         [Category("Configuration")]
         [ProtoMember(9)]
@@ -64,15 +73,38 @@ namespace Utopia.Shared.LandscapeEntities.Trees
         [Category("Configuration")]
         [DisplayName("Foliage size")]
         [ProtoMember(16)]
-        //public Vector3I FoliageSize { get; set; }
+        public Vector3I FoliageSize { get; set; }
+        
+        [Category("Growing")]
+        [Description("Tree grow time from seed to final state")]
+        [TypeConverter(typeof(UtopiaTimeSpanConverter))]
+        [ProtoMember(17)]
+        public UtopiaTimeSpan GrowTime { get; set; }
+        [Category("Growing")]
+        [Description("Will grow only in specified seasond. If not set will grow all the time")]
+        [Editor(typeof(Season.SeasonsEditor), typeof(UITypeEditor))]
+        [ProtoMember(18)]
+        public List<string> GrowingSeasons { get; set; }
+        [Category("Growing")]
+        [Description("Tree seed inventory icon model")]
+        [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
+        [ProtoMember(19)]
+        public string SeedModel { get; set; }
+        [Category("Growing")]
+        [Description("Will grow only on specified blocks. If not set will grow anywhere")]
+        [Editor(typeof(GrowingEntity.MultiBlockListEditor), typeof(UITypeEditor))]
+        [ProtoMember(20)]
+        public List<byte> GrowingBlocks { get; set; }
+        [Category("Growing")]
+        [Description("How much game time should pass between items regenerations")]
+        [TypeConverter(typeof(UtopiaTimeSpanConverter))]
+        [ProtoMember(21)]
+        public UtopiaTimeSpan ItemsRegenerationTime { get; set; }
 
-        public Vector3I FoliageSize
+        public TreeBluePrint()
         {
-            get { return _foliageSize; }
-            set { _foliageSize = value; }
+            GrowingSeasons = new List<string>();
         }
-        private Vector3I _foliageSize;
-
 
         public override string ToString()
         {

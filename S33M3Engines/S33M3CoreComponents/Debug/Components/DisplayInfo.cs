@@ -17,7 +17,7 @@ namespace S33M3CoreComponents.Components.Debug
     {
         private SpriteFont _font;
         private SpriteRenderer _spriteRender;
-        private Vector2 _textPosition = new Vector2(5, 0);
+        private Vector2 _textPosition = new Vector2(205, 5);
         private StringBuilder _sb = new StringBuilder();
         private Game _game;
 

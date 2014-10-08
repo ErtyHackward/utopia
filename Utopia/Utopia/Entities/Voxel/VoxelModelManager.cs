@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Ninject;
-using Utopia.Network;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Interfaces;
-using Utopia.Shared.Net.Connections;
-using Utopia.Shared.Net.Messages;
 using S33M3DXEngine.Main;
 
 namespace Utopia.Entities.Voxel
@@ -16,12 +15,13 @@ namespace Utopia.Entities.Voxel
     /// </summary>
     public class VoxelModelManager : GameComponent
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private bool _initialized;
-        private ServerComponent _server;
         private readonly object _syncRoot = new object();
         private readonly Dictionary<string, VisualVoxelModel> _models = new Dictionary<string, VisualVoxelModel>();
         private HashSet<string> _pendingModels = new HashSet<string>();
-
+        private readonly ConcurrentQueue<VoxelModel> _receivedModels = new ConcurrentQueue<VoxelModel>();
 
         /// <summary>
         /// Occurs when a voxel model is available (received from the server, loaded from the storage)
@@ -38,42 +38,13 @@ namespace Utopia.Entities.Voxel
         public IVoxelModelStorage VoxelModelStorage { get; set; }
 
         [Inject]
-        public ServerComponent Server
-        {
-            get { return _server; }
-            set { 
-                _server = value;
-                _server.MessageVoxelModelData += ServerConnectionMessageVoxelModelData;
-            }
-        }
-
-        [Inject]
         public VoxelMeshFactory VoxelMeshFactory { get; set; }
-
-        public override void BeforeDispose()
-        {
-            if (_server != null)
-                _server.MessageVoxelModelData -= ServerConnectionMessageVoxelModelData;
-        }
-
-        void ServerConnectionMessageVoxelModelData(object sender, ProtocolMessageEventArgs<VoxelModelDataMessage> e)
-        {
-            lock (_syncRoot)
-            {
-                _models.Add(e.Message.VoxelModel.Name, new VisualVoxelModel(e.Message.VoxelModel, VoxelMeshFactory));
-                _pendingModels.Remove(e.Message.VoxelModel.Name);
-            }
-
-            OnVoxelModelAvailable(new VoxelModelReceivedEventArgs { Model = e.Message.VoxelModel });
-
-            VoxelModelStorage.Save(e.Message.VoxelModel);
-        }
 
         /// <summary>
         /// Request a missing model from the server
         /// </summary>
         /// <param name="name"></param>
-        public void RequestModel(string name)
+        public void RequestModelAsync(string name)
         {
             bool requested;
             lock (_syncRoot)
@@ -84,8 +55,50 @@ namespace Utopia.Entities.Voxel
             }
 
             // don't request the model before we are initialized or already requested
-            if (requested && _initialized && _server != null)
-                _server.ServerConnection.Send(new GetVoxelModelsMessage { Names = new[] { name } });
+            if (requested && _initialized)
+            {
+                new System.Action(() => DownloadModel(name)).BeginInvoke(null, null);
+            }
+        }
+
+        /// <summary>
+        /// Request a missing model from the server
+        /// </summary>
+        /// <param name="name"></param>
+        public void DownloadModel(string name)
+        {
+            logger.Info("Downloading model: {0}", name);
+            
+            try
+            {
+                var req = WebRequest.Create(string.Format("http://utopiarealms.com/models/{0}/download", Uri.EscapeDataString(name)));
+                var response = req.GetResponse();
+
+                using (var stream = response.GetResponseStream())
+                {
+                    var voxelModel = VoxelModel.LoadFromStream(stream);
+
+                    lock (_syncRoot)
+                    {
+                        if (_models.ContainsKey(voxelModel.Name))
+                            _models.Remove(voxelModel.Name);
+
+                        var model = new VisualVoxelModel(voxelModel, VoxelMeshFactory);
+                        model.BuildMesh();
+                        _models.Add(voxelModel.Name, model);
+                        _pendingModels.Remove(voxelModel.Name);
+                    }
+
+                    _receivedModels.Enqueue(voxelModel);
+                    VoxelModelStorage.Save(voxelModel);
+                }
+
+                response.Close();
+            }
+            catch (Exception x)
+            {
+                logger.Error("Unable to download the model: {0}", x.Message);
+            }
         }
 
         /// <summary>
@@ -104,7 +117,7 @@ namespace Utopia.Entities.Voxel
             }
 
             if (requestIfMissing)
-                RequestModel(name);
+                RequestModelAsync(name);
 
             return null;
         }
@@ -163,14 +176,18 @@ namespace Utopia.Entities.Voxel
             // load all models
             lock (_syncRoot)
             {
+                if (_initialized)
+                    return;
+
                 foreach (var voxelModel in VoxelModelStorage.Enumerate())
                 {
                     var vmodel = new VisualVoxelModel(voxelModel, VoxelMeshFactory);
                     vmodel.BuildMesh(); //Build the mesh of all local models
                     _models.Add(voxelModel.Name, vmodel);
                 }
+                
+                _initialized = true;
             }
-            _initialized = true;
             
             // if we have some requested models, remove those that was loaded
             List<string> loadedModels;
@@ -199,8 +216,22 @@ namespace Utopia.Entities.Voxel
             // request the rest models
             foreach (var absentModel in requestSet)
             {
-                RequestModel(absentModel);
+                RequestModelAsync(absentModel);
             }
+        }
+
+        public override void FTSUpdate(GameTime timeSpent)
+        {
+            if (_receivedModels.Count > 0)
+            {
+                VoxelModel model;
+                while (_receivedModels.TryDequeue(out model))
+                {
+                    OnVoxelModelAvailable(new VoxelModelReceivedEventArgs { Model = model });
+                }
+            }
+
+            base.FTSUpdate(timeSpent);
         }
 
         public bool Contains(string name)
@@ -223,6 +254,26 @@ namespace Utopia.Entities.Voxel
                 VoxelModelStorage.Save(model.VoxelModel);
                 _models.Remove(oldName);
                 _models.Add(newName, model);
+            }
+        }
+
+        public VisualVoxelModel GetModelByHash(string hash)
+        {
+            lock (_syncRoot)
+            {
+                var model = _models.Select(p => p.Value).FirstOrDefault(m =>
+                {
+                    if (m.VoxelModel.Hash == null)
+                        m.VoxelModel.UpdateHash();
+                    return m.VoxelModel.Hash.ToString() == hash;
+                });
+
+                if (model == null)
+                {
+                    RequestModelAsync(hash);
+                }
+
+                return model;
             }
         }
     }

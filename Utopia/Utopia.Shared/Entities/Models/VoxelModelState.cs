@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using System.IO;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using SharpDX;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
 {
@@ -11,7 +9,7 @@ namespace Utopia.Shared.Entities.Models
     /// Contains a model parts layout
     /// </summary>
     [ProtoContract]
-    public class VoxelModelState : IBinaryStorable
+    public class VoxelModelState
     {
         private VoxelModel _parentModel;
         private BoundingBox _boundingBox;
@@ -36,6 +34,16 @@ namespace Utopia.Shared.Entities.Models
         {
             get { return _boundingBox; }
             set { _boundingBox = value; }
+        }
+
+        public bool IsMainState
+        {
+            get { return _parentModel.GetMainState() == this; }
+        }
+
+        public bool IsIconState
+        {
+            get { return _parentModel.GetIconState() == this; }
         }
 
         public VoxelModel ParentModel
@@ -78,32 +86,6 @@ namespace Utopia.Shared.Entities.Models
         public VoxelModelState(VoxelModel parentModel) : this()
         {
             ParentModel = parentModel;
-        }
-
-        public void Save(BinaryWriter writer)
-        {
-            if (string.IsNullOrEmpty(Name))
-                Name = "unnamed";
-            writer.Write(Name);
-            writer.Write((byte)PartsStates.Count);
-            foreach (var voxelModelPartState in PartsStates)
-            {
-                voxelModelPartState.Save(writer);
-            }
-        }
-
-        public void Load(BinaryReader reader)
-        {
-            Name = reader.ReadString();
-            var count = reader.ReadByte();
-            PartsStates.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                var partState = new VoxelModelPartState();
-                partState.Load(reader);
-                PartsStates.Add(partState);
-            }
         }
         
         //Update internal BoundingBox

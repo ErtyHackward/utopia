@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using SharpDX;
 using Utopia.Shared.Structs;
@@ -11,6 +12,9 @@ namespace Utopia.Shared.Entities.Models
     /// </summary>
     public class VoxelModelInstance
     {
+
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         #region Private Variables
         // cached intermediate state of the model
         private VoxelModelState _internalState;
@@ -46,6 +50,11 @@ namespace Utopia.Shared.Entities.Models
         /// Instance light color
         /// </summary>
         public Color3 LightColor { get; set; }
+
+        /// <summary>
+        /// Indicates how much sun value receive the model [0;1]
+        /// </summary>
+        public float SunLightLevel { get; set; }
 
         /// <summary>
         /// Gets or sets instance alpha transparency
@@ -142,6 +151,12 @@ namespace Utopia.Shared.Entities.Models
                 return _internalState;
             }
         }
+
+        /// <summary>
+        /// Contains a list of particles emit data, null if the particles are not initialized
+        /// </summary>
+        public List<DateTime> ParticuleLastEmit { get; set; }
+
         #endregion
 
         public VoxelModelInstance(VoxelModel model = null)
@@ -309,8 +324,8 @@ namespace Utopia.Shared.Entities.Models
                 throw new ArgumentOutOfRangeException("animationName", "Model have not animation called " + animationName);
 
             _animationIndex = animation;
-            _animationStepIndexFrom = -1;
-            _animationStepIndexTo = 0;
+            _animationStepIndexFrom = VoxelModel.Animations[animation].StartFrame;
+            _animationStepIndexTo = _animationStepIndexFrom + 1;
             _elapsed = 0;
             _repeat = repeat;
             _stopping = false;
@@ -327,8 +342,8 @@ namespace Utopia.Shared.Entities.Models
                 throw new ArgumentOutOfRangeException("index", "Model have not animation with index " + index);
 
             _animationIndex = index;
-            _animationStepIndexFrom = -1;
-            _animationStepIndexTo = 0;
+            _animationStepIndexFrom = VoxelModel.Animations[index].StartFrame;
+            _animationStepIndexTo = _animationStepIndexFrom + 1;
             _elapsed = 0;
             _repeat = repeat;
             _stopping = false;
@@ -340,7 +355,9 @@ namespace Utopia.Shared.Entities.Models
         /// <param name="timePassed"></param>
         public void Interpolation(float elapsedTime)
         {
-            if (!Playing) return;
+            if (!Playing) 
+                return;
+
             var ms = (int)(elapsedTime * 1000.0f);
 
             _elapsed += ms;
@@ -431,7 +448,7 @@ namespace Utopia.Shared.Entities.Models
             {
                 var animation = VoxelModel.Animations.FindIndex(a => a.Name == animationName);
                 if (animation == -1)
-                    throw new ArgumentOutOfRangeException("animationName", "Model have not animation called " + animationName);
+                    logger.Debug("{0}", "Model have not animation called " + animationName);
 
                 if (_animationIndex != animation)
                     return;

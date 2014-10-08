@@ -21,6 +21,11 @@ namespace Utopia.Shared.Interfaces
         Vector3I GlobalPosition { get; set; }
 
         /// <summary>
+        /// Gets or sets owner dynamic entity id. This id will be supplied in the events
+        /// </summary>
+        uint OwnerDynamicId { get; set; }
+
+        /// <summary>
         /// Reads current block type at the cursor position
         /// </summary>
         byte Read();
@@ -42,7 +47,8 @@ namespace Utopia.Shared.Interfaces
         /// </summary>
         /// <param name="value"></param>
         /// <param name="tag"> </param>
-        void Write(byte value, BlockTag tag = null);
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for that change</param>
+        void Write(byte value, BlockTag tag = null, uint sourceDynamicId = 0);
 
         /// <summary>
         /// Creates a copy of current cursor
@@ -64,7 +70,6 @@ namespace Utopia.Shared.Interfaces
         /// <param name="tag"> </param>
         /// <returns></returns>
         byte PeekValue<T>(Vector3I moveVector, out T tag) where T: BlockTag;
-
 
         /// <summary>
         /// Return Cube profile
@@ -91,7 +96,7 @@ namespace Utopia.Shared.Interfaces
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
-        void AddEntity(StaticEntity entity, uint sourceDynamicId = 0);
+        void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0);
 
         /// <summary>
         /// Remove static entity from the world
@@ -100,6 +105,16 @@ namespace Utopia.Shared.Interfaces
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
         /// <returns></returns>
         IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0);
+
+        /// <summary>
+        /// Starts new transaction
+        /// </summary>
+        void BeginTransaction();
+
+        /// <summary>
+        /// Finish the transaction
+        /// </summary>
+        void CommitTransaction();
     }
 
     public class LandscapeCursorBeforeWriteEventArgs : EventArgs
@@ -109,5 +124,7 @@ namespace Utopia.Shared.Interfaces
         public byte Value { get; set; }
 
         public BlockTag BlockTag { get; set; }
+
+        public uint SourceDynamicId { get; set; }
     }
 }

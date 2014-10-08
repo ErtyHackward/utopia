@@ -12,6 +12,8 @@ namespace Utopia.Shared.Net.Web
 {
     public abstract class UtopiaWebApiBase : IDisposable
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         protected const string ServerUrl = "http://utopiarealms.com";
 
         /// <summary>
@@ -64,7 +66,6 @@ namespace Utopia.Shared.Net.Web
         /// Performs a post http request, use IAsyncResult.State as WebRequest class
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="pars"></param>
         /// <param name="callback"></param>
         public static void GetRequestAsync<T>(string url, Action<T> callback) where T : WebEventArgs, new()
         {

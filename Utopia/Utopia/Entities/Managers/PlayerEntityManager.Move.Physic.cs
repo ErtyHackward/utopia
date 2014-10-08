@@ -22,18 +22,48 @@ namespace Utopia.Entities.Managers
 
             switch (mode)
             {
+                case EntityDisplacementModes.Dead:
+                    _physicSimu.Friction = 0f;
+                    PhysicSimulation(ref timeSpent);
+                    break;
                 case EntityDisplacementModes.God:
                 case EntityDisplacementModes.Flying:
                     _physicSimu.Friction = 0f;
-//#if !DEBUG
-//                    PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
-//#endif
+#if !DEBUG
+                    PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
+#endif
                     break;
                 case EntityDisplacementModes.Swiming:
                     _physicSimu.Friction = 0.3f;
                     PhysicSimulation(ref timeSpent);    //Apply physic constraint on new compute location
                     break;
                 case EntityDisplacementModes.Walking:
+
+                    if (_physicSimu.isInContactWithLadder)
+                    {
+                        if (!_physicSimu.OnGround)
+                        {
+                            _physicSimu.AirFriction = 0.25f;
+                            _physicSimu.Friction = 0.25f;
+                        }
+                        else
+                        {
+                            _physicSimu.AirFriction = 0;
+                            if (_stopMovedAction == false)
+                            {
+                                _physicSimu.Friction = _groundCubeProgile.Friction; //0.25f;
+                            }
+                            else
+                            {
+                                //I did stop to move, but I'm on a sliding block => Will slide a little before ending movement
+                                _physicSimu.Friction = _groundCubeProgile.SlidingValue;
+                            }
+                        }
+
+                        PhysicSimulation(ref timeSpent); //Apply physic constraint on new compute location
+                        break;
+                    } 
+                    
                     if (_physicSimu.OnGround)
                     {
                         _physicSimu.AirFriction = 0.0f;

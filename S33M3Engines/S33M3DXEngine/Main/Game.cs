@@ -76,7 +76,7 @@ namespace S33M3DXEngine.Main
         #region Private Variable
 
         private delegate void WinformInvockCallBack();
-        protected D3DEngine Engine;
+        public D3DEngine Engine;
         Stopwatch _framelimiter = new Stopwatch();
         long _framelimiterTime = 0;
 
@@ -97,31 +97,34 @@ namespace S33M3DXEngine.Main
         #endregion
 
         //Constructed Engine
-        public Game(Size startingWindowsSize, string WindowsCaption, SampleDescription sampleDescription, Size ResolutionSize = default(Size), bool withDebugObjectTracking = false, bool withFullDebug = false)
+        public Game(Size startingWindowsSize, string WindowsCaption, SampleDescription sampleDescription, Size ResolutionSize = default(Size), bool withDebugObjectTracking = false)
         {
-            D3DEngine.FULLDEBUGMODE = withFullDebug;
             Engine = ToDispose(new D3DEngine(startingWindowsSize, WindowsCaption, sampleDescription, ResolutionSize));
+            if (Engine.isInitialized)
+            {
+                Engine.GameWindow.FormClosing += GameWindow_FormClosing;
 
-            Engine.GameWindow.FormClosing += GameWindow_FormClosing;
+                _visibleDrawable = new List<DrawableComponentHolder>();
+                _enabledUpdatable = new List<IUpdatableComponent>();
+                _gameComponents = ToDispose(new GameComponentCollection());
 
-            _visibleDrawable = new List<DrawableComponentHolder>();
-            _enabledUpdatable = new List<IUpdatableComponent>();
-            _gameComponents = ToDispose(new GameComponentCollection());
-
-            gameInitialize(withDebugObjectTracking);
+                gameInitialize(withDebugObjectTracking);
+            }
         }
 
         //Injected Engine
-        public Game(D3DEngine engine, bool withDebugObjectTracking = false, bool withFullDebug = false)
+        public Game(D3DEngine engine, bool withDebugObjectTracking = false)
         {
-            D3DEngine.FULLDEBUGMODE = withFullDebug;
             Engine = engine;
-            Engine.GameWindow.FormClosing += GameWindow_FormClosing;
-            _visibleDrawable = new List<DrawableComponentHolder>();
-            _enabledUpdatable = new List<IUpdatableComponent>();
-            _gameComponents = ToDispose(new GameComponentCollection());
+            if (Engine.isInitialized)
+            {
+                Engine.GameWindow.FormClosing += GameWindow_FormClosing;
+                _visibleDrawable = new List<DrawableComponentHolder>();
+                _enabledUpdatable = new List<IUpdatableComponent>();
+                _gameComponents = ToDispose(new GameComponentCollection());
 
-            gameInitialize(withDebugObjectTracking);
+                gameInitialize(withDebugObjectTracking);
+            }
         }
 
         protected virtual void GameWindow_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)

@@ -12,7 +12,7 @@ namespace Utopia.Shared.Entities.Inventory
     {
         public ContainedSlot()
         {
-            ItemsCount = 1;
+
         }
 
         public ContainedSlot(Vector2I from, int quantity)

@@ -194,12 +194,18 @@ namespace Utopia.Shared.Structs
 
             var chunk = landscapeManager.GetChunk(ChunkPosition);
 
+            if (chunk == null)
+                return null;
+
             var collection = (IStaticContainer)chunk.Entities;
             IStaticEntity sEntity = null;
 
             for (int i = 0; i < Tail.Length; i++)
             {
-                sEntity = collection.GetStaticEntity(Tail[i]);
+
+                if (!collection.ContainsId(Tail[i], out sEntity))
+                    return null;
+
                 if (sEntity is IStaticContainer)
                     collection = sEntity as IStaticContainer;
             }

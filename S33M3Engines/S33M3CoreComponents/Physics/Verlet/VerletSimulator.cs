@@ -10,6 +10,8 @@ namespace S33M3CoreComponents.Physics.Verlet
 {
     public class VerletSimulator
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private Vector3D _curPosition;
 
         private Vector3D _prevPosition;
@@ -41,6 +43,43 @@ namespace S33M3CoreComponents.Physics.Verlet
         public float OnOffsettedBlock { get; set; }
         public float OffsetBlockHitted { get; set; }
         public double GroundBelowEntity { get; set; }
+        public bool isInContactWithLadder { get; set; }
+        public bool StopMovementAction { get; set; }
+
+        private bool _isSliding;
+        private int _slidingCycles;
+        private int _stopSliddingCounter;
+        public Vector3 SliddingForce;
+        public bool IsSliding
+        {
+            get { return _isSliding; }
+            set
+            {
+                if (!_isSliding && value)
+                {
+                    //logger.Debug("Slide Start detected");
+                    _stopSliddingCounter = 1;
+                    _slidingCycles = 0;
+                    _isSliding = true;
+                }
+                if (_isSliding && !value && _stopSliddingCounter <= 0)
+                {
+                    //logger.Debug("Slide Stop detected");
+                    SliddingForce *= (_slidingCycles/4);
+                    //logger.Debug("START Force {0} with {1} cycle", SliddingForce ,_slidingCycles );
+
+                    Impulses.Add(new Impulse() { ForceApplied = SliddingForce });
+                    StopMovementAction = true;
+
+                    SliddingForce = default(Vector3);
+                    _isSliding = false;
+                }
+
+                if (!value) _stopSliddingCounter--;
+
+                if (_isSliding) _slidingCycles++;
+            }
+        }
 
         //If set to value other than 0, then the enviroment will emit a force that will absorbe all force being applied to the entity.
         public float Friction { get; set; }
@@ -56,7 +95,7 @@ namespace S33M3CoreComponents.Physics.Verlet
         }
         public Vector3D PrevPosition { get { return _prevPosition; } set { _prevPosition = value; } }
 
-        public delegate void CheckConstraintFct(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition);
+        public delegate void CheckConstraintFct(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition);
         public CheckConstraintFct ConstraintFct;
 
         public VerletSimulator(ref BoundingBox localBoundingBox)
@@ -107,11 +146,14 @@ namespace S33M3CoreComponents.Physics.Verlet
                 {
                     newPosition = _curPosition;
                 }
-                SatisfyConstraints(ref newPosition, ref _prevPosition); //Validate the new location based in constraint (Collision, ...)
+                isInContactWithLadder = false;
+                SatisfyConstraints(ref newPosition, ref _prevPosition);          //Validate the new location based in constraint (Collision, ...)
             }
             else
             {
-                newPosition = Vector3D.Zero;
+                //newPosition = Vector3D.Zero;
+                newPosition = _curPosition;
+                logger.Error("Simulate physic called while not running, please avoid !");
             }
         }
 
@@ -122,19 +164,21 @@ namespace S33M3CoreComponents.Physics.Verlet
             _forcesAccum.Z = 0;
 
             //Vertical velocity if not on ground, to make the entity fall !
-            if (_subjectToGravity && !_onGround)
+            if (_subjectToGravity && !_onGround && !isInContactWithLadder)
             {
                 _forcesAccum.Y += -SimulatorCst.Gravity;
             }
 
+            _impulses.RemoveAll(x => x.ApplyOnlyIfOnGround && OnGround == false);
+
             OnGround = false;
 
-            for (int ImpulseIndex = 0; ImpulseIndex < _impulses.Count; ImpulseIndex++)
+            foreach (var impulse in _impulses)
             {
-                if (_impulses[ImpulseIndex].IsActive)
+                if (impulse.IsActive)
                 {
-                    _forcesAccum += (_impulses[ImpulseIndex].ForceApplied);
-                    _impulses[ImpulseIndex].AmountOfTime -= elapsedTimeS;
+                    _forcesAccum += (impulse.ForceApplied);
+                    impulse.AmountOfTime -= elapsedTimeS;
                 }
             }
 
@@ -163,10 +207,11 @@ namespace S33M3CoreComponents.Physics.Verlet
 
         private void SatisfyConstraints(ref Vector3D futurePosition, ref Vector3D OriginalPosition)
         {
+            Vector3D OriginalPositionBackUp = OriginalPosition;
             foreach (CheckConstraintFct fct in ConstraintFct.GetInvocationList())
             {
                 //This fct will be able to modify the newPosition if needed to satisfy its own constraint !
-                fct(this, ref _localBoundingBox, ref futurePosition, ref OriginalPosition);
+                fct(this, ref _localBoundingBox, ref futurePosition, ref OriginalPosition, ref OriginalPositionBackUp);
             }
             _curPosition = futurePosition;
         }

@@ -17,10 +17,12 @@ namespace Utopia.Resources.VertexFormats
     {
         public static readonly VertexDeclaration VertexDeclaration;
 
-        public Vector4B Position;
+        public Vector4B Position;     // X = XPosi, Y = YPosi, Z = ZPosi,  W =  Y Modified block Height modificator
         public ByteColor Color;
-        public Vector4B VertexInfo1;
-        public Vector4 VertexInfo2;  //X = Vertex Y offset; Y = Still not use
+        public Vector4B VertexInfo1;  // x = FaceType, (bool)y = is Upper vertex, Z = Biome Texture Id,
+        public Vector4B VertexInfo2;  // x = Moisture, y = Temperature, z = animation Speed, w = Animation NbrFrames
+        public ushort ArrayId;
+        public ushort Dummy;
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
@@ -33,28 +35,23 @@ namespace Utopia.Resources.VertexFormats
                                                             new InputElement("POSITION", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned , 0),  
                                                             new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0),
                                                             new InputElement("INFO", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned, 0),
-                                                            new InputElement("INFO", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 0)
+                                                            new InputElement("BIOMEINFO", 0, Format.R8G8_UNorm, InputElement.AppendAligned, 0),
+                                                            new InputElement("ANIMATION", 0, Format.R8G8_UInt, InputElement.AppendAligned, 0),
+                                                            new InputElement("ARRAYID", 0, Format.R16_UInt, InputElement.AppendAligned, 0),
+                                                            new InputElement("DUMMY", 0, Format.R16_UInt, InputElement.AppendAligned, 0)
                                                             };
 
             VertexDeclaration = new VertexDeclaration(elements);
         }
 
-        public VertexCubeLiquid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting)
-        {
-            this.VertexInfo1 = new Vector4B();
-            this.VertexInfo2 = new Vector4();
-            this.Color = lighting;
-            this.Position = position;
-            this.Position.W = textureArrayId;
-        }
-
-        public VertexCubeLiquid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4 vertexInfo2, ref Vector4B VertexInfo1)
+        public VertexCubeLiquid(ref Vector4B position, int textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo2, ref Vector4B VertexInfo1)
         {
             this.VertexInfo1 = VertexInfo1;
             this.VertexInfo2 = vertexInfo2;
             this.Color = lighting;
             this.Position = position;
-            this.Position.W = textureArrayId;
+            Dummy = 0;
+            this.ArrayId = (ushort)textureArrayId; 
         }
     }
 }

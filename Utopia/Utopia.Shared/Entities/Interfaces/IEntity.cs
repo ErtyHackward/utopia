@@ -12,6 +12,7 @@ namespace Utopia.Shared.Entities.Interfaces
     /// Base interface for entities
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(Entity))]
     public interface IEntity : ICloneable
     {
         /// <summary>
@@ -33,11 +34,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Y Force that will be given to anyone that is colliding with this entity, only working in "Model" collision mode
         /// </summary>
         double YForceOnSideHit { get; set; }
-
-        /// <summary>
-        /// Gets entity class id
-        /// </summary>
-        ushort ClassId { get; }
 
         /// <summary>
         /// Gets entity BluePrint ID
@@ -88,12 +84,15 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <returns></returns>
         EntityLink GetLink();
 
-        EntityParticule[] Particules { get; set; }
+        StaticEntityParticule[] Particules { get; set; }
 
         /// <summary>
         /// Gets an optional entity controller
         /// Controller is a class that provides gameplay specific logic
         /// </summary>
         object Controller { get; set; }
+
+        float SlidingValue { get; set; }
+        float Friction { get; set; }
     }
 }

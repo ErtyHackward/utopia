@@ -1,20 +1,16 @@
-﻿using System.Linq;
-using Ninject;
-using S33M3CoreComponents.Cameras;
+﻿using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3DXEngine.RenderStates;
 using S33M3Resources.Structs.Vertex;
 using SharpDX;
+using Utopia.Entities.Managers;
 using Utopia.Entities.Voxel;
 using Utopia.Resources.Effects.Entities;
-using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
-using Utopia.Shared.World;
 
 namespace Utopia.Entities.Renderer
 {
@@ -23,11 +19,9 @@ namespace Utopia.Entities.Renderer
     /// </summary>
     public class GhostedEntityRenderer : DrawableGameComponent
     {
-        private readonly IDynamicEntity _playerEntity;
+        private readonly PlayerEntityManager _playerEntityManager;
         private readonly VoxelModelManager _voxelModelManager;
         private readonly CameraManager<ICameraFocused> _cameraManager;
-        private readonly WorldParameters _worldParameters;
-        private readonly EntityFactory _factory;
 
         private HLSLVoxelModel _voxelModelEffect;
         private VisualVoxelModel _toolVoxelModel;
@@ -49,18 +43,14 @@ namespace Utopia.Entities.Renderer
        
 
         public GhostedEntityRenderer(
-            IDynamicEntity playerEntity, 
+            PlayerEntityManager playerEntityManager, 
             VoxelModelManager voxelModelManager,
-            CameraManager<ICameraFocused> cameraManager,
-            WorldParameters worldParameters,
-            EntityFactory factory
+            CameraManager<ICameraFocused> cameraManager
             )
         {
-            _playerEntity = playerEntity;
+            _playerEntityManager = playerEntityManager;
             _voxelModelManager = voxelModelManager;
             _cameraManager = cameraManager;
-            _worldParameters = worldParameters;
-            _factory = factory;
             Transform = Matrix.Identity;
             Display = true;
 
@@ -100,19 +90,7 @@ namespace Utopia.Entities.Renderer
         {
             IItem tool = null;
 
-            if (_playerEntity is PlayerCharacter)
-                tool = ((PlayerCharacter)_playerEntity).Equipment.RightTool;
-
-            if (_playerEntity is GodEntity)
-            {
-                var godEntity = (GodEntity)_playerEntity;
-
-                if (godEntity.DesignationBlueprintId != 0)
-                {
-                    tool = (IItem)_worldParameters.Configuration.BluePrints[godEntity.DesignationBlueprintId];
-                    _factory.PrepareEntity(tool);
-                }
-            }
+            tool = _playerEntityManager.PlayerCharacter.Equipment.RightTool;
 
             if (tool != Tool)
             {
@@ -123,7 +101,7 @@ namespace Utopia.Entities.Renderer
             if (Tool == null)
                 return;
 
-            var pos = Tool.GetPosition(_playerEntity);
+            var pos = Tool.GetPosition(_playerEntityManager.PlayerCharacter);
 
             if (pos.Valid)
                 Transform = Matrix.RotationQuaternion(pos.Rotation) * Matrix.Translation(pos.Position.AsVector3());
@@ -133,9 +111,9 @@ namespace Utopia.Entities.Renderer
 
             _alpha += ( _alphaRaise ? 0.4f : -0.4f ) * elapsedTime;
 
-            if (_alpha < 0.2f)
+            if (_alpha < 0.1f)
                 _alphaRaise = true;
-            if (_alpha > 0.5f)
+            if (_alpha > 0.3f)
                 _alphaRaise = false;
         }
 
@@ -150,58 +128,10 @@ namespace Utopia.Entities.Renderer
                 _voxelModelEffect.CBPerFrame.IsDirty = true;
 
                 _toolVoxelInstance.World = Matrix.Scaling(1f / 16) * Transform.Value; 
-                _toolVoxelInstance.LightColor = new Color3(0, 0, 1);
+                _toolVoxelInstance.LightColor = new Color3(0.0f, 0.0f, 1f);
                 _toolVoxelInstance.Alpha = _alpha;
 
                 _toolVoxelModel.Draw(context, _voxelModelEffect, _toolVoxelInstance);
-            }
-
-            var godEntity = _playerEntity as GodEntity;
-
-            if (godEntity != null)
-            {
-                RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled);
-                var faction = _factory.GlobalStateManager.GlobalState.Factions[godEntity.FactionId];
-
-                foreach (var placement in faction.Designations.OfType<PlaceDesignation>())
-                {
-                    if (placement.ModelInstance == null)
-                    {
-                        var voxelEntity = (IVoxelEntity)_factory.Config.BluePrints[placement.BlueprintId];
-
-                        if (voxelEntity != null)
-                        {
-                            var voxelModel = _voxelModelManager.GetModel(voxelEntity.ModelName);
-
-                            if (voxelModel != null)
-                            {
-                                if (!voxelModel.Initialized)
-                                {
-                                    voxelModel.BuildMesh();
-                                }
-
-                                placement.ModelInstance = voxelModel.VoxelModel.CreateInstance();
-                                placement.ModelInstance.SetState(voxelModel.VoxelModel.GetMainState());
-
-                                var pos = placement.Position;
-                                placement.ModelInstance.World =  Matrix.Scaling(1f / 16) * Matrix.RotationQuaternion(pos.Rotation) * Matrix.Translation(pos.Position.AsVector3());
-                            }
-                        }
-                    }
-
-                    if (placement.ModelInstance != null)
-                    {
-                        _voxelModelEffect.Begin(context);
-                        _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_cameraManager.ActiveCamera.ViewProjection3D);
-                        _voxelModelEffect.CBPerFrame.IsDirty = true;
-
-                        placement.ModelInstance.LightColor = new Color3(0, 0, 1);
-                        placement.ModelInstance.Alpha = _alpha;
-
-                        var visualVoxelModel = _voxelModelManager.GetModel(placement.ModelInstance.VoxelModel.Name);
-                        visualVoxelModel.Draw(context, _voxelModelEffect, placement.ModelInstance);
-                    }
-                }
             }
         }
     }

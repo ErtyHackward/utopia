@@ -4,8 +4,8 @@ using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Utopia.Entities;
+using Utopia.Entities.Managers;
 using Utopia.GUI.Inventory;
-using Utopia.Shared.Entities.Dynamic;
 
 namespace Realms.Client.Components.GUI.Inventory
 {
@@ -28,7 +28,7 @@ namespace Realms.Client.Components.GUI.Inventory
             }
         }
 
-        public PlayerInventory(D3DEngine engine, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) : 
+        public PlayerInventory(D3DEngine engine, PlayerEntityManager character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) : 
             base(character, iconFactory, new Point(200,120), new Point(270,50), inputManager)
         {
             _commonResources = commonResources;

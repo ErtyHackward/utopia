@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
 using ProtoBuf;
+using System;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
+    [Obsolete("Use ChunkSpawnableEntity instead !")]
     [ProtoContract]
     public partial class BiomeEntity
     {

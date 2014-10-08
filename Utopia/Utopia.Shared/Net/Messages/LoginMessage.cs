@@ -30,12 +30,6 @@ namespace Utopia.Shared.Net.Messages
         public string Password { get; set; }
         
         /// <summary>
-        /// Gets or sets value indicating if client is asking to register
-        /// </summary>
-        [ProtoMember(3)]
-        public bool Register { get; set; }
-
-        /// <summary>
         /// Gets or sets a client software version
         /// </summary>
         [ProtoMember(4)]

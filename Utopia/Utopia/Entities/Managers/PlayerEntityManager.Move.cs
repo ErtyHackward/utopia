@@ -33,6 +33,9 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Walking:
                     _gravityInfluence = 1;
                     break;
+                case EntityDisplacementModes.Dead:
+                    _gravityInfluence = 1.5f;
+                    break;
                 case EntityDisplacementModes.Swiming:
                     _gravityInfluence = 1f / 2; // We will move 2 times slower when swimming
                     break;
@@ -107,23 +110,35 @@ namespace Utopia.Entities.Managers
                 case EntityDisplacementModes.Swiming:
                     SwimmingFreeFirstPersonMove(ref timeSpent);
                     break;
-                case EntityDisplacementModes.God:
+                case EntityDisplacementModes.Dead:
+                    DeadMove();
+                    break;
                 case EntityDisplacementModes.Flying:
+                case EntityDisplacementModes.God:
                     FreeFirstPersonMove();
                     break;
                 case EntityDisplacementModes.Walking:
-                    if (_physicSimu.OnGround)
+                    if (_physicSimu.isInContactWithLadder)
                     {
-                        WalkingFirstPersonOnGround(ref timeSpent);
+                        LadderFreeFirstPersonMove(ref timeSpent);
                     }
                     else
                     {
-                        WalkingFirstPersonNotOnGround(ref timeSpent);
+                        if (_physicSimu.OnGround)
+                        {
+                            WalkingFirstPersonOnGround(ref timeSpent);
+                            _physicSimu.StopMovementAction = false;
+                        }
+                        else
+                        {
+                            WalkingFirstPersonNotOnGround(ref timeSpent);
+                        }
                     }
                     break;
                 default:
                     break;
             }
+
         }
 
         private void SwimmingFreeFirstPersonMove(ref GameTime timeSpent)
@@ -135,6 +150,16 @@ namespace Utopia.Entities.Managers
                 _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 11 + (2 * jumpPower), 0) });
 
             _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * _moveDelta * 20 });            
+        }
+
+        private void LadderFreeFirstPersonMove(ref GameTime timeSpent)
+        {
+            float jumpPower;
+            
+            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
+                _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 11 + (2 * jumpPower), 0) });
+
+            _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * _moveDelta * 10 }); 
         }
 
         private void FreeFirstPersonMove()
@@ -151,6 +176,12 @@ namespace Utopia.Entities.Managers
             _physicSimu.CurPosition = _worldPosition;
         }
 
+        private void DeadMove()
+        {
+            _worldPosition += _entityRotations.EntityMoveVector * _moveDelta;
+            _physicSimu.CurPosition = _worldPosition;
+        }
+
         private void WalkingFirstPersonOnGround(ref GameTime timeSpent)
         {
             float moveModifier = 1;
@@ -160,7 +191,8 @@ namespace Utopia.Entities.Managers
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveForward) ||
                 _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveBackward) ||
                 _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeLeft) ||
-                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeRight))
+                _inputsManager.ActionsManager.isTriggered(UtopiaActions.EndMoveStrafeRight) ||
+                _physicSimu.StopMovementAction)
             {
                 _stopMovedAction = true;
             }
@@ -175,7 +207,7 @@ namespace Utopia.Entities.Managers
                 {
                     //Force of 8 for 0.5 offset
                     //Force of 2 for 0.1 offset
-                    _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, MathHelper.FullLerp(2, 3.8f, 0.1, 0.5, _physicSimu.OffsetBlockHitted), 0) });
+                    _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, MathHelper.FullLerp(2, 4f, 0.1, 0.5, _physicSimu.OffsetBlockHitted), 0) });
                     _physicSimu.OffsetBlockHitted = 0;
                 }
 
@@ -188,7 +220,10 @@ namespace Utopia.Entities.Managers
                 //Jumping
                 if ((_physicSimu.OnGround || _physicSimu.PrevPosition == _physicSimu.CurPosition || _physicSimu.AllowJumping) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
                 {
-                    _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
+                    if (GetStaminaForJumping())
+                    {
+                        _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
+                    }
                 }
 
                 if (_entityRotations.EntityMoveVector != Vector3.Zero) _stopMovedAction = false;
@@ -197,7 +232,10 @@ namespace Utopia.Entities.Managers
             //Run only if Move forward and run button pressed at the same time.
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Forward) && (_inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Run)))
             {
-                moveModifier = 1.5f;
+                if (GetStaminaForRunning(timeSpent))
+                {
+                    moveModifier = 1.5f;
+                }
             }
 
             _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * 1.2f * moveModifier });
@@ -217,12 +255,11 @@ namespace Utopia.Entities.Managers
             }
 
             //Jumping
-            if (_physicSimu.AllowJumping && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
+            if ((_physicSimu.AllowJumping || _physicSimu.isInContactWithLadder) && _inputsManager.ActionsManager.isTriggered(UtopiaActions.Move_Jump, out jumpPower))
             {
                 _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = new Vector3(0, 7 + (2 * jumpPower), 0) });
             }
 
-            //_physicSimu.PrevPosition -= _entityRotations.EntityMoveVector * _moveDelta * moveModifier;
             _physicSimu.Impulses.Add(new Impulse(timeSpent) { ForceApplied = _entityRotations.EntityMoveVector * moveModifier });
         }
 
@@ -240,35 +277,41 @@ namespace Utopia.Entities.Managers
 
         private void CheckForEventRaising()
         {
-            //Landing on ground after falling event
-            if (_physicSimu.OnGround == false || Player.DisplacementMode == EntityDisplacementModes.Swiming || Player.DisplacementMode == EntityDisplacementModes.Flying || Player.DisplacementMode == EntityDisplacementModes.God)
+
+            if(Player.DisplacementMode == EntityDisplacementModes.Dead ||
+               Player.DisplacementMode == EntityDisplacementModes.Flying || 
+               Player.DisplacementMode == EntityDisplacementModes.God ||
+               Player.DisplacementMode == EntityDisplacementModes.Swiming ||
+               _physicSimu.isInContactWithLadder)
             {
-                //New "trigger"
-                if (_worldPosition.Y > _fallMaxHeight) _fallMaxHeight = _worldPosition.Y;
+                //Situation where we can't take falling damage.
+                _fallMaxHeight = double.MinValue;
             }
             else
             {
-                if (_physicSimu.OnGround == true && _fallMaxHeight != int.MinValue)
+                //Situation where I have to care of the damage.
+                if (_fallMaxHeight < _worldPosition.Y) _fallMaxHeight = _worldPosition.Y;
+
+                //Check the ground collision
+                if (_physicSimu.OnGround == true && _fallMaxHeight != double.MinValue)
                 {
-                    if (_fallMaxHeight - _worldPosition.Y >= 0.01)
+                    var fallDistance = _fallMaxHeight - _worldPosition.Y;
+                    if (fallDistance >= 0.01) //Check the fall height
                     {
-                        var handler = OnLanding;
-                        if (handler != null)
-                        {
-                            handler(_fallMaxHeight - _worldPosition.Y, _groundCube);
-                        }
-#if DEBUG
-                        logger.Trace("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id].Name);
-#endif
+                        OnLanding(fallDistance, _groundCube);
                     }
-                    _fallMaxHeight = int.MinValue;
+#if DEBUG
+                    logger.Trace("OnLandingGround event fired with height value : {0} m, cube type : {1} ", _fallMaxHeight - _worldPosition.Y, _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_groundCube.Cube.Id].Name);
+#endif
+                    _fallMaxHeight = double.MinValue;
                 }
             }
+
         }
 
         private void CheckHeadUnderWater()
         {
-            if (_cubesHolder.IndexSafe(MathHelper.Floor(CameraWorldPosition.X), MathHelper.Floor(CameraWorldPosition.Y), MathHelper.Floor(CameraWorldPosition.Z), out _headCubeIndex))
+            if (_cubesHolder.IndexYSafe(MathHelper.Floor(CameraWorldPosition.X), MathHelper.Floor(CameraWorldPosition.Y), MathHelper.Floor(CameraWorldPosition.Z), out _headCubeIndex))
             {
                 //Get the cube at the camera position !
                 _headCube = _cubesHolder.Cubes[_headCubeIndex];
@@ -276,19 +319,25 @@ namespace Utopia.Entities.Managers
                 //Get Feet block
                 int feetBlockIdx = _cubesHolder.FastIndex(_headCubeIndex, MathHelper.Floor(CameraWorldPosition.Y), SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1);
                 TerraCube feetBlock = _cubesHolder.Cubes[feetBlockIdx];
-                TerraCube BelowfeetBlock = _cubesHolder.Cubes[_cubesHolder.FastIndex(feetBlockIdx, MathHelper.Floor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1)];
+
+                var belowIndex = _cubesHolder.FastIndex(feetBlockIdx, MathHelper.Floor(CameraWorldPosition.Y) - 1, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1);
+
+                if (belowIndex < 0 || belowIndex > _cubesHolder.Cubes.Length)
+                    return;
+
+                TerraCube BelowfeetBlock = _cubesHolder.Cubes[belowIndex];
 
                 if (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[feetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid &&
                    (_visualWorldParameters.WorldParameters.Configuration.BlockProfiles[BelowfeetBlock.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid || _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[_headCube.Id].CubeFamilly == Shared.Enums.enuCubeFamilly.Liquid))
                 {
-                    if (DisplacementMode == EntityDisplacementModes.Walking)
+                    if (_playerCharacter.DisplacementMode == EntityDisplacementModes.Walking)
                     {
-                        DisplacementMode = EntityDisplacementModes.Swiming;
+                        _playerCharacter.DisplacementMode = EntityDisplacementModes.Swiming;
                     }
                 }
                 else
                 {
-                    if (DisplacementMode == EntityDisplacementModes.Swiming) DisplacementMode = EntityDisplacementModes.Walking;
+                    if (_playerCharacter.DisplacementMode == EntityDisplacementModes.Swiming) _playerCharacter.DisplacementMode = EntityDisplacementModes.Walking;
                 }
 
                 //Eyes under water (Used to change view Color)

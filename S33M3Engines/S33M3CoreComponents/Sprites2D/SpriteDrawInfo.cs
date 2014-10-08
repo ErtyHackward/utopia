@@ -23,6 +23,7 @@ namespace S33M3CoreComponents.Sprites2D
         #region Public variables
         public readonly SpriteTexture Texture;
         public readonly SamplerState TextureSampler;
+        public readonly Matrix TextureMatrix = Matrix.Identity;
         public readonly List<VertexSprite2> Vertices;
         public readonly List<ushort> Indices;
         #endregion
@@ -31,6 +32,15 @@ namespace S33M3CoreComponents.Sprites2D
         {
             Texture = texture;
             TextureSampler = textureSampler;
+            Vertices = new List<VertexSprite2>();
+            Indices = new List<ushort>();
+        }
+
+        public SpriteDrawInfo(SpriteTexture texture, SamplerState textureSampler, Matrix textureMatrix)
+        {
+            Texture = texture;
+            TextureSampler = textureSampler;
+            TextureMatrix = textureMatrix;
             Vertices = new List<VertexSprite2>();
             Indices = new List<ushort>();
         }
@@ -51,19 +61,23 @@ namespace S33M3CoreComponents.Sprites2D
                                                              sourceRect.Top / (float)textureSize.Y,
                                                              size.X / (float)textureSize.X,
                                                              size.Y / (float)textureSize.Y);
+
+            var wrapOffset = new Vector2(sourceRect.X % sourceRect.Width, sourceRect.Y % sourceRect.Height) / textureSize;
+            var wrap = new Vector4(sourceRect.Width / textureSize.X, sourceRectInTexCoord.Left, sourceRect.Height / textureSize.Y, sourceRectInTexCoord.Top);
+            sourceRectInTexCoord.Location -= wrapOffset;
             
             //Create the vertices
             Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y, depth),
-                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top, textureArrayIndex), color));
+                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top, textureArrayIndex), color, wrap));
 
             Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y, depth),
-                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top, textureArrayIndex), color));
+                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top, textureArrayIndex), color, wrap));
 
             Vertices.Add(new VertexSprite2(new Vector3(position.X + size.X, position.Y + size.Y, depth),
-                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color));
+                         new Vector3(sourceRectInTexCoord.Left + sourceRectInTexCoord.Width, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color, wrap));
 
             Vertices.Add(new VertexSprite2(new Vector3(position.X, position.Y + size.Y, depth),
-                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color));
+                         new Vector3(sourceRectInTexCoord.Left, sourceRectInTexCoord.Top + sourceRectInTexCoord.Height, textureArrayIndex), color, wrap));
 
             //Create the indices
             Indices.Add((ushort)(0 + indiceVertexOffset));
@@ -107,11 +121,11 @@ namespace S33M3CoreComponents.Sprites2D
             RectangleF sourceRectInTexCoord;
             if (sourceRectInTextCoord)
             {
-                sourceRectInTexCoord = new RectangleF(sourceRect.Left / (float)Texture.Width, sourceRect.Top / (float)Texture.Height, sourceRect.Right / (float)Texture.Width, sourceRect.Bottom / (float)Texture.Height);
+                sourceRectInTexCoord = new RectangleF(sourceRect.Left / (float)Texture.Width, sourceRect.Top / (float)Texture.Height, sourceRect.Width / (float)Texture.Width, sourceRect.Height / (float)Texture.Height);
             }
             else
             {
-                sourceRectInTexCoord = new RectangleF(sourceRect.Left, sourceRect.Top, sourceRect.Right, sourceRect.Bottom);
+                sourceRectInTexCoord = new RectangleF(sourceRect.Left, sourceRect.Top, sourceRect.Width, sourceRect.Height);
             }
 
             //Create the vertices
@@ -141,9 +155,9 @@ namespace S33M3CoreComponents.Sprites2D
             return Texture.GetHashCode() ^ TextureSampler.GetHashCode();
         }
 
-        public static int ComputeHashCode(SpriteTexture texture, SamplerState sampler, int groupId)
+        public static int ComputeHashCode(SpriteTexture texture, SamplerState sampler, int groupId, float rotation = 0)
         {
-            return texture.GetHashCode() ^ sampler.GetHashCode() ^ groupId.GetHashCode();
+            return texture.GetHashCode() ^ sampler.GetHashCode() ^ groupId.GetHashCode() ^ rotation.GetHashCode();
         }
         #endregion
 

@@ -34,6 +34,7 @@ namespace S33M3CoreComponents.Inputs.Actions
             public bool Triggered;
             public float ElapsedTimeInS;
             public ActionRaisedSources RaisedSources;
+            public bool IsAutoRepeatedEvent;
         }
 
         #region Private variables
@@ -279,6 +280,36 @@ namespace S33M3CoreComponents.Inputs.Actions
             return data.Triggered;
         }
 
+
+        /// <summary>
+        /// Is an action Triggered !
+        /// </summary>
+        /// <param name="action">The action to look at</param>
+        /// <returns></returns>
+        public bool isTriggered(int actionId, out bool IsAutoRepeatedEvent, bool withExclusive = false)
+        {
+            ActionData data = _actions[actionId];
+            IsAutoRepeatedEvent = data.IsAutoRepeatedEvent;
+
+            if (withExclusive == false)
+            {
+                //If I'm not in keyboard exclusive mode, and this action has been at least raised by the keyboard, Do the trigger test
+                if (_isKeyboardExclusiveMode == false && (_actions[actionId].RaisedSources & ActionRaisedSources.Keyboard) == ActionRaisedSources.Keyboard)
+                {
+                    return true;
+                }
+
+                //If I'm not in Mouse exclusive mode, and this action has been at least raised by the Mouse, Do the trigger test
+                if (_isMouseExclusiveMode == false && (_actions[actionId].RaisedSources & ActionRaisedSources.Mouse) == ActionRaisedSources.Mouse)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return _actions[actionId].Triggered;
+        }
         #endregion
 
         #region Private methods
@@ -392,26 +423,191 @@ namespace S33M3CoreComponents.Inputs.Actions
                         }
                         break;
                     case MouseTriggerMode.ButtonPressed:
+
                         //Set the Action Flag if required
                         switch (_mouseAction.Binding)
                         {
                             case MouseButton.LeftButton:
-                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
+                                if (_mouseAction.WithAutoResetButtonPressed && _mouseAction.StartTimeAutoResetTick == 0 && _curMouseState.LeftButton == ButtonState.Pressed)
+                                {
+                                    //Mouse Button DOWN and autoresetting its ButtonPressed value - Memorize when the time when the mouse has been pressed
+                                    _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed)
+                                {
+                                    _actionTimeElapsedInS = (float)(((Stopwatch.GetTimestamp() - _mouseAction.StartTimeAutoResetTick) / (float)Stopwatch.Frequency));
+                                }
+
+                                if ((_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed) ||
+                                    (_mouseAction.WithAutoResetButtonPressed && _curMouseState.LeftButton == ButtonState.Pressed && _actionTimeElapsedInS >= _mouseAction.AutoResetTimeInS)
+                                    )
+                                {
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; 
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse;
+                                    if (_prevMouseState.LeftButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].IsAutoRepeatedEvent = true;
+                                    if (_mouseAction.WithAutoResetButtonPressed)
+                                    {
+                                            _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                    }
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.LeftButton != ButtonState.Pressed)
+                                {
+                                    _mouseAction.StartTimeAutoResetTick = 0;
+                                }
                                 break;
                             case MouseButton.MiddleButton:
-                                if (_prevMouseState.MiddleButton == ButtonState.Released && _curMouseState.MiddleButton == ButtonState.Pressed) {  _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
+                                if (_mouseAction.WithAutoResetButtonPressed && _mouseAction.StartTimeAutoResetTick == 0 && _curMouseState.middleButton == ButtonState.Pressed)
+                                {
+                                    //Mouse Button DOWN and autoresetting its ButtonPressed value - Memorize when the time when the mouse has been pressed
+                                    _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed)
+                                {
+                                    _actionTimeElapsedInS = (float)(((Stopwatch.GetTimestamp() - _mouseAction.StartTimeAutoResetTick) / (float)Stopwatch.Frequency));
+                                }
+
+                                if ((_prevMouseState.middleButton == ButtonState.Released && _curMouseState.middleButton == ButtonState.Pressed) ||
+                                    (_mouseAction.WithAutoResetButtonPressed && _curMouseState.middleButton == ButtonState.Pressed && _actionTimeElapsedInS >= _mouseAction.AutoResetTimeInS)
+                                    )
+                                {
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; 
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse;
+                                    if (_prevMouseState.middleButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].IsAutoRepeatedEvent = true;
+                                    if (_mouseAction.WithAutoResetButtonPressed)
+                                    {
+                                            _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                    }
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.middleButton != ButtonState.Pressed)
+                                {
+                                    _mouseAction.StartTimeAutoResetTick = 0;
+                                }
                                 break;
                             case MouseButton.RightButton:
-                                if (_prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
+                                if (_mouseAction.WithAutoResetButtonPressed && _mouseAction.StartTimeAutoResetTick == 0 && _curMouseState.rightButton == ButtonState.Pressed)
+                                {
+                                    //Mouse Button DOWN and autoresetting its ButtonPressed value - Memorize when the time when the mouse has been pressed
+                                    _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed)
+                                {
+                                    _actionTimeElapsedInS = (float)(((Stopwatch.GetTimestamp() - _mouseAction.StartTimeAutoResetTick) / (float)Stopwatch.Frequency));
+                                }
+
+                                if ((_prevMouseState.rightButton == ButtonState.Released && _curMouseState.rightButton == ButtonState.Pressed) ||
+                                    (_mouseAction.WithAutoResetButtonPressed && _curMouseState.rightButton == ButtonState.Pressed && _actionTimeElapsedInS >= _mouseAction.AutoResetTimeInS)
+                                    )
+                                {
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; 
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse;
+                                    if (_prevMouseState.rightButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].IsAutoRepeatedEvent = true;
+                                    if (_mouseAction.WithAutoResetButtonPressed)
+                                    {
+                                            _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                    }
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.rightButton != ButtonState.Pressed)
+                                {
+                                    _mouseAction.StartTimeAutoResetTick = 0;
+                                }
                                 break;
                             case MouseButton.XButton1:
-                                if (_prevMouseState.XButton1 == ButtonState.Released && _curMouseState.XButton1 == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
+                                if (_mouseAction.WithAutoResetButtonPressed && _mouseAction.StartTimeAutoResetTick == 0 && _curMouseState.XButton1 == ButtonState.Pressed)
+                                {
+                                    //Mouse Button DOWN and autoresetting its ButtonPressed value - Memorize when the time when the mouse has been pressed
+                                    _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed)
+                                {
+                                    _actionTimeElapsedInS = (float)(((Stopwatch.GetTimestamp() - _mouseAction.StartTimeAutoResetTick) / (float)Stopwatch.Frequency));
+                                }
+
+                                if ((_prevMouseState.XButton1 == ButtonState.Released && _curMouseState.XButton1 == ButtonState.Pressed) ||
+                                    (_mouseAction.WithAutoResetButtonPressed && _curMouseState.XButton1 == ButtonState.Pressed && _actionTimeElapsedInS >= _mouseAction.AutoResetTimeInS)
+                                    )
+                                {
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; 
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse;
+                                    if (_prevMouseState.XButton1 == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].IsAutoRepeatedEvent = true;
+                                    if (_mouseAction.WithAutoResetButtonPressed)
+                                    {
+                                            _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                    }
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.XButton1 != ButtonState.Pressed)
+                                {
+                                    _mouseAction.StartTimeAutoResetTick = 0;
+                                }
                                 break;
                             case MouseButton.XButton2: 
-                                if (_prevMouseState.XButton2 == ButtonState.Released && _curMouseState.XButton2 == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
+                                if (_mouseAction.WithAutoResetButtonPressed && _mouseAction.StartTimeAutoResetTick == 0 && _curMouseState.XButton2 == ButtonState.Pressed)
+                                {
+                                    //Mouse Button DOWN and autoresetting its ButtonPressed value - Memorize when the time when the mouse has been pressed
+                                    _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed)
+                                {
+                                    _actionTimeElapsedInS = (float)(((Stopwatch.GetTimestamp() - _mouseAction.StartTimeAutoResetTick) / (float)Stopwatch.Frequency));
+                                }
+
+                                if ((_prevMouseState.XButton2 == ButtonState.Released && _curMouseState.XButton2 == ButtonState.Pressed) ||
+                                    (_mouseAction.WithAutoResetButtonPressed && _curMouseState.XButton2 == ButtonState.Pressed && _actionTimeElapsedInS >= _mouseAction.AutoResetTimeInS)
+                                    )
+                                {
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; 
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse;
+                                    if (_prevMouseState.XButton2 == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].IsAutoRepeatedEvent = true;
+                                    if (_mouseAction.WithAutoResetButtonPressed)
+                                    {
+                                            _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                    }
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.XButton2 != ButtonState.Pressed)
+                                {
+                                    _mouseAction.StartTimeAutoResetTick = 0;
+                                }
                                 break;
                             case MouseButton.LeftAndRightButton:
-                                if (_prevMouseState.LeftButton == ButtonState.Released && _curMouseState.LeftButton == ButtonState.Pressed && _prevMouseState.RightButton == ButtonState.Released && _curMouseState.RightButton == ButtonState.Pressed) { _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse; }
+                                
+                                if (_mouseAction.WithAutoResetButtonPressed && _mouseAction.StartTimeAutoResetTick == 0 && _curMouseState.LeftButton == ButtonState.Pressed && _curMouseState.rightButton == ButtonState.Pressed)
+                                {
+                                    //Mouse Button DOWN and autoresetting its ButtonPressed value - Memorize when the time when the mouse has been pressed
+                                    _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed)
+                                {
+                                    _actionTimeElapsedInS = (float)(((Stopwatch.GetTimestamp() - _mouseAction.StartTimeAutoResetTick) / (float)Stopwatch.Frequency));
+                                }
+
+                                if ((_prevMouseState.leftButton == ButtonState.Released && _curMouseState.leftButton == ButtonState.Pressed && _prevMouseState.rightButton == ButtonState.Released && _curMouseState.rightButton == ButtonState.Pressed) ||
+                                    (_mouseAction.WithAutoResetButtonPressed && _curMouseState.rightButton == ButtonState.Pressed && _curMouseState.leftButton == ButtonState.Pressed && _actionTimeElapsedInS >= _mouseAction.AutoResetTimeInS)
+                                    )
+                                {
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].Triggered = true; 
+                                    _bufferedActionsInProgress[_mouseAction.ActionId].RaisedSources |= ActionRaisedSources.Mouse;
+                                    if (_prevMouseState.leftButton == ButtonState.Pressed && _prevMouseState.rightButton == ButtonState.Pressed) _bufferedActionsInProgress[_mouseAction.ActionId].IsAutoRepeatedEvent = true;
+                                    if (_mouseAction.WithAutoResetButtonPressed)
+                                    {
+                                            _mouseAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                                    }
+                                }
+
+                                if (_mouseAction.WithAutoResetButtonPressed && _curMouseState.leftButton != ButtonState.Pressed && _curMouseState.rightButton != ButtonState.Pressed)
+                                {
+                                    _mouseAction.StartTimeAutoResetTick = 0;
+                                }
+
                                 break;
                         }
                         break;
@@ -469,11 +665,33 @@ namespace S33M3CoreComponents.Inputs.Actions
                         break;
                     case KeyboardTriggerMode.KeyPressed:
                         //Set the Action Flag if required
+                        if (_keyboardAction.WithAutoResetButtonPressed && _keyboardAction.StartTimeAutoResetTick == 0 && _curKeyboardState.IsKeyDown(_keyboardAction.Binding))
+                        {
+                            //Mouse Button DOWN and autoresetting its ButtonPressed value - Memorize when the time when the mouse has been pressed
+                            _keyboardAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                        }
 
-                        if (_curKeyboardState.IsKeyDown(_keyboardAction.Binding) && _prevKeyboardState.IsKeyUp(_keyboardAction.Binding))
+                        if (_keyboardAction.WithAutoResetButtonPressed)
+                        {
+                            _actionTimeElapsedInS = (float)(((Stopwatch.GetTimestamp() - _keyboardAction.StartTimeAutoResetTick) / (float)Stopwatch.Frequency));
+                        }
+
+                        if ((_curKeyboardState.IsKeyDown(_keyboardAction.Binding) && _prevKeyboardState.IsKeyUp(_keyboardAction.Binding)) ||
+                            (_keyboardAction.WithAutoResetButtonPressed && (_curKeyboardState.IsKeyDown(_keyboardAction.Binding) && _actionTimeElapsedInS >= _keyboardAction.AutoResetTimeInS))
+                            )
                         {
                             _bufferedActionsInProgress[_keyboardAction.ActionId].Triggered = true;
                             _bufferedActionsInProgress[_keyboardAction.ActionId].RaisedSources |= ActionRaisedSources.Keyboard;
+                            if (_prevKeyboardState.IsKeyDown(_keyboardAction.Binding)) _bufferedActionsInProgress[_keyboardAction.ActionId].IsAutoRepeatedEvent = true;
+                            if (_keyboardAction.WithAutoResetButtonPressed)
+                            {
+                                _keyboardAction.StartTimeAutoResetTick = Stopwatch.GetTimestamp();
+                            }
+                        }
+
+                        if (_keyboardAction.WithAutoResetButtonPressed && _curKeyboardState.IsKeyUp(_keyboardAction.Binding))
+                        {
+                            _keyboardAction.StartTimeAutoResetTick = 0;
                         }
                         break;
                 }

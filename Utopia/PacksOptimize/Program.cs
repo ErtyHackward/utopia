@@ -1,6 +1,7 @@
 ﻿using SharpDX.D3DCompiler;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,6 +73,13 @@ namespace PacksOptimize
         {
             switch (action.ToLower())
             {
+                case "cleanup":
+                    var filePaths = Directory.GetFiles(rootPath, "*.chlsl", SearchOption.AllDirectories);
+                    foreach(string filePath in filePaths)
+                    {
+                        File.Delete(filePath);
+                    }
+                    break;
                 case "compilation":
                     if (rootPath == null || includeHandlerPath == null)
                     {
@@ -95,7 +103,7 @@ namespace PacksOptimize
 
                     break;
                 default:
-                    Console.WriteLine("Unknown Action value parameters");
+                    Console.WriteLine("Unknown Action value parameters : {0}", action.ToLower());
                     return;
             }
         }

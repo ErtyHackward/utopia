@@ -1,5 +1,6 @@
 ﻿using System;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
+using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat;
 using S33M3CoreComponents.Sprites2D;
 using S33M3Resources.Structs.Helpers;
 using SharpDX.Direct3D11;
@@ -21,12 +22,17 @@ namespace Realms.Client.Components.GUI
         private ButtonControl _connectButton;
         private ListControl _serverList;
         private LabelControl _serversLabel;
+        private LabelControl _serverDescriptionLabel;
 
         private SpriteTexture _stLabelConnect;
 
         public ListControl List
         {
             get { return _serverList; }
+        }
+
+        public string Description {
+            set { _serverDescriptionLabel.Text = value; }
         }
 
         public event EventHandler BackPressed;
@@ -55,7 +61,7 @@ namespace Realms.Client.Components.GUI
             _screen = screen;
             _commonResources = commonResources;
 
-            _engine.ViewPort_Updated += UpdateLayout;
+            _engine.ScreenSize_Updated += UpdateLayout;
         }
 
         public override void Initialize()
@@ -69,6 +75,11 @@ namespace Realms.Client.Components.GUI
                 Text = "Servers:",
                 Color = ColorHelper.ToColor4(System.Drawing.Color.White),
                 CustomFont = _commonResources.FontBebasNeue25
+            };
+
+            _serverDescriptionLabel = new LabelControl {
+                Color = ColorHelper.ToColor4(System.Drawing.Color.White), 
+                CustomVerticalPlacement = FlatGuiGraphics.Frame.VerticalTextAlignment.Top 
             };
 
             _backButton = new ButtonControl
@@ -112,6 +123,7 @@ namespace Realms.Client.Components.GUI
             _screen.Desktop.Children.Add(_connectButton);
             _screen.Desktop.Children.Add(_backButton);
             _screen.Desktop.Children.Add(_serversLabel);
+            _screen.Desktop.Children.Add(_serverDescriptionLabel);
             UpdateLayout(_engine.ViewPort, _engine.BackBufferTex.Description);
 
             base.EnableComponent(forced);
@@ -123,6 +135,7 @@ namespace Realms.Client.Components.GUI
             _screen.Desktop.Children.Remove(_connectButton);
             _screen.Desktop.Children.Remove(_backButton);
             _screen.Desktop.Children.Remove(_serversLabel);
+            _screen.Desktop.Children.Remove(_serverDescriptionLabel);
 
             base.DisableComponent();
         }
@@ -133,6 +146,7 @@ namespace Realms.Client.Components.GUI
             _serverList.Bounds = new UniRectangle(200, _headerHeight + 137, 400, _engine.ViewPort.Height - _headerHeight - 200);
             _connectButton.Bounds = new UniRectangle(_engine.ViewPort.Width - 300, _engine.ViewPort.Height - 140, 212, 40);
             _backButton.Bounds = new UniRectangle(_engine.ViewPort.Width - 300, _engine.ViewPort.Height - 100, 212, 40);
+            _serverDescriptionLabel.Bounds = new UniRectangle(620, _headerHeight + 137, 300, 100);
         }
     }
 }

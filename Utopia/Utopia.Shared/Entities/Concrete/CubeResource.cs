@@ -1,7 +1,8 @@
+using System.ComponentModel;
 using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Sound;
 using SharpDX;
-using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -17,45 +18,32 @@ namespace Utopia.Shared.Entities.Concrete
     public class CubeResource : Item, ITool
     {
         [ProtoMember(1)]
-        public byte CubeId { get; private set; }
+        public byte CubeId { get; set; }
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.CubeResource; }
-        }
+        [Description("Is the tool will be used multiple times when the mouse putton is pressed")]
+        [ProtoMember(2)]
+        public bool RepeatedActionsAllowed { get; set; }
 
-        public DynamicEntity Parent { get; set; }
-
-        public AbstractChunk ParentChunk { get; set; }
-        
-        public void SetCube(byte cubeId, string cubeName)
-        {
-            CubeId = cubeId;
-            Name = cubeName;
-        }
-
-        public override IToolImpact Put(IDynamicEntity owner)
+        public override IToolImpact Put(IDynamicEntity owner, Item worldDroppedItem = null)
         {
             // don't allow to put out the cube resource
-            return new ToolImpact();
+            return new ToolImpact { Message = "This action is not allowed by design" };
         }
 
         public IToolImpact Use(IDynamicEntity owner)
         {
-            if (owner.EntityState.IsBlockPicked)
-            {
-                return BlockImpact(owner);
-            }
+            IToolImpact impact;
 
-            var impact = new ToolImpact { Success = false };
-            impact.Message = "No target selected for use";
-            return impact;
+            if (!CanDoBlockAction(owner, out impact))
+                return impact;
+            
+            return BlockImpact(owner);
         }
 
         public IToolImpact BlockImpact(IDynamicEntity owner, bool runOnServer = false)
         {
             var entity = owner;
-            var impact = new ToolImpact { Success = false };
+            var impact = new BlockToolImpact { SrcBlueprintId = BluePrintId };
 
             if (entity.EntityState.IsBlockPicked)
             {
@@ -64,27 +52,80 @@ namespace Utopia.Shared.Entities.Concrete
                 foreach (var dynEntity in EntityFactory.DynamicEntityManager.EnumerateAround(entity.EntityState.NewBlockPosition))
                 {
                     var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.Position.AsVector3() + dynEntity.DefaultSize);
-                    if (blockBB.Intersects(ref dynBB)) return impact;
-                }
-
-                // Get the chunk where the entity will be added and check if another block static entity is present inside this block
-                var workingchunk = LandscapeManager.GetChunk(owner.EntityState.NewBlockPosition);
-                foreach (IBlockLocationRoot staticEntity in workingchunk.Entities.Entities.Values.Where(e => e is IBlockLocationRoot))
-                {
-                    if (staticEntity.BlockLocationRoot == entity.EntityState.NewBlockPosition)
+                    if (blockBB.Intersects(ref dynBB))
                     {
-                        // IBlockLocationRoot Entity already present at this location
+                        impact.Message = "Cannot place a block where someone is standing";
                         return impact;
                     }
                 }
-                
+
+                // Get the chunk where the entity will be added and check if another block static entity is present inside this block
+                var workingchunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.NewBlockPosition);
+                if (workingchunk == null)
+                {
+                    //Impossible to find chunk, chunk not existing, event dropped
+                    impact.Message = "Chunk is not existing, event dropped";
+                    impact.Dropped = true;
+                    return impact;
+                }
+                foreach (var staticEntity in workingchunk.Entities.OfType<IBlockLocationRoot>())
+                {
+                    if (staticEntity.BlockLocationRoot == entity.EntityState.NewBlockPosition)
+                    {
+                        impact.Message = "There is something there, remove it first " + staticEntity.BlockLocationRoot;
+                        return impact;
+                    }
+                }
+
                 //Add new block
                 var cursor = LandscapeManager.GetCursor(entity.EntityState.NewBlockPosition);
-
+                if (cursor == null)
+                {
+                    //Impossible to find chunk, chunk not existing, event dropped
+                    impact.Message = "Block not existing, event dropped";
+                    impact.Dropped = true;
+                    return impact;
+                }
                 if (cursor.Read() == WorldConfiguration.CubeId.Air)
                 {
+                    if (!EntityFactory.Config.IsInfiniteResources)
+                    {
+                        var charEntity = owner as CharacterEntity;
+                        if (charEntity == null)
+                        {
+                            impact.Message = "Character entity is expected";
+                            return impact;
+                        }
+
+                        var slot = charEntity.Inventory.FirstOrDefault(s => s.Item.StackType == StackType);
+
+                        if (slot == null)
+                        {
+                            // we have no more items in the inventory, remove from the hand
+                            slot = charEntity.Equipment[EquipmentSlotType.Hand];
+                            impact.Success = charEntity.Equipment.TakeItem(slot.GridPosition);
+                        }
+                        else
+                        {
+                            impact.Success = charEntity.Inventory.TakeItem(slot.GridPosition);
+                        }
+
+                        if (!impact.Success)
+                        {
+                            impact.Message = "Unable to take an item from the inventory";
+                            return impact;
+                        }
+                    }
+
                     cursor.Write(CubeId);
                     impact.Success = true;
+                    impact.CubeId = CubeId;
+
+                    if (SoundEngine != null && EntityFactory.Config.ResourcePut != null)
+                    {
+                        SoundEngine.StartPlay3D(EntityFactory.Config.ResourcePut, entity.EntityState.NewBlockPosition + new Vector3(0.5f));
+                    }
+
                     return impact;
                 }
             }

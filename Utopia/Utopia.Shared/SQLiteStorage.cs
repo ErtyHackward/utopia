@@ -58,7 +58,7 @@ namespace Utopia.Shared
         /// <param name="fileName">the Database Path</param>
         /// <param name="wipeDatabase">Boolean forcing a fresh DB creation, even if the file is existing</param>
         /// <returns>Return true if New Database has been created</returns>
-        protected bool CreateDBConnection(string fileName, bool wipeDatabase = false)
+        protected virtual bool CreateDBConnection(string fileName, bool wipeDatabase = false)
         {
             _path = fileName;
 
@@ -93,7 +93,11 @@ namespace Utopia.Shared
             _connection = new SQLiteConnection(csb + @";COMPRESS=TRUE");
             _connection.Open();
 
+#if DEBUG
+            Execute("PRAGMA JOURNAL_MODE=WAL;");
+#else
             Execute("PRAGMA LOCKING_MODE=EXCLUSIVE;PRAGMA JOURNAL_MODE=WAL;");
+#endif
 
             if (createDb) CreateDataBaseInternal();
 
@@ -164,9 +168,10 @@ namespace Utopia.Shared
                         return cmd.ExecuteReader();
                     }
                 }
-                catch { 
+                catch (Exception e){ 
                     return null; 
                 }
+
             }
         }
 
@@ -227,6 +232,18 @@ namespace Utopia.Shared
         public int Execute(string format, params object[] pars)
         {
             return Execute(string.Format(format, pars));
+        }
+
+        public bool TableExists(string name)
+        {
+            using (var reader = Query("SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';", name))
+            {
+                if (reader != null && reader.Read())
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

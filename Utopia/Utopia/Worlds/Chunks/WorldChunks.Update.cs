@@ -10,6 +10,8 @@ using System;
 using System.Diagnostics;
 using Utopia.Shared.LandscapeEntities;
 using Utopia.Action;
+using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -36,6 +38,7 @@ namespace Utopia.Worlds.Chunks
 #endif
         private int _chunkCreationTrigger;
         private Vector3D _lastPlayerTriggeredPosition;
+        private Range3I _eventNotificationArea; //Area where the server is sending events, everything outside this Area won't received events
         private int _sliceValue = -1;
 
         #region public methods
@@ -52,7 +55,7 @@ namespace Utopia.Worlds.Chunks
             }
 
             // slicing view of the chunk only if player is in God mode !
-            if (_playerManager is GodEntityManager)
+            if (PlayerManager is GodEntityManager)
             {
                 SlicingUpdate(timeSpend);
             }
@@ -114,6 +117,7 @@ namespace Utopia.Worlds.Chunks
         {
             int maximumUpdateOrderPossible = SortedChunks.Max(x => x.UpdateOrder);
             UpdateLeveled();
+            ChunkResyncing();
             CreateNewChunk();
             PropagateOuterChunkLights();
             CreateChunkMeshes(maximumUpdateOrderPossible);
@@ -132,6 +136,28 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
+        private void ChunkResyncing()
+        {
+            //Process each chunk that are in Empty state, and not currently processed
+            foreach (VisualChunk chunk in SortedChunks.Where(x => x.IsServerResyncMode && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
+            {
+                VisualChunk localChunk = chunk;
+
+                //Start chunk creation process in a threaded way !
+                localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
+#if DEBUG
+                localChunk.ThreadLockedBy = "ChunkResyncing";
+#endif
+                //SmartThread.ThreadPool.QueueWorkItem(ChunkCreationThreadedSteps_Threaded, chunk, WorkItemPriority.Normal);
+                S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkResyncing_Threaded(localChunk));
+            }
+        }
+
+        private void ChunkResyncing_Threaded(VisualChunk chunk)
+        {
+            if (chunk.IsServerResyncMode) _landscapeManager.CreateLandScape(chunk);
+            chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
+        }
 
         //Will create new chunks based on chunks with state = Empty
         private void CreateNewChunk()
@@ -194,7 +220,6 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
                     localChunk.ThreadLockedBy = "PropagateOuterChunkLights";
 #endif
-                    //SmartThread.ThreadPool.QueueWorkItem(ChunkOuterLightPropagation_Threaded, chunk, WorkItemPriority.Normal);
                     S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => ChunkOuterLightPropagation_Threaded(localChunk));
                 }
             }
@@ -288,7 +313,7 @@ namespace Utopia.Worlds.Chunks
             //Compute Distance Squared from Chunk Center to Camera
             foreach (var chunk in Chunks)
             {
-                chunk.DistanceFromPlayer = MVector3.Distance2D(chunk.ChunkCenter, _playerManager.CameraWorldPosition);
+                chunk.DistanceFromPlayer = MVector3.Distance2D(chunk.ChunkCenter, PlayerManager.CameraWorldPosition);
             }
             
             //Sort by this distance
@@ -303,10 +328,35 @@ namespace Utopia.Worlds.Chunks
 
         private void PlayerDisplacementChunkEvents()
         {
-            double distance = MVector3.Distance2D(_lastPlayerTriggeredPosition, _playerManager.Player.Position);
-            if (distance > 8)
+            double distance = MVector3.Distance2D(_lastPlayerTriggeredPosition, PlayerManager.Player.Position);
+            //Triggered when player has move a distance of 8 blocks (half chunk distance)
+            if (distance > (AbstractChunk.ChunkSize.X / 2d))
             {
-                _lastPlayerTriggeredPosition = _playerManager.Player.Position;
+                var newEventNotificationArea = new Range3I
+                {
+                    Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position) - _eventNotificationArea.Size / 2,
+                    Size = _eventNotificationArea.Size
+                };
+
+                var chunks2Syncro = newEventNotificationArea.AllExclude(_eventNotificationArea);
+                if (chunks2Syncro != null)
+                {
+                    bool synchroFullyRequested = true;
+                    //Get all new chunk in the area that are in a state ready to be requested !
+                    //Check that the concerned chunks are in a correct state to be requested.
+
+                    foreach (var chunkPosition in chunks2Syncro)
+                    {
+                        if (ResyncChunk(chunkPosition, false) == false)
+                        {
+                            synchroFullyRequested = false;
+                            break;
+                        }
+                    }
+                    if (synchroFullyRequested) _eventNotificationArea = newEventNotificationArea;
+                }
+
+                _lastPlayerTriggeredPosition = PlayerManager.Player.Position;
                 ChunkNeed2BeSorted = true;
             }
         }
@@ -318,13 +368,13 @@ namespace Utopia.Worlds.Chunks
 
             // Get World Border line ! => Highest and lowest X et Z chunk components
             //Compute Player position against WorldRange
-            var resultmin = new Vector3D(_playerManager.Player.Position.X - VisualWorldParameters.WorldRange.Position.X,
-                                         _playerManager.Player.Position.Y - VisualWorldParameters.WorldRange.Position.Y,
-                                         _playerManager.Player.Position.Z - VisualWorldParameters.WorldRange.Position.Z);
+            var resultmin = new Vector3D(PlayerManager.Player.Position.X - VisualWorldParameters.WorldRange.Position.X,
+                                         PlayerManager.Player.Position.Y - VisualWorldParameters.WorldRange.Position.Y,
+                                         PlayerManager.Player.Position.Z - VisualWorldParameters.WorldRange.Position.Z);
 
-            var resultmax = new Vector3D(VisualWorldParameters.WorldRange.Max.X - _playerManager.Player.Position.X,
-                                         VisualWorldParameters.WorldRange.Max.Y - _playerManager.Player.Position.Y,
-                                         VisualWorldParameters.WorldRange.Max.Z - _playerManager.Player.Position.Z);
+            var resultmax = new Vector3D(VisualWorldParameters.WorldRange.Max.X - PlayerManager.Player.Position.X,
+                                         VisualWorldParameters.WorldRange.Max.Y - PlayerManager.Player.Position.Y,
+                                         VisualWorldParameters.WorldRange.Max.Z - PlayerManager.Player.Position.Z);
 
             float wrapOrder = float.MaxValue;
             ChunkWrapType operation = ChunkWrapType.Z_Plus1;

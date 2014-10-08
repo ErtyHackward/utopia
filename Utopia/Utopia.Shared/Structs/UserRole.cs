@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Enumerates all possible roles for the user
+    /// Warning: the higher values means more power
     /// </summary>
     public enum UserRole
     {
@@ -10,20 +11,20 @@
         /// </summary>
         Undefinded = 0,
         /// <summary>
-        /// User that have no registration yet
+        /// Read only user, can not modify the world
         /// </summary>
-        Guest,
+        Guest = 1,
         /// <summary>
-        /// Normal ordinary registered user
+        /// User is allowed to modify the world
         /// </summary>
-        Registered,
+        Member = 2,
         /// <summary>
         /// User with higher credentials
         /// </summary>
-        Moderator,
+        Moderator = 3,
         /// <summary>
         /// Server administrator, all commands allowed
         /// </summary>
-        Administrator
+        Administrator = 4
     }
 }

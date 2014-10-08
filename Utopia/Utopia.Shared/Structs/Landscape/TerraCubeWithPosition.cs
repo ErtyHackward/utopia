@@ -13,16 +13,16 @@ namespace Utopia.Shared.Structs
 
         public static TerraCubeWithPosition DefaultValue = default(TerraCubeWithPosition);
 
-        public TerraCubeWithPosition(Vector3I pos, TerraCube cube, WorldConfiguration configuration)
+        public TerraCubeWithPosition(Vector3I pos, TerraCube cube, BlockProfile profile)
         {
-            BlockProfile = configuration.BlockProfiles[cube.Id];
+            BlockProfile = profile;
             Position = pos;
             Cube = cube;
         }
 
-        public TerraCubeWithPosition(Vector3I pos, byte cubeId, WorldConfiguration configuration)
+        public TerraCubeWithPosition(Vector3I pos, byte cubeId, BlockProfile profile)
         {
-            BlockProfile = configuration.BlockProfiles[cubeId];
+            BlockProfile = profile;
             Position = pos;
             Cube = new TerraCube(cubeId);
         }

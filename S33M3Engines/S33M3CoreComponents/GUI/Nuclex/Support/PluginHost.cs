@@ -66,6 +66,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Support
 
             // Iterate all types contained in the assembly
             Type[] types = assembly.GetTypes();
+
             for (int index = 0; index < types.Length; ++index)
             {
                 Type type = types[index];

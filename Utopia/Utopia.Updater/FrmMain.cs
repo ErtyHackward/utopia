@@ -29,7 +29,9 @@ namespace Utopia.Updater
 
         public void StartGame()
         {
-            Process.Start(Path.Combine(_basePath, "Realms.exe"));
+            var psi = new ProcessStartInfo(Path.Combine(_basePath, "Realms.exe"));
+            psi.WorkingDirectory = _basePath;
+            Process.Start(psi);
             Application.Exit();
         }
 
@@ -114,8 +116,23 @@ namespace Utopia.Updater
                     _updateFile.Load(reader);
                 }
 
-                Status("Check files to update...");
+                var indexPath = Path.Combine(_basePath, "update.index");
 
+                UpdateFile previousUpdate = null;
+
+                if (File.Exists(indexPath))
+                {
+                    using (var fs = File.OpenRead(indexPath))
+                    using (var zs = new GZipStream(fs, CompressionMode.Decompress))
+                    {
+                        var reader = new BinaryReader(zs);
+                        previousUpdate = new UpdateFile();
+                        previousUpdate.Load(reader);
+                    }
+                }
+                
+                Status("Check files to update...");
+                
                 var files = new List<UpdateFileInfo>();
 
                 foreach (var file in _updateFile.Files)
@@ -165,8 +182,6 @@ namespace Utopia.Updater
                                 {
                                     stream.CopyTo(fs);
                                 }
-
-
                             }
                         }
                     }
@@ -177,6 +192,28 @@ namespace Utopia.Updater
                     }
 
                     index++;
+                }
+
+                // delete removed files
+                if (previousUpdate != null)
+                {
+                    foreach (var removedFile in _updateFile.GetRemovedFiles(previousUpdate))
+                    {
+                        var fullPath = Path.Combine(_basePath, removedFile);
+                        if (File.Exists(fullPath))
+                            File.Delete(fullPath);
+                    }
+                }
+
+                if (File.Exists(indexPath))
+                    File.Delete(indexPath);
+
+                // save index for future update
+                using (var fs = File.OpenWrite(indexPath))
+                using (var zs = new GZipStream(fs, CompressionMode.Compress))
+                {
+                    var writer = new BinaryWriter(zs);
+                    _updateFile.Save(writer);
                 }
 
                 // save current token

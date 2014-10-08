@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Ninject;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3CoreComponents.Inputs;
+using S33M3DXEngine.Debug.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3Resources.Structs;
 using SharpDX;
@@ -23,16 +26,16 @@ namespace Utopia.Entities.Managers
     /// <summary>
     /// Provides entity and block picking by the player
     /// </summary>
-    public class PickingManager : GameComponent
+    public class PickingManager : GameComponent, IDebugInfo, IPickingManager
     {
-        private readonly IPlayerManager _playerManager;
-        private readonly IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly IWorldChunks2D _worldChunks;
         private readonly ICameraManager _cameraManager;
         private readonly InputsManager _inputsManager;
-        private readonly IPickingRenderer _pickingRenderer;
+        private IPickingRenderer _pickingRenderer;
         private readonly SingleArrayChunkContainer _cubesHolder;
         private readonly WorldConfiguration _worldConfiguration;
+        private IVisualDynamicEntityManager _dynamicEntityManager;
+        private IPlayerManager _playerManager;
 
         private VisualEntity _pickedUpEntity;
         private Vector3D _pickedUpEntityPosition;
@@ -41,35 +44,52 @@ namespace Utopia.Entities.Managers
 
         private TerraCubeWithPosition _pickedCube;
         private TerraCubeWithPosition _newCube;
+
+        public bool ShowDebugInfo { get; set; }
+
+        #region DI
+        [Inject]
+        public IPickingRenderer PickingRenderer
+        {
+            get { return _pickingRenderer; }
+            set { _pickingRenderer = value; }
+        }
+
+
+        [Inject]
+        public IPlayerManager PlayerManager { 
+            get { return _playerManager; }
+            set { _playerManager = value; }
+        }
         
-        public IPlayerManager PlayerManager { get { return _playerManager; } }
+        [Inject]
+        public IVisualDynamicEntityManager DynamicEntityManager
+        {
+            get { return _dynamicEntityManager; }
+            set { _dynamicEntityManager = value; }
+        }
         
-        public PickingManager(IPlayerManager playerManager,
-                              IVisualDynamicEntityManager dynamicEntityManager,
-                              IWorldChunks2D worldChunks,
+        #endregion
+
+        public PickingManager(IWorldChunks2D worldChunks,
                               ICameraManager cameraManager,
                               InputsManager inputsManager,
-                              IPickingRenderer pickingRenderer,
                               SingleArrayChunkContainer cubesHolder,
                               WorldConfiguration worldConfiguration)
         {
-            if (playerManager == null) throw new ArgumentNullException("playerManager");
-            if (dynamicEntityManager == null) throw new ArgumentNullException("dynamicEntityManager");
             if (worldChunks == null) throw new ArgumentNullException("worldChunks");
             if (cameraManager == null) throw new ArgumentNullException("cameraManager");
             if (inputsManager == null) throw new ArgumentNullException("inputsManager");
-            if (pickingRenderer == null) throw new ArgumentNullException("pickingRenderer");
             if (cubesHolder == null) throw new ArgumentNullException("cubesHolder");
             if (worldConfiguration == null) throw new ArgumentNullException("worldConfiguration");
 
-            _playerManager = playerManager;
-            _dynamicEntityManager = dynamicEntityManager;
             _worldChunks = worldChunks;
             _cameraManager = cameraManager;
             _inputsManager = inputsManager;
-            _pickingRenderer = pickingRenderer;
             _cubesHolder = cubesHolder;
             _worldConfiguration = worldConfiguration;
+
+            ShowDebugInfo = true;
         }
 
         public override void FTSUpdate(GameTime timeSpent)
@@ -78,7 +98,7 @@ namespace Utopia.Entities.Managers
 
             base.FTSUpdate(timeSpent);
         }
-
+        
         /// <summary>
         /// Checks nearby entities intersection with the pickingRay
         /// </summary>
@@ -93,7 +113,7 @@ namespace Utopia.Entities.Managers
             if (tool == null)
                 return result;
 
-            var pickedEntityDistance = float.MaxValue;
+            var pickedEntityDistance = tool.PickRange == 0f ? float.MaxValue : tool.PickRange;
             foreach (var entity in PossibleEntities())
             {
                 if (tool.CanPickEntity(entity.Entity) == PickType.Pick)
@@ -101,8 +121,28 @@ namespace Utopia.Entities.Managers
                     //Refresh entity bounding box world
                     if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
                     {
+                        if (entity.VoxelEntity.ModelInstance == null)
+                            continue; 
+
                         var localStaticEntityBb = entity.VoxelEntity.ModelInstance.State.BoundingBox;
-                        localStaticEntityBb = localStaticEntityBb.Transform(Matrix.RotationQuaternion(((IStaticEntity)entity.Entity).Rotation));          //Rotate the BoundingBox
+
+                        var staticEntity = entity.Entity as IStaticEntity;
+                        var dynamicEntity = entity.Entity as IDynamicEntity;
+
+                        var rotation = Quaternion.Identity;
+
+                        if (staticEntity != null)
+                        {
+                            rotation = staticEntity.Rotation;
+                        }
+                        if (dynamicEntity != null)
+                        {
+                            rotation = dynamicEntity.BodyRotation;
+                            rotation.Invert();
+                        }
+
+
+                        localStaticEntityBb = localStaticEntityBb.Transform(Matrix.RotationQuaternion(rotation));          //Rotate the BoundingBox
                         //Recompute the World bounding box of the entity based on a new Entity BoundingBox
                         entity.SetEntityVoxelBB(localStaticEntityBb); //Will automaticaly apply a 1/16 scaling on the boundingbox
                     }
@@ -171,6 +211,8 @@ namespace Utopia.Entities.Managers
             var activeModelState = instance.State;
 
             var visualModel = visualVoxelEntity.VisualVoxelModel;
+            if (visualModel == null || visualModel.VoxelModel != instance.VoxelModel)
+                return false;
 
             //For each Part in the model (A model can be composed of several parts)
             for (int partId = 0; partId < visualModel.VoxelModel.Parts.Count; partId++)
@@ -250,13 +292,13 @@ namespace Utopia.Entities.Managers
         /// <returns></returns>
         private IEnumerable<VisualVoxelEntity> PossibleEntities()
         {
-            foreach (var containers in _dynamicEntityManager.DynamicEntities)
+            foreach (var containers in DynamicEntityManager.DynamicEntities)
             {
-                if (_worldChunks.IsEntityVisible(containers.VisualVoxelEntity.Entity.Position))
-                    yield return containers.VisualVoxelEntity;
+                if (_worldChunks.IsEntityVisible(containers.Entity.Position))
+                    yield return containers;
             }
 
-            foreach (var visibleChunk in _worldChunks.VisibleChunks())
+            foreach (var visibleChunk in _worldChunks.VisibleChunks().Where(c => c.DistanceFromPlayer < 32))
             {
                 foreach (var visualEntity in visibleChunk.AllEntities())
                 {
@@ -313,13 +355,13 @@ namespace Utopia.Entities.Managers
                 //A new Block has been pickedup
                 if (PlayerManager.Player.EntityState.IsEntityPicked == false)
                 {
-                    _pickingRenderer.SetPickedBlock(ref PlayerManager.Player.EntityState.PickedBlockPosition, _worldConfiguration.BlockProfiles[_pickedCube.Cube.Id].YBlockOffset);
+                    PickingRenderer.SetPickedBlock(ref PlayerManager.Player.EntityState.PickedBlockPosition, _worldConfiguration.BlockProfiles[_pickedCube.Cube.Id].YBlockOffset);
                 }
                 else
                 {
                     if (_cameraManager.ActiveBaseCamera.CameraType == CameraType.ThirdPerson && _pickedUpEntity.Entity == PlayerManager.Player)
                         return;
-                    _pickingRenderer.SetPickedEntity(_pickedUpEntity);
+                    PickingRenderer.SetPickedEntity(_pickedUpEntity);
                 }
             }
         }
@@ -344,7 +386,13 @@ namespace Utopia.Entities.Managers
 
             var epr = CheckEntityPicking(pickingRay);
 
+            if (epr.Found && epr.Distance > blockPickingDistance)
+                epr.Found = false;
+
             var tool = PlayerManager.ActiveTool;
+
+            if (tool.PickRange != 0f)
+                blockPickingDistance = Math.Min(tool.PickRange, blockPickingDistance);
 
             var nbrPointToSample = (int)(Math.Min(blockPickingDistance, epr.Distance) / 0.02);
 
@@ -494,6 +542,28 @@ namespace Utopia.Entities.Managers
             }
 
             return PlayerManager.Player.EntityState.IsBlockPicked || PlayerManager.Player.EntityState.IsEntityPicked;
+        }
+
+        public string GetDebugInfo()
+        {
+            if (PlayerManager.Player.EntityState.IsBlockPicked)
+            {
+                return string.Format("Block picked {0} light : {1}; New Block position {2} light : {3}", 
+                                      PlayerManager.Player.EntityState.PickedBlockPosition,
+                                      _cubesHolder.GetCube(PlayerManager.Player.EntityState.PickedBlockPosition).Cube.EmissiveColor.ToString(),
+                                      PlayerManager.Player.EntityState.NewBlockPosition,
+                                      _cubesHolder.GetCube(PlayerManager.Player.EntityState.NewBlockPosition).Cube.EmissiveColor.ToString()
+                                      );
+                
+            }
+            else if (PlayerManager.Player.EntityState.IsEntityPicked)
+            {
+                return string.Format("Entity picked {0}", PlayerManager.Player.EntityState.PickedEntityPosition);
+            }
+            else
+            {
+                return "";    
+            }
         }
     }
 }

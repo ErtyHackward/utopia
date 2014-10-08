@@ -25,10 +25,28 @@ namespace Utopia.Shared.Chunks.Tags
 
         [ProtoMember(3)]
         public bool Sourced;
-        
+
+        public override bool Equals(BlockTag tag)
+        {
+            var t = tag as LiquidTag;
+
+            if (ReferenceEquals(t, null))
+                return false;
+
+            return Pressure == t.Pressure && LiquidType == t.LiquidType && Sourced == t.Sourced;
+        }
+
         public override int GetHashCode()
         {
             return Pressure.GetHashCode() ^ LiquidType.GetHashCode() ^ Sourced.GetHashCode();
+        }
+
+        /// <summary>
+        /// Liquid tag changes water block shape, so we need to rebuild the chunk
+        /// </summary>
+        public override bool RequireChunkMeshUpdate
+        {
+            get { return true; }
         }
     }
 }

@@ -17,10 +17,13 @@ namespace Utopia.Resources.VertexFormats
     {
         public static readonly VertexDeclaration VertexDeclaration;
 
-        public Vector4B Position;
+        public Vector4B Position; // X = XPosi, Y = YPosi, Z = ZPosi
         public ByteColor Color;
         public Vector4B VertexInfo;  //(bool)x = is Upper vertex;  y = facetype, z = not used, w = Offset
-        public Vector4B BiomeInfo;   //X = Temperature, Y = Moisture, Z = ArrayTextureID for Biome, W SideOffset multiplier
+        public Vector4B BiomeInfo;   //X = Moisture, Y = Temperature, Z = ArrayTextureID for Biome, W SideOffset multiplier
+        public Vector4B Animation;   // X = Speed, Y = NbrFrames
+        public ushort ArrayId;
+        public ushort Dummy;
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
@@ -34,37 +37,25 @@ namespace Utopia.Resources.VertexFormats
                                                             new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, InputElement.AppendAligned, 0),
                                                             new InputElement("INFO", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned, 0),
                                                             new InputElement("BIOMEINFO", 0, Format.R8G8_UNorm, InputElement.AppendAligned, 0),
-                                                            new InputElement("VARIOUS", 0, Format.R8G8_UInt, InputElement.AppendAligned, 0)
+                                                            new InputElement("VARIOUS", 0, Format.R8G8_UInt, InputElement.AppendAligned, 0),
+                                                            new InputElement("ANIMATION", 0, Format.R8G8B8A8_UInt, InputElement.AppendAligned, 0),
+                                                            new InputElement("ARRAYID", 0, Format.R16_UInt, InputElement.AppendAligned, 0),
+                                                            new InputElement("DUMMY", 0, Format.R16_UInt, InputElement.AppendAligned, 0)
                                                             };
 
             VertexDeclaration = new VertexDeclaration(elements);
         }
 
-        public VertexCubeSolid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B biomeInfo)
-        {
-            this.VertexInfo = new Vector4B();
-            this.Color = lighting;
-            this.Position = position;
-            this.Position.W = textureArrayId;
-            this.BiomeInfo = biomeInfo;
-        }
 
-        public VertexCubeSolid(Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector4B biomeInfo)
+        public VertexCubeSolid(ref Vector4B position, int textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector4B biomeInfo, byte animationSpeed, byte maxAnimationFrame)
         {
             this.VertexInfo = vertexInfo;
             this.Color = lighting;
             this.Position = position;
-            this.Position.W = textureArrayId;
+            this.ArrayId = (ushort)textureArrayId;
             this.BiomeInfo = biomeInfo;
-        }
-
-        public VertexCubeSolid(ref Vector4B position, Byte textureArrayId, ref ByteColor lighting, ref Vector4B vertexInfo, ref Vector4B biomeInfo)
-        {
-            this.VertexInfo = vertexInfo;
-            this.Color = lighting;
-            this.Position = position;
-            this.Position.W = textureArrayId;
-            this.BiomeInfo = biomeInfo;
+            Dummy = 0;
+            Animation = new Vector4B() { X = animationSpeed, Y = maxAnimationFrame };
         }
     }
 }

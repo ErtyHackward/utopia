@@ -8,6 +8,8 @@ namespace S33M3DXEngine.VertexFormat
 {
     public class VertexDeclaration
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         InputElement[] _elements;
         int _vertexStride = 0;
         int _perVertex_vertexStride = 0;
@@ -34,6 +36,14 @@ namespace S33M3DXEngine.VertexFormat
                         break;
                 }
             }
+
+            //Check Multiple of 4 !
+            if (_vertexStride % 4 != 0)
+            {
+                logger.Error(string.Format("Vertex declaration stride ({0}) is not multiple of 4", _vertexStride));
+                throw new Exception(string.Format("Vertex declaration stride ({0}) is not multiple of 4", _vertexStride));
+            }
+
         }
     }
 }

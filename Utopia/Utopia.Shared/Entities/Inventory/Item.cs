@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Globalization;
 using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Sound;
 using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Configuration;
@@ -21,7 +23,17 @@ namespace Utopia.Shared.Entities.Inventory
     /// Represents any lootable voxelEntity, tool, weapon, armor, collectible. This entity can be put into the inventory
     /// </summary>
     [ProtoContract]
-    public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity
+    [ProtoInclude(100, typeof(BlockItem))]
+    [ProtoInclude(101, typeof(BlockLinkedItem))]
+    [ProtoInclude(102, typeof(ResourcesCollector))]
+    [ProtoInclude(103, typeof(CubeResource))]
+    [ProtoInclude(104, typeof(Food))]
+    [ProtoInclude(105, typeof(Stuff))]
+    [ProtoInclude(106, typeof(GodHandTool))]
+    [ProtoInclude(107, typeof(Extractor))]
+    [ProtoInclude(108, typeof(MeleeWeapon))]
+    [ProtoInclude(109, typeof(TreeSoulKiller))]
+    public abstract class Item : StaticEntity, IItem, IWorldInteractingEntity, ISoundEmitterEntity
     {
         private VoxelModelInstance _modelInstance;
 
@@ -30,18 +42,21 @@ namespace Utopia.Shared.Entities.Inventory
         /// Gets or sets current voxel model name
         /// </summary>
         [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
+        [Category("Appearance")]
         [ProtoMember(1)]
         public string ModelName { get; set; }
 
         /// <summary>
         /// Gets an item description
         /// </summary>
+        [Category("Gameplay")]
         [ProtoMember(2)]
         public string Description { get; set; }
 
         /// <summary>
         /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
         /// </summary>
+        [Category("Gameplay")]
         [ProtoMember(3)]
         public int MaxStackSize { get; set; }
 
@@ -57,6 +72,34 @@ namespace Utopia.Shared.Entities.Inventory
         [ProtoMember(7)]
         public StaticEntitySoundSource EmittedSound { get; set; }
 
+        /// <summary>
+        /// Gets maximum pick range, 0 means default
+        /// </summary>
+        [Description("Maximum pick range, 0 means default")]
+        [Category("Gameplay")]
+        [ProtoMember(8)]
+        public float PickRange { get; set; }
+
+        /// <summary>
+        /// Optional model state for the entity, if not set the main state will be used
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Optional model state for the entity, if not set the main state will be used")]
+        [TypeConverter(typeof(ModelStateConverter))]
+        [ProtoMember(9)]
+        public string ModelState { get; set; }
+
+        /// <summary>
+        /// Possible entity transformation (grass => wheat seeds)
+        /// </summary>
+        [Category("Gameplay")]
+        [Description("Allows to transform the item when it is picked")]
+        [ProtoMember(10)]
+        public List<ItemTransformation> Transformations { get; set; }
+
+
+        [Browsable(false)]
+        public ISoundEngine SoundEngine { get; set; }
 
         /// <summary>
         /// Gets or sets voxel model instance
@@ -76,14 +119,17 @@ namespace Utopia.Shared.Entities.Inventory
         /// <summary>
         /// Gets stack string. Entities with the same stack string will be possible to put together in a single slot
         /// </summary>
+        [Browsable(false)]
         public virtual string StackType
         {
             get { return BluePrintId.ToString(CultureInfo.InvariantCulture); }            
         }
 
+
         /// <summary>
         /// Gets possible slot types where the item can be put to
         /// </summary>
+        [Category("Gameplay")]
         public EquipmentSlotType AllowedSlots { get; set; }
 
         // -------------------------------------------------------------------------
@@ -120,6 +166,7 @@ namespace Utopia.Shared.Entities.Inventory
             MaxStackSize = 1;
 
             EmittedSound = new StaticEntitySoundSource();
+            Transformations = new List<ItemTransformation>();
         }
 
         /// <summary>
@@ -151,6 +198,62 @@ namespace Utopia.Shared.Entities.Inventory
             item.Rotation = pos.Rotation;
         }
 
+        protected bool CanDo(IDynamicEntity owner, out IToolImpact impact)
+        {
+            impact = null;
+            if (owner.IsReadOnly)
+            {
+                impact = new ToolImpact
+                {
+                    Message = "You don't have the access to modify the world. Ask admins for access."
+                };
+                return false;
+            }
+
+            return true;
+        }
+
+        protected bool CanDoBlockAction(IDynamicEntity owner, out IToolImpact impact)
+        {
+            if (!owner.EntityState.IsBlockPicked)
+            {
+                impact = new ToolImpact
+                {
+                    Message = "Pick a block"
+                };
+                return false;
+            }
+            return CanDo(owner, out impact);
+        }
+
+        protected bool CanDoEntityAction(IDynamicEntity owner, out IToolImpact impact)
+        {
+            if (!owner.EntityState.IsEntityPicked)
+            {
+                impact = new ToolImpact
+                {
+                    Message = "Pick an entity"
+                };
+                return false;
+            }
+            return CanDo(owner, out impact);
+        }
+
+        protected bool CanDoBlockOrEntityAction(IDynamicEntity owner, out IToolImpact impact)
+        {
+            impact = null;
+            if (!owner.EntityState.IsBlockPicked && !owner.EntityState.IsEntityPicked)
+            {
+                impact = new ToolImpact
+                {
+                    Message = "Pick an entity or a block"
+                };
+                return false;
+            }
+            return CanDo(owner, out impact);
+        }
+
+
         /// <summary>
         /// Executes put operation
         /// Removes one item from the inventory and puts it into 
@@ -158,22 +261,23 @@ namespace Utopia.Shared.Entities.Inventory
         /// </summary>
         /// <param name="owner">entity that runs the operation</param>
         /// <returns></returns>
-        public virtual IToolImpact Put(IDynamicEntity owner)
+        public virtual IToolImpact Put(IDynamicEntity owner, Item worldDroppedItem = null)
         {
             // by default all items can only be dropped to some position
-            var impact = new ToolImpact { Success = false };
+            IToolImpact checkImpact;
+            
+            if (!CanDoBlockOrEntityAction(owner, out checkImpact))
+                return checkImpact;
 
-            var blockPicked = owner.EntityState.IsBlockPicked;
-            var entityPicked = owner.EntityState.IsEntityPicked;
-
-            // allow to put the item only if user picks something
-            if (!blockPicked && !entityPicked)
-                return impact;
-
+            var impact = new EntityToolImpact();
+            
             var pos = GetPosition(owner);
 
             if (!pos.Valid)
+            {
+                impact.Message = "Provided position is invalid";
                 return impact;
+            }
 
             var entityBB = new BoundingBox(pos.Position.AsVector3(), pos.Position.AsVector3() + DefaultSize);
 
@@ -181,44 +285,95 @@ namespace Utopia.Shared.Entities.Inventory
             {
                 var dynBB = new BoundingBox(dynEntity.Position.AsVector3(), dynEntity.Position.AsVector3() + dynEntity.DefaultSize);
                 if (entityBB.Intersects(ref dynBB))
+                {
+                    impact.Message = "Intersection with dynamic entity is detected";
                     return impact;
+                }
             }
 
 
             var cursor = EntityFactory.LandscapeManager.GetCursor(new Vector3D(owner.EntityState.PickPoint));
-            
-            var entity = (Item)Clone();
+
+            if (cursor == null)
+            {
+                impact.Dropped = true;
+                return impact;
+            }
+
+            Item entity;
+            if (worldDroppedItem == null)
+            {
+                entity = (Item)Clone();
+            }
+            else
+            {
+                entity = worldDroppedItem;
+            }
 
             SetPosition(pos, entity, owner);
-
-            // put entity into the world
-            cursor.AddEntity(entity, owner.DynamicId);
 
             // take entity from the inventory
             var charEntity = owner as CharacterEntity;
             if (charEntity != null)
             {
-                var slot = charEntity.Inventory.FirstOrDefault(s => s.Item.StackType == entity.StackType);
+                impact.Success = TakeFromPlayer(owner);
 
-                if (slot == null)
+                if (!impact.Success)
                 {
-                    // we have no more items in the inventory, remove from the hand
-                    slot = charEntity.Equipment[EquipmentSlotType.Hand];
-                    charEntity.Equipment.TakeItem(slot.GridPosition);
+                    impact.Message = "Unable to take an item from the inventory";
+                    return impact;
                 }
-                else
+
+                OnBeforePut(entity);
+                // put entity into the world
+                cursor.AddEntity(entity, owner.DynamicId);
+                impact.EntityId = entity.StaticId;
+
+                if (SoundEngine != null)
                 {
-                    charEntity.Inventory.TakeItem(slot.GridPosition);
+                    var sound = entity.PutSound ?? EntityFactory.Config.EntityPut;
+                    if (sound != null)
+                    {
+                        SoundEngine.StartPlay3D(sound, entity.Position.AsVector3());
+                    }
                 }
+
+                return impact;
             }
-
+            
+            impact.Message = "CharacterEntity owner is expected";
             return impact;
         }
+
+        protected bool TakeFromPlayer(IDynamicEntity owner, int itemsCount = 1)
+        {
+            var charEntity = owner as CharacterEntity;
+
+            if (charEntity == null)
+                return false;
+
+            var slot = charEntity.Inventory.FirstOrDefault(s => s.Item.StackType == StackType);
+
+            if (slot == null)
+            {
+                // we have no more items in the inventory, remove from the hand
+                slot = charEntity.Equipment[EquipmentSlotType.Hand];
+                return charEntity.Equipment.TakeItem(slot.GridPosition);
+            }
+
+            return charEntity.Inventory.TakeItem(slot.GridPosition);
+        }
+
+        protected virtual void OnBeforePut(Item item)
+        {
+
+        }
+        
 
         /// <summary>
         /// Defines tool pick behaviour for the blocks
         /// </summary>
-        /// <param name="blockId"></param>
+        /// <param name="blockProfile"></param>
         /// <returns></returns>
         public virtual PickType CanPickBlock(BlockProfile blockProfile)
         {
@@ -237,6 +392,38 @@ namespace Utopia.Shared.Entities.Inventory
         public virtual PickType CanPickEntity(IEntity entity)
         {
             return PickType.Pick;
+        }
+
+        public override object Clone()
+        {
+            var item = (Item)base.Clone();
+            if (Transformations != null)
+                item.Transformations = new List<ItemTransformation>(Transformations);
+            
+            return item;
+        }
+    }
+
+    [ProtoContract]
+    public class ItemTransformation
+    {
+        /// <summary>
+        /// Entity that will be given instead of default
+        /// </summary>
+        [Description("Entities that will be given instead of default")]
+        [ProtoMember(1)]
+        public List<InitSlot> GeneratedItems { get; set; }
+
+        /// <summary>
+        /// A chance that item will transform to other entity [0;1]
+        /// </summary>
+        [Description("A chance that item will transform to other entity [0;1]")]
+        [ProtoMember(2)]
+        public float TransformChance { get; set; }
+
+        public ItemTransformation()
+        {
+            GeneratedItems = new List<InitSlot>();
         }
     }
 }

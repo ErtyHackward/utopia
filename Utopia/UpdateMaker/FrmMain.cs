@@ -18,8 +18,13 @@ namespace UpdateMaker
     {
         private UpdateFile _previousFile;
 
-        private HashSet<string> _ignoredFiles = new HashSet<string>();
-        private string baseFolderPath;
+        private readonly HashSet<string> _ignoredFiles = new HashSet<string>();
+        private string _baseFolderPath;
+        private float _progress;
+        private string _file = "Prepare to upload...";
+        private bool _finished = false;
+        private UpdateFile _updateFile;
+        private List<UpdateFileInfo> _newFiles = new List<UpdateFileInfo>(); 
 
         public string IgnoreListPath
         {
@@ -39,7 +44,7 @@ namespace UpdateMaker
                 Application.Exit();
 
             linkLabel1.Text = Settings.Default.BaseFile;
-            baseFolderPath = Path.GetDirectoryName(Settings.Default.BaseFile);
+            _baseFolderPath = Path.GetDirectoryName(Settings.Default.BaseFile);
 
             if (File.Exists(IgnoreListPath))
             {
@@ -47,6 +52,11 @@ namespace UpdateMaker
                 {
                     _ignoredFiles.Add(file);
                 }
+            }
+
+            if (File.Exists(Settings.Default.BaseFile))
+            {
+                button2_Click(null, null);
             }
         }
 
@@ -62,7 +72,7 @@ namespace UpdateMaker
                     Settings.Default.BaseFile = fileDialog.FileName;
                     Settings.Default.Save();
                     linkLabel1.Text = Settings.Default.BaseFile;
-                    baseFolderPath = Path.GetDirectoryName(Settings.Default.BaseFile);
+                    _baseFolderPath = Path.GetDirectoryName(Settings.Default.BaseFile);
                 }
             }
         }
@@ -88,7 +98,6 @@ namespace UpdateMaker
             {
                 LoadFiles(directory);
             }
-
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -121,10 +130,10 @@ namespace UpdateMaker
         private void button1_Click(object sender, EventArgs e)
         {
             // check files we need to update
-            updateFile = new UpdateFile();
+            _updateFile = new UpdateFile();
 
-            updateFile.Message = textBox1.Text;
-            updateFile.Version = Assembly.LoadFile(Settings.Default.BaseFile).GetName().Version.ToString();
+            _updateFile.Message = textBox1.Text;
+            _updateFile.Version = Assembly.LoadFile(Settings.Default.BaseFile).GetName().Version.ToString();
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
@@ -134,27 +143,31 @@ namespace UpdateMaker
                 f.Md5Hash = row.Cells[1].Value.ToString();
                 f.DownloadUri = "http://update.utopiarealms.com/files/" + f.SystemPath.Replace('\\', '/');
 
-                var fi = new FileInfo(Path.Combine(baseFolderPath, f.SystemPath));
+                var fi = new FileInfo(Path.Combine(_baseFolderPath, f.SystemPath));
                 f.Length = fi.Length;
                 f.LastWriteTime = fi.LastWriteTimeUtc;
 
-                updateFile.Files.Add(f);
+                _updateFile.Files.Add(f);
             }
 
             var ms = new MemoryStream();
             var writer = new BinaryWriter(ms);
-            foreach (var fileInfo in updateFile.Files)
+            foreach (var fileInfo in _updateFile.Files)
             {
                 fileInfo.Save(writer);
             }
             ms.Position = 0;
             var hash = Md5Hash.Calculate(ms);
-            updateFile.UpdateToken = hash.ToString();
+            _updateFile.UpdateToken = hash.ToString();
 
             if (_previousFile != null)
-                updateFile.Files = updateFile.GetChangedFiles(_previousFile);
+                _newFiles = _updateFile.GetChangedFiles(_previousFile);
+            else
+            {
+                _newFiles = _updateFile.Files;
+            }
 
-            if (updateFile.Files.Count == 0)
+            if (_newFiles.Count == 0)
             {
                 MessageBox.Show("No changes found.");
                 return;
@@ -162,20 +175,20 @@ namespace UpdateMaker
 
 
             // upload them
-            finished = false;
+            _finished = false;
             var progressForm = new FrmProgress();
 
-            progressForm.Progress = progress;
-            progressForm.Label = file;
+            progressForm.Progress = _progress;
+            progressForm.Label = _file;
 
             new ThreadStart(Publish).BeginInvoke(null, null);
 
             progressForm.Show(this);
 
-            while (!finished)
+            while (!_finished)
             {
-                progressForm.Progress = progress;
-                progressForm.Label = file;
+                progressForm.Progress = _progress;
+                progressForm.Label = _file;
                 progressForm.Refresh();
                 Application.DoEvents();
                 Thread.Sleep(10);
@@ -183,17 +196,14 @@ namespace UpdateMaker
 
             progressForm.Close();
             FrmMain_Load(null, null);
-        }
 
-        private float progress = 0f;
-        private string file = "Prepare to upload...";
-        private bool finished = false;
-        private UpdateFile updateFile;
+            MessageBox.Show("Autoupdate publish is complete","Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
         private void Publish()
         {
             // create directories
-            var dirs = updateFile.Files.Select(f => Path.GetDirectoryName(f.SystemPath)).Distinct().ToList();
+            var dirs = _newFiles.Select(f => Path.GetDirectoryName(f.SystemPath)).Distinct().ToList();
 
             foreach (var dir in dirs)
             {
@@ -217,12 +227,12 @@ namespace UpdateMaker
 
             int index = 0;
             // upload files
-            foreach (var updateFileInfo in updateFile.Files)
+            foreach (var updateFileInfo in _newFiles)
             {
                 var url = "ftp://update.utopiarealms.com/files/" + updateFileInfo.SystemPath.Replace('\\', '/');
-                file = updateFileInfo.SystemPath;
-                progress = (float)index / updateFile.Files.Count;
-                using (var fs = File.OpenRead(Path.Combine(baseFolderPath, updateFileInfo.SystemPath)))
+                _file = updateFileInfo.SystemPath;
+                _progress = (float)index / _newFiles.Count;
+                using (var fs = File.OpenRead(Path.Combine(_baseFolderPath, updateFileInfo.SystemPath)))
                 {
                     UploadFile(url, fs);
                 }
@@ -230,13 +240,13 @@ namespace UpdateMaker
             }
 
             // upload index file
-            file = "index file...";
+            _file = "index file...";
             using (var ms = new MemoryStream())
             {
                 using (var zs = new GZipStream(ms, CompressionMode.Compress))
                 {
                     var bwriter = new BinaryWriter(zs);
-                    updateFile.Save(bwriter);
+                    _updateFile.Save(bwriter);
                 }
                 var ms2 = new MemoryStream(ms.ToArray());
                 UploadFile("ftp://update.utopiarealms.com/index.update", ms2);
@@ -246,12 +256,12 @@ namespace UpdateMaker
             {
                 using (var writer = new StreamWriter(ms, Encoding.UTF8))
                 {
-                    writer.Write(updateFile.UpdateToken);
+                    writer.Write(_updateFile.UpdateToken);
                     writer.Flush();
                     UploadFile("ftp://update.utopiarealms.com/token", ms);
                 }
             }
-            finished = true;
+            _finished = true;
         }
 
         private void UploadFile(string uri, Stream filestream)

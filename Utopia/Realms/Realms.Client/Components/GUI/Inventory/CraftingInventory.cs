@@ -1,16 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using S33M3CoreComponents.GUI.Nuclex;
+﻿using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
-using S33M3Resources.Structs;
 using Utopia.Entities;
+using Utopia.Entities.Managers;
 using Utopia.GUI.Crafting;
-using Utopia.GUI.Inventory;
 using Utopia.Shared.Configuration;
-using Utopia.Shared.Entities.Dynamic;
 
 namespace Realms.Client.Components.GUI.Inventory
 {
@@ -29,10 +25,14 @@ namespace Realms.Client.Components.GUI.Inventory
         private SpriteTexture _stBtnCraft;
         private SpriteTexture _stBtnCraftDown;
         private SpriteTexture _stBtnCraftHover;
-
         
-
-        public CraftingInventory(D3DEngine engine, WorldConfiguration conf, PlayerCharacter character, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) :
+        public CraftingInventory(
+                D3DEngine engine, 
+                WorldConfiguration conf, 
+                PlayerEntityManager character, 
+                IconFactory iconFactory, 
+                InputsManager inputManager, 
+                SandboxCommonResources commonResources) :
             base(conf, character, iconFactory, inputManager)
         {
             _engine = engine;

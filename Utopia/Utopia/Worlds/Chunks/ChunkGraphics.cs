@@ -15,6 +15,7 @@ namespace Utopia.Worlds.Chunks
     {
         private readonly VisualChunkBase _parentChunk;
         private readonly D3DEngine _d3dEngine;
+        private bool _disposed;
 
         private bool _ready2Draw;
 
@@ -85,6 +86,8 @@ namespace Utopia.Worlds.Chunks
 
         public void SendCubeMeshesToBuffers()
         {
+            if (_disposed) return;
+
             SendSolidCubeMeshToGraphicCard();       //Solid Cubes
             SendLiquidCubeMeshToGraphicCard();      //See Through Cubes
 
@@ -150,6 +153,8 @@ namespace Utopia.Worlds.Chunks
         //Ask the Graphical card to Draw the solid faces
         public void DrawSolidFaces(DeviceContext context)
         {
+            if (_disposed) return;
+
             if (SolidCubeVB != null)
             {
                 SolidCubeVB.SetToDevice(context, 0);
@@ -161,6 +166,8 @@ namespace Utopia.Worlds.Chunks
         //Ask the Graphical card to Draw the solid faces
         public void DrawLiquidFaces(DeviceContext context)
         {
+            if (_disposed) return;
+
             if (LiquidCubeVB != null)
             {
                 LiquidCubeVB.SetToDevice(context, 0);
@@ -175,6 +182,7 @@ namespace Utopia.Worlds.Chunks
             if (SolidCubeIB != null) SolidCubeIB.Dispose();
             if (LiquidCubeVB != null) LiquidCubeVB.Dispose();
             if (LiquidCubeIB != null) LiquidCubeIB.Dispose();
+            _disposed = true;
         }
     }
 }

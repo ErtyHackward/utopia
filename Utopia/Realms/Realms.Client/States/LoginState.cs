@@ -54,6 +54,21 @@ namespace Realms.Client.States
             AddComponent(login);
             AddComponent(sound);
             base.Initialize(context);
+
+            ////Bypassing Login check
+            //var vars = _iocContainer.Get<RealmRuntimeVariables>();
+
+            //vars.Login = login.Email;
+            //vars.PasswordHash = login.Password.GetSHA1Hash();
+
+            //ClientSettings.Current.Settings.Login = login.Email;
+            //ClientSettings.Current.Settings.Token = "??/";
+            //ClientSettings.Current.Settings.PasswordHash = vars.PasswordHash;
+            //ClientSettings.Current.Save();
+
+            //vars.DisplayName = "Local TEST";
+
+            //StatesManager.ActivateGameStateAsync("MainMenu");
         }
 
         void WebApiTokenVerified(object sender, VerifyResponse e)

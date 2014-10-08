@@ -19,5 +19,9 @@ namespace Utopia.Shared.Chunks
         public byte MaxGroundHeight;
         [ProtoMember(5)]
         public byte Biome;
+        [ProtoMember(6)]
+        public byte Zone;
+        [ProtoMember(7)]
+        public bool IsWild;
     }
 }

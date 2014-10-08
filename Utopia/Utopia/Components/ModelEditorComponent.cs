@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Ninject;
@@ -10,7 +12,9 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using Utopia.Entities;
 using Utopia.Entities.Voxel;
+using Utopia.Particules;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Net.Web;
 using Utopia.Shared.Structs;
@@ -29,6 +33,8 @@ using S33M3DXEngine.RenderStates;
 using Utopia.Shared.GameDXStates;
 using Utopia.Shared.Settings;
 using Utopia.Resources.Effects.Entities;
+using Matrix = SharpDX.Matrix;
+using System.Globalization;
 
 namespace Utopia.Components
 {
@@ -113,8 +119,10 @@ namespace Utopia.Components
 
         private int _selectedColorIndex;
         private FrameEditorTools _frameEditorTool;
-        private EditorAxis _sliceAxis = EditorAxis.Y;
+        private EditorAxis _sliceAxis = EditorAxis.None;
         private EditorAxis _mirror = EditorAxis.None;
+        private bool _wholeSlice;
+        private bool _diagonalTouch;
 
         private bool _displayLayoutRotationPosition = true;
 
@@ -143,9 +151,13 @@ namespace Utopia.Components
         private List<BoundingBox> _frameShapeBBoxes = null;
         private int _selectedStateIndex;
 
+        private bool _askedSave;
+
         #endregion
 
         #region Properties
+
+        public string Author { get; set; }
 
         /// <summary>
         /// Gets current editor camera transformation
@@ -426,13 +438,14 @@ namespace Utopia.Components
         /// <summary>
         /// Creates new editor component
         /// </summary>
-        /// <param name="d3DEngine"></param>
-        /// <param name="screen"></param>
-        /// <param name="manager"> </param>
-        /// <param name="meshFactory"> </param>
-        /// <param name="gui"> </param>
-        /// <param name="inputManager"> </param>
-        public ModelEditorComponent(D3DEngine d3DEngine, MainScreen screen, VoxelModelManager manager, VoxelMeshFactory meshFactory, GuiManager gui, InputsManager inputManager, IconFactory iconFactory)
+        public ModelEditorComponent(
+            D3DEngine d3DEngine, 
+            MainScreen screen, 
+            VoxelModelManager manager, 
+            VoxelMeshFactory meshFactory, 
+            GuiManager gui, 
+            InputsManager inputManager, 
+            IconFactory iconFactory)
         {
             _inputManager = inputManager;
             _iconFactory = iconFactory;
@@ -452,19 +465,26 @@ namespace Utopia.Components
             _mainViewData.Scale = 0.1f;
             _currentViewData.Scale = 0.1f;
             _frameViewData.Scale = 0.1f;
-            _d3DEngine.ViewPort_Updated += ViewportUpdated;
+            _d3DEngine.ScreenSize_Updated += ViewportUpdated;
+
+            _manager.VoxelModelAvailable += ManagerVoxelModelAvailable;
 
             DrawOrders.UpdateIndex(0, 15);
         }
 
+        void ManagerVoxelModelAvailable(object sender, VoxelModelReceivedEventArgs e)
+        {
+            UpdateModelsList(_visualVoxelModel);
+        }
+
         private void InitPlanes(Vector3I chunkSize)
         {
-            _gridBackPlane = new Plane(new Vector3(), _gridBackNormal);
-            _gridFrontPlane = new Plane(chunkSize, _gridFrontNormal);
-            _gridTopPlane = new Plane(chunkSize, _gridTopNormal);
+            _gridBackPlane   = new Plane(new Vector3(), _gridBackNormal);
+            _gridFrontPlane  = new Plane(chunkSize, _gridFrontNormal);
+            _gridTopPlane    = new Plane(chunkSize, _gridTopNormal);
             _gridBottomPlane = new Plane(new Vector3(), _gridBottomNormal);
-            _gridLeftPlane = new Plane(new Vector3(), _gridLeftNormal);
-            _gridRightPlane = new Plane(chunkSize, _gridRightNormal);
+            _gridLeftPlane   = new Plane(new Vector3(), _gridLeftNormal);
+            _gridRightPlane  = new Plane(chunkSize, _gridRightNormal);
 
             _gridPlanes = new[] { _gridBackPlane, _gridFrontPlane, _gridTopPlane, _gridBottomPlane, _gridLeftPlane, _gridRightPlane };
         }
@@ -483,7 +503,7 @@ namespace Utopia.Components
         {
             InitializeGui();
 
-            foreach (var model in _manager.Enumerate())
+            foreach (var model in _manager.Enumerate().OrderBy(x => x.VoxelModel.Name))
             {
                 _modelsList.Items.Add(model);
             }
@@ -612,10 +632,24 @@ namespace Utopia.Components
         {
             _modelEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogModelEditStruct(), "Add a new model", OnModelAdded);
         }
+
+        private string NormalizeName(string modelName)
+        {
+            modelName = modelName.Replace(" ", "");
+            modelName = modelName.Replace("'", "");
+            if (modelName.Length > 0)
+                modelName = char.ToUpper(modelName[0]) + modelName.Remove(0, 1);
+
+            return modelName;
+        }
+
+
         private void OnModelAdded(DialogModelEditStruct e)
         {
             if (string.IsNullOrEmpty(e.Name))
                 e.Name = "rename_me";
+
+            e.Name = NormalizeName(e.Name);
 
             var model = new VisualVoxelModel(new VoxelModel { Name = e.Name }, _meshFactory);
             var voxelModelState = new VoxelModelState(model.VoxelModel);
@@ -662,6 +696,8 @@ namespace Utopia.Components
             if (string.IsNullOrEmpty(e.Name))
                 e.Name = "rename_me";
 
+            e.Name = NormalizeName(e.Name);
+
             if (_manager.Contains(VisualVoxelModel.VoxelModel.Name))
             {
                 _manager.Rename(VisualVoxelModel.VoxelModel.Name, e.Name);
@@ -706,13 +742,8 @@ namespace Utopia.Components
             part.Name = e.Name;
             part.IsHead = e.IsHead;
             part.IsArm = e.IsArm;
-
-            foreach (var voxelModelState in _visualVoxelModel.VoxelModel.States)
-            {
-                voxelModelState.PartsStates.Add(new VoxelModelPartState());
-            }
-
-            _visualVoxelModel.VoxelModel.Parts.Add(part);
+            
+            _visualVoxelModel.VoxelModel.AddPart(part);
             _visualVoxelModel.BuildMesh();
             _partsList.Items.Add(part);
 
@@ -748,6 +779,38 @@ namespace Utopia.Components
             part.Name = e.Name;
             part.IsHead = e.IsHead;
             part.IsArm = e.IsArm;
+
+            NeedSave();
+        }
+
+        private void OnPartsEffectButtonPressed()
+        {
+            if (SelectedStateIndex == -1)
+            {
+                _gui.MessageBox("Select a state to edit");
+                return;
+            }
+
+            var particule =
+                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules;
+
+            if (particule == null)
+                particule = new StaticEntityParticule();
+
+            var s = new DialogPartEffectStruct(particule);
+            _partEffectDialog.ShowDialog(_screen, _d3DEngine.ViewPort,s , "Edit the effect", OnEffectEdited);
+        }
+
+        private void OnEffectEdited(DialogPartEffectStruct obj)
+        {
+            if (obj.EnableEffect)
+            {
+                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules = obj.ToStaticParticule();
+            }
+            else
+            {
+                _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[SelectedPartIndex].Particlules = null;
+            }
         }
 
         private void OnPartsDeletePressed()
@@ -758,15 +821,13 @@ namespace Utopia.Components
                 return;
             }
 
-            _visualVoxelModel.VoxelModel.Parts.RemoveAt(SelectedPartIndex);
-
-            foreach (var voxelModelState in _visualVoxelModel.VoxelModel.States)
+            if (_visualVoxelModel.VoxelModel.Parts.Count == 1)
             {
-                voxelModelState.PartsStates.RemoveAt(SelectedPartIndex);
+                _gui.MessageBox("Model must have at least one part");
+                return;
             }
-
-            _visualVoxelModel.RemoveFrameAt(SelectedPartIndex);
-
+            
+            _visualVoxelModel.VoxelModel.RemovePartAt(SelectedPartIndex);
             _partsList.Items.RemoveAt(SelectedPartIndex);
 
             if (_partsList.Items.Count > 0 && SelectedPartIndex == 0)
@@ -776,6 +837,10 @@ namespace Utopia.Components
             }
             else
                 SelectedPartIndex = SelectedPartIndex - 1;
+
+            _partsList.SelectItem(SelectedPartIndex);
+            _visualVoxelModel.BuildMesh();
+            _instance.UpdateStates();
         }
 
         private void OnFrameAddPressed()
@@ -786,7 +851,14 @@ namespace Utopia.Components
                 return;
             }
 
-            _frameEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogFrameEditStruct { SizeX = 16, SizeY = 16, SizeZ = 16, Name = "noname" }, "Add a new frame", OnFrameAdded);
+            var ds = new DialogFrameEditStruct { 
+                SizeX = 16, 
+                SizeY = 16, 
+                SizeZ = 16, 
+                Name = "noname" 
+            };
+            
+            _frameEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, ds, "Add a new frame", OnFrameAdded);
         }
         private void OnFrameAdded(DialogFrameEditStruct e)
         {
@@ -817,6 +889,20 @@ namespace Utopia.Components
                 SizeZ = size.Z,
                 Name = frame.Name
             };
+
+            args.MirrorBack   = (frame.FrameMirror & FrameMirror.MirrorBack) == FrameMirror.MirrorBack;
+            args.MirrorFront  = (frame.FrameMirror & FrameMirror.MirrorFront) == FrameMirror.MirrorFront;
+            args.MirrorTop    = (frame.FrameMirror & FrameMirror.MirrorTop) == FrameMirror.MirrorTop;
+            args.MirrorBottom = (frame.FrameMirror & FrameMirror.MirrorBottom) == FrameMirror.MirrorBottom;
+            args.MirrorLeft   = (frame.FrameMirror & FrameMirror.MirrorLeft) == FrameMirror.MirrorLeft;
+            args.MirrorRight  = (frame.FrameMirror & FrameMirror.MirrorRight) == FrameMirror.MirrorRight;
+            args.TileBack     = (frame.FrameMirror & FrameMirror.TileBack) == FrameMirror.TileBack;
+            args.TileFront    = (frame.FrameMirror & FrameMirror.TileFront) == FrameMirror.TileFront;
+            args.TileTop      = (frame.FrameMirror & FrameMirror.TileTop) == FrameMirror.TileTop;
+            args.TileBottom   = (frame.FrameMirror & FrameMirror.TileBottom) == FrameMirror.TileBottom;
+            args.TileLeft     = (frame.FrameMirror & FrameMirror.TileLeft) == FrameMirror.TileLeft;
+            args.TileRight    = (frame.FrameMirror & FrameMirror.TileRight) == FrameMirror.TileRight;
+
             
             _frameEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, args, "Edit frame size", OnFrameEdited);
         }
@@ -825,8 +911,25 @@ namespace Utopia.Components
             var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex];
             frame.Name = e.Name;
             frame.BlockData.UpdateChunkSize(new Vector3I(e.SizeX, e.SizeY, e.SizeZ), true);
+
+            frame.FrameMirror = 0;
+            if (e.MirrorBack) frame.FrameMirror |= FrameMirror.MirrorBack;
+            if (e.MirrorFront) frame.FrameMirror |= FrameMirror.MirrorFront;
+            if (e.MirrorTop) frame.FrameMirror |= FrameMirror.MirrorTop;
+            if (e.MirrorBottom) frame.FrameMirror |= FrameMirror.MirrorBottom;
+            if (e.MirrorLeft) frame.FrameMirror |= FrameMirror.MirrorLeft;
+            if (e.MirrorRight) frame.FrameMirror |= FrameMirror.MirrorRight;
+
+            if (e.TileBack) frame.FrameMirror |= FrameMirror.TileBack;
+            if (e.TileFront) frame.FrameMirror |= FrameMirror.TileFront;
+            if (e.TileTop) frame.FrameMirror |= FrameMirror.TileTop;
+            if (e.TileBottom) frame.FrameMirror |= FrameMirror.TileBottom;
+            if (e.TileLeft) frame.FrameMirror |= FrameMirror.TileLeft;
+            if (e.TileRight) frame.FrameMirror |= FrameMirror.TileRight;
+
             RebuildFrameVertices();
             ClearSelection();
+            NeedSave();
         }
 
         private void OnFrameDeletePressed()
@@ -842,8 +945,12 @@ namespace Utopia.Components
                 return;
             }
 
-            // TODO: implement frame delete
+            _visualVoxelModel.RemoveFrameAt(SelectedFrameIndex);
+            _visualVoxelModel.BuildMesh();
+            _framesList.Items.RemoveAt(SelectedFrameIndex);
 
+            _framesList.SelectItem(0);
+            _selectedFrameIndex = 0;
         }
 
         private void OnFrameHidePressed()
@@ -855,6 +962,7 @@ namespace Utopia.Components
             }
 
             _visualVoxelModel.VoxelModel.States[SelectedStateIndex].PartsStates[_selectedPartIndex].ActiveFrame = byte.MaxValue;
+            NeedSave();
         }
 
         private void OnColorAddPressed()
@@ -924,7 +1032,6 @@ namespace Utopia.Components
                 }
             }
             
-
             _visualVoxelModel.BuildMesh();
         }
 
@@ -939,16 +1046,28 @@ namespace Utopia.Components
             }
 
             VisualVoxelModel = newModel;
-            if (VisualVoxelModel != null && !VisualVoxelModel.Initialized)
+            if (VisualVoxelModel != null)
             {
-                VisualVoxelModel.BuildMesh();
+                VisualVoxelModel.VoxelModel.Validate();
+                if (!VisualVoxelModel.Initialized)
+                {
+                    VisualVoxelModel.BuildMesh();
+                }
             }
             UpdateCamera();
         }
-
+        
         private void AskModelSave(Action<string> callback)
         {
-            _gui.MessageBox("Current model was modified. Would you like to save the changes?", "Confirm", new[] { "Save", "Drop changes" }, callback );
+            if (_askedSave)
+                return;
+            _gui.MessageBox("Current model was modified. Would you like to save the changes?", "Confirm", new[] { "Save", "Drop changes" },
+                s =>
+                {
+                    _askedSave = false;
+                    callback(s);
+                });
+            _askedSave = true;
         }
 
         private void OnModelSaveConfirm(string button)
@@ -964,12 +1083,6 @@ namespace Utopia.Components
 
         private void OnStateAddButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
-
             _stateEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogStateEditStruct(), "Add a new state", OnStateAdded);
             
         }
@@ -985,12 +1098,6 @@ namespace Utopia.Components
         
         private void OnStateEditButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
-
             if (SelectedStateIndex == -1)
             {
                 _gui.MessageBox("Select a state to edit");
@@ -1009,11 +1116,6 @@ namespace Utopia.Components
 
         private void OnStateDeleteButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before delete");
-                return;
-            }
             if (VisualVoxelModel.VoxelModel.States.Count == 1)
             {
                 _gui.MessageBox("Model should have at least one state");
@@ -1022,18 +1124,17 @@ namespace Utopia.Components
 
             _statesList.Items.RemoveAt(SelectedStateIndex);
             VisualVoxelModel.VoxelModel.RemoveStateAt(SelectedStateIndex);
+
+            _statesList.SelectItem(0);
+            SelectedStateIndex = 0;
+            UpdateCamera();
         }
 
         private void OnAnimationsAddButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
-
             _animationsEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationEditStruct(), "Add a new animation", OnAnimationAdded);
         }
+
         private void OnAnimationAdded(DialogAnimationEditStruct e)
         {
             if (string.IsNullOrEmpty(e.Name))
@@ -1042,6 +1143,7 @@ namespace Utopia.Components
             var animation = new VoxelModelAnimation();
             
             animation.Name = e.Name;
+            animation.StartFrame = e.StartFrame;
 
             VisualVoxelModel.VoxelModel.Animations.Add(animation);
             _animationsList.Items.Add(animation);
@@ -1049,12 +1151,6 @@ namespace Utopia.Components
         
         private void OnAnimationsEditButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before edit");
-                return;
-            }
-
             if (SelectedAnimationIndex == -1)
             {
                 _gui.MessageBox("Select an animation to edit");
@@ -1063,22 +1159,17 @@ namespace Utopia.Components
 
             var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
 
-            _animationsEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationEditStruct { Name = animation.Name }, "Animation edit", OnAnimationEdited);
+            _animationsEditDialog.ShowDialog(_screen, _d3DEngine.ViewPort, new DialogAnimationEditStruct { Name = animation.Name, StartFrame = animation.StartFrame }, "Animation edit", OnAnimationEdited);
         }
         private void OnAnimationEdited(DialogAnimationEditStruct e)
         {
             var animation = VisualVoxelModel.VoxelModel.Animations[SelectedAnimationIndex];
             animation.Name = e.Name;
+            animation.StartFrame = e.StartFrame;
         }
 
         private void OnAnimationsDeleteButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before delete");
-                return;
-            }
-
             VisualVoxelModel.VoxelModel.Animations.RemoveAt(SelectedAnimationIndex);
             _animationsList.Items.RemoveAt(SelectedAnimationIndex);
 
@@ -1086,11 +1177,6 @@ namespace Utopia.Components
 
         private void OnAnimationStepAddButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before add a state");
-                return;
-            }
             if (SelectedAnimationIndex == -1)
             {
                 _gui.MessageBox("Select an animation to add step to");
@@ -1121,12 +1207,6 @@ namespace Utopia.Components
 
         private void OnAnimationStepEditButtonPressed()
         {
-            if (VisualVoxelModel == null)
-            {
-                _gui.MessageBox("Select a model before edit");
-                return;
-            }
-
             if (SelectedAnimationIndex == -1)
             {
                 _gui.MessageBox("Select an animation to edit");
@@ -1236,8 +1316,8 @@ namespace Utopia.Components
                 // fill the frame 
                 var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
 
-                // clear everything
-                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
+                if (frame.BlockBytes == null)
+                    frame.SetBlock(new Vector3I(), 0);
 
                 Vector3 center;
 
@@ -1256,13 +1336,15 @@ namespace Utopia.Components
                     center = (Vector3)frame.ChunkSize / 2;
                 }
 
-                var radius = Math.Min(Math.Min(center.X, center.Y), center.Z);
+                var radius = Math.Min(center.X, center.Z);
 
                 foreach (var position in range)
                 {
                     var point = position + new Vector3(0.5f, 0.5f, 0.5f);
-                    center.Y = point.Y;
-                    if (Vector3.Distance(point, center + range.Position) <= radius)
+                    var rangeOffset = center + range.Position;
+                    //center.Y = point.Y;
+                    rangeOffset.Y = point.Y;
+                    if (Vector3.Distance(point, rangeOffset) <= radius)
                         frame.SetBlock((Vector3I)point, (byte)(_selectedColorIndex + 1));
                 }
 
@@ -1277,8 +1359,8 @@ namespace Utopia.Components
                 // fill the frame 
                 var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
 
-                // clear everything
-                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
+                if (frame.BlockBytes == null)
+                    frame.SetBlock(new Vector3I(), 0);
 
                 Vector3 center;
 
@@ -1329,8 +1411,8 @@ namespace Utopia.Components
                 // fill the frame 
                 var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
 
-                // clear everything
-                frame.SetBlockBytes(new byte[frame.ChunkSize.X * frame.ChunkSize.Y * frame.ChunkSize.Z]);
+                if (frame.BlockBytes == null)
+                    frame.SetBlock(new Vector3I(), 0);
 
                 Vector3 center;
 
@@ -1478,7 +1560,7 @@ namespace Utopia.Components
                     }
                     break;
                 case EditorMode.FrameEdit:
-                    if (_selectedPartIndex != -1 && _selectedFrameIndex != -1)
+                    if (_selectedPartIndex != -1 && _selectedFrameIndex != -1 && _selectedFrameIndex != byte.MaxValue)
                     {
                         var frame = _visualVoxelModel.VoxelModel.Frames[_selectedFrameIndex];
                         var box = new BoundingBox(new Vector3(), frame.BlockData.ChunkSize);
@@ -1490,62 +1572,74 @@ namespace Utopia.Components
 
         private IEnumerable<Vector3I> GetSelectedCubes(bool newCubes = false)
         {
-            if (_newCube.HasValue || _pickedCube.HasValue)
+            if (!(_newCube.HasValue || _pickedCube.HasValue))
+                yield break;
+
+            if (_frameEditorTool != FrameEditorTools.Edit)
             {
-                var pos = _pickedCube.HasValue ? _pickedCube.Value : _newCube.Value;
+                var pos1 = _pickedCube.HasValue ? _pickedCube.Value : _newCube.Value;
 
-                if (newCubes) pos = _newCube.Value;
+                if (newCubes) pos1 = _newCube.Value;
 
-                yield return pos;
+                yield return pos1;
+                yield break;
+            }
 
-                if (_mirror != EditorAxis.None)
+
+            var pos = _pickedCube.HasValue ? _pickedCube.Value : _newCube.Value;
+
+            if (newCubes) pos = _newCube.Value;
+
+            yield return pos;
+
+            if (_mirror != EditorAxis.None)
+            {
+                if (SelectedPartIndex != -1 && SelectedFrameIndex != -1)
                 {
-                    if (SelectedPartIndex != -1 && SelectedFrameIndex != -1)
+                    var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex];
+
+                    if (_mirror.HasFlag(EditorAxis.X))
                     {
-                        var frame = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex];
+                        yield return new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1, pos.Y, pos.Z);
+                    }
+                    if (_mirror.HasFlag(EditorAxis.Y))
+                    {
+                        yield return new Vector3I(pos.X, frame.BlockData.ChunkSize.Y - pos.Y - 1, pos.Z);
+                    }
+                    if (_mirror.HasFlag(EditorAxis.Z))
+                    {
+                        yield return new Vector3I(pos.X, pos.Y, frame.BlockData.ChunkSize.Z - pos.Z - 1);
+                    }
 
-                        if (_mirror.HasFlag(EditorAxis.X))
-                        {
-                            yield return new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1, pos.Y, pos.Z);
-                        }
-                        if (_mirror.HasFlag(EditorAxis.Y))
-                        {
-                            yield return new Vector3I(pos.X, frame.BlockData.ChunkSize.Y - pos.Y - 1, pos.Z);
-                        }
-                        if (_mirror.HasFlag(EditorAxis.Z))
-                        {
-                            yield return new Vector3I(pos.X, pos.Y, frame.BlockData.ChunkSize.Z - pos.Z - 1);
-                        }
+                    if (_mirror.HasFlag(EditorAxis.X | EditorAxis.Y))
+                    {
+                        yield return
+                            new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1,
+                                            frame.BlockData.ChunkSize.Y - pos.Y - 1, pos.Z);
+                    }
+                    if (_mirror.HasFlag(EditorAxis.X | EditorAxis.Z))
+                    {
+                        yield return
+                            new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1, pos.Y,
+                                            frame.BlockData.ChunkSize.Z - pos.Z - 1);
+                    }
+                    if (_mirror.HasFlag(EditorAxis.Z | EditorAxis.Y))
+                    {
+                        yield return
+                            new Vector3I(pos.X, frame.BlockData.ChunkSize.Y - pos.Y - 1,
+                                            frame.BlockData.ChunkSize.Z - pos.Z - 1);
+                    }
 
-                        if (_mirror.HasFlag(EditorAxis.X | EditorAxis.Y))
-                        {
-                            yield return
-                                new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1,
-                                             frame.BlockData.ChunkSize.Y - pos.Y - 1, pos.Z);
-                        }
-                        if (_mirror.HasFlag(EditorAxis.X | EditorAxis.Z))
-                        {
-                            yield return
-                                new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1, pos.Y,
-                                             frame.BlockData.ChunkSize.Z - pos.Z - 1);
-                        }
-                        if (_mirror.HasFlag(EditorAxis.Z | EditorAxis.Y))
-                        {
-                            yield return
-                                new Vector3I(pos.X, frame.BlockData.ChunkSize.Y - pos.Y - 1,
-                                             frame.BlockData.ChunkSize.Z - pos.Z - 1);
-                        }
-
-                        if (_mirror.HasFlag(EditorAxis.X | EditorAxis.Y | EditorAxis.Z))
-                        {
-                            yield return
-                                new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1,
-                                             frame.BlockData.ChunkSize.Y - pos.Y - 1,
-                                             frame.BlockData.ChunkSize.Z - pos.Z - 1);
-                        }
+                    if (_mirror.HasFlag(EditorAxis.X | EditorAxis.Y | EditorAxis.Z))
+                    {
+                        yield return
+                            new Vector3I(frame.BlockData.ChunkSize.X - pos.X - 1,
+                                            frame.BlockData.ChunkSize.Y - pos.Y - 1,
+                                            frame.BlockData.ChunkSize.Z - pos.Z - 1);
                     }
                 }
             }
+            
         }
 
         /// <summary>
@@ -1738,74 +1832,15 @@ namespace Utopia.Components
                                             frame.BlockData.SetBlock(cubePos, 0);
                                             break;
                                         case FrameEditorTools.ColorBrush:
-                                            frame.BlockData.SetBlock(cubePos, (byte) (_selectedColorIndex + 1));
+                                            frame.BlockData.SetBlock(cubePos, (byte)( _selectedColorIndex + 1 ));
                                             break;
-                                        case FrameEditorTools.FillBrush:
-                                            {
-                                                // color fill 
-                                                var fillIndex = frame.BlockData.GetBlock(cubePos);
-                                                var fillWith = (byte) (_selectedColorIndex + 1);
-                                                // recursive change all adjacent cubes
-                                                if (fillIndex != fillWith)
-                                                    ColorFill(frame, cubePos, fillIndex, fillWith);
-                                            }
+                                        case FrameEditorTools.BlockFillBrush:
+                                            FillTool(frame, cubePos, 0);
                                             break;
-                                        case FrameEditorTools.SliceBrush:
-                                            {
-                                                // slice fill
-                                                var fillWith = (byte) (_selectedColorIndex + 1);
-
-                                                switch (_sliceAxis)
-                                                {
-                                                    case EditorAxis.X:
-                                                        for (int y = 0; y < frame.BlockData.ChunkSize.Y; y++)
-                                                        {
-                                                            for (int z = 0; z < frame.BlockData.ChunkSize.Z; z++)
-                                                            {
-                                                                if (
-                                                                    frame.BlockData.GetBlock(cubePos.X, y, z) !=
-                                                                    0)
-                                                                    frame.BlockData.SetBlock(
-                                                                        new Vector3I(cubePos.X, y, z),
-                                                                        fillWith);
-                                                            }
-                                                        }
-                                                        break;
-                                                    case EditorAxis.Y:
-                                                        for (int x = 0; x < frame.BlockData.ChunkSize.X; x++)
-                                                        {
-                                                            for (int z = 0; z < frame.BlockData.ChunkSize.Z; z++)
-                                                            {
-                                                                if (
-                                                                    frame.BlockData.GetBlock(x, cubePos.Y, z) !=
-                                                                    0)
-                                                                    frame.BlockData.SetBlock(
-                                                                        new Vector3I(x, cubePos.Y, z),
-                                                                        fillWith);
-                                                            }
-                                                        }
-                                                        break;
-                                                    case EditorAxis.Z:
-                                                        for (int y = 0; y < frame.BlockData.ChunkSize.Y; y++)
-                                                        {
-                                                            for (int x = 0; x < frame.BlockData.ChunkSize.X; x++)
-                                                            {
-                                                                if (
-                                                                    frame.BlockData.GetBlock(x, y, cubePos.Z) !=
-                                                                    0)
-                                                                    frame.BlockData.SetBlock(
-                                                                        new Vector3I(x, y, cubePos.Z),
-                                                                        fillWith);
-                                                            }
-                                                        }
-                                                        break;
-                                                    default:
-                                                        throw new ArgumentOutOfRangeException();
-                                                }
-
-                                            }
+                                        case FrameEditorTools.ColorFillBrush:
+                                            FillTool(frame, cubePos, (byte)( _selectedColorIndex + 1 ));
                                             break;
-                                        case FrameEditorTools.Selection : // selection tool
+                                        case FrameEditorTools.Selection: // selection tool
 
                                             if (_selectionEnd.HasValue || !_selectionStart.HasValue)
                                             {
@@ -1839,7 +1874,8 @@ namespace Utopia.Components
                                             break;
                                         case FrameEditorTools.ColorBrush:
                                             break;
-                                        case FrameEditorTools.FillBrush:
+                                        case FrameEditorTools.BlockFillBrush:
+                                            FillTool(frame, cubePos, (byte)(_selectedColorIndex + 1));
                                             break;
                                         case FrameEditorTools.Selection: // selection tool
 
@@ -1870,7 +1906,51 @@ namespace Utopia.Components
             base.FTSUpdate(timeSpent);
         }
 
-        private void ColorFill(VoxelFrame frame, Vector3I vector3I, byte fillIndex, byte newIndex)
+        private void FillTool(VoxelFrame frame, Vector3I cubePos, byte fillWith)
+        {
+            var fillIndex = frame.BlockData.GetBlock(cubePos);
+
+            if (fillIndex == fillWith)
+                return;
+
+            BackupFrame();
+
+            if (_wholeSlice)
+            {
+                var xs = _sliceAxis.HasFlag(EditorAxis.X) ? Enumerable.Range(0, frame.BlockData.ChunkSize.X).ToArray() : new[] { cubePos.X };
+                var ys = _sliceAxis.HasFlag(EditorAxis.Y) ? Enumerable.Range(0, frame.BlockData.ChunkSize.Y).ToArray() : new[] { cubePos.Y };
+                var zs = _sliceAxis.HasFlag(EditorAxis.Z) ? Enumerable.Range(0, frame.BlockData.ChunkSize.Z).ToArray() : new[] { cubePos.Z };
+                    
+                var vectors =   from x in xs
+                                from y in ys
+                                from z in zs
+                                select new Vector3I(x,y,z);
+                
+                IEnumerable<Vector3I> allPoints;
+                
+                if (HaveSelection())
+                {
+                    var range = GetSelectionRange();
+                    allPoints = vectors.Where(range.Contains);
+                }
+                else
+                {
+                    allPoints = vectors;
+                }
+
+                foreach (var checkVector in allPoints)
+                {
+                    if (frame.BlockData.GetBlock(checkVector) == fillIndex)
+                        frame.BlockData.SetBlock(checkVector, fillWith);
+                }
+            }
+            else
+            {
+                ColorFill(frame, cubePos, fillIndex, fillWith, new Vector3I(_sliceAxis.HasFlag(EditorAxis.X) ? 0 : 1, _sliceAxis.HasFlag(EditorAxis.Y) ? 0 : 1, _sliceAxis.HasFlag(EditorAxis.Z) ? 0 : 1));
+            }
+        }
+
+        private IEnumerable<Vector3I> ColorFillFind(VoxelFrame frame, Vector3I vector3I, byte fillIndex)
         {
             for (int x = -1; x < 2; x++)
             {
@@ -1879,6 +1959,19 @@ namespace Utopia.Components
                     for (int z = -1; z < 2; z++)
                     {
                         var checkVector = vector3I + new Vector3I(x, y, z);
+
+                        if (!_diagonalTouch)
+                        {
+                            int components = 0;
+
+                            if (x != 0) components++;
+                            if (y != 0) components++;
+                            if (z != 0) components++;
+
+                            if (components > 1)
+                                continue;
+                        }
+                            
 
                         if (HaveSelection())
                         {
@@ -1890,12 +1983,38 @@ namespace Utopia.Components
 
                         if (InChunk(frame.BlockData.ChunkSize, checkVector) && frame.BlockData.GetBlock(checkVector) == fillIndex)
                         {
-                            frame.BlockData.SetBlock(checkVector, newIndex);
-                            ColorFill(frame, checkVector, fillIndex, newIndex);
+                            yield return checkVector;
                         }
                     }
                 }
             }
+        }
+
+        private void ColorFill(VoxelFrame frame, Vector3I vector3I, byte fillIndex, byte newIndex, Vector3I constraint = default(Vector3I))
+        {
+            var checkVectors = new HashSet<Vector3I>();
+            checkVectors.Add(vector3I);
+
+            while (checkVectors.Count > 0)
+            {
+                var vector = checkVectors.First();
+                frame.BlockData.SetBlock(vector, newIndex);
+                checkVectors.Remove(vector);
+                
+                foreach (var v in ColorFillFind(frame, vector, fillIndex))
+                {
+                    if (v.X != vector.X && constraint.X != 0)
+                        continue;
+                    if (v.Y != vector.Y && constraint.Y != 0)
+                        continue;
+                    if (v.Z != vector.Z && constraint.Z != 0)
+                        continue;
+                    
+                    if (!checkVectors.Contains(v))
+                        checkVectors.Add(v);
+                }
+            }
+
         }
         
         private void GetSelectedCube(out Vector3I? cubePosition, out Vector3I? newCubePosition)
@@ -2281,7 +2400,7 @@ namespace Utopia.Components
                 var direction = new Vector3(0f, 0f, 1f);
                 direction.Normalize();
                 _voxelInstancedEffect.Begin(context);
-                _voxelInstancedEffect.CBPerFrame.Values.LightDirection = direction;
+                _voxelInstancedEffect.CBPerFrame.Values.SunVector = direction;
                 _voxelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_viewProjection);
                 _voxelInstancedEffect.CBPerFrame.IsDirty = true;
 
@@ -2681,6 +2800,8 @@ namespace Utopia.Components
                 return;
             }
 
+            _visualVoxelModel.VoxelModel.Validate();
+
             _manager.SaveModel(_visualVoxelModel);
             _needSave = false;
             _saveButton.Enabled = false;
@@ -2724,6 +2845,26 @@ namespace Utopia.Components
             }
         }
 
+        private void OnRenderPng()
+        {
+            if (_visualVoxelModel == null)
+            {
+                _gui.MessageBox("No model is selected to be rendered.", "Error");
+                return;
+            }
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia",
+                        _visualVoxelModel.VoxelModel.Name + ".png");
+            var dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            if (File.Exists(path))
+                File.Delete(path);
+
+            RenderPng(path, true);
+        }
+
+
         private void OnExportAll()
         {
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Utopia");
@@ -2741,7 +2882,7 @@ namespace Utopia.Components
 
                 // create icon
 
-                using (var tex2d = _iconFactory.CreateVoxelIcon(visualVoxelModel, new DrawingSize { Width = 128, Height = 128 }))
+                using (var tex2d = _iconFactory.CreateVoxelIcon(visualVoxelModel, new Size2 { Width = 128, Height = 128 }))
                     Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, previewPath);
 
                 count++;
@@ -2767,7 +2908,7 @@ namespace Utopia.Components
             }
 
             _modelsList.Items.Clear();
-            foreach (var model in _manager.Enumerate())
+            foreach (var model in _manager.Enumerate().OrderBy(x => x.VoxelModel.Name))
             {
                 _modelsList.Items.Add(model);
             }
@@ -2797,19 +2938,7 @@ namespace Utopia.Components
                 var visualModel = new VisualVoxelModel(voxelModel, _meshFactory);
                 _manager.SaveModel(visualModel);
 
-                _modelsList.Items.Clear();
-                var index = 0;
-                int i = 0;
-                foreach (var model in _manager.Enumerate())
-                {
-                    _modelsList.Items.Add(model);
-                    if (model == visualModel)
-                        index = i;
-                    i++;
-                }
-
-                _modelsList.SelectedItems.Clear();
-                _modelsList.SelectedItems.Add(index);
+                UpdateModelsList(visualModel);
                 
                 _gui.MessageBox("Model imported", "Success");
             }
@@ -2817,6 +2946,39 @@ namespace Utopia.Components
             {
                 _gui.MessageBox(x.Message, "Error");
             }
+        }
+
+        private void UpdateModelsList(VisualVoxelModel selected = null)
+        {
+            _modelsList.Items.Clear();
+            var index = 0;
+            int i = 0;
+            foreach (var model in _manager.Enumerate().OrderBy(m => m.VoxelModel.Name))
+            {
+                _modelsList.Items.Add(model);
+                if (model == selected)
+                    index = i;
+                i++;
+            }
+
+            _modelsList.SelectedItems.Clear();
+            _modelsList.SelectedItems.Add(index);
+        }
+
+        private void OnLoadServerModels()
+        {
+            WebApi.GetModelsListAsync(m => 
+            {
+                foreach (var model in m.Models)
+                {
+                    if (!string.IsNullOrEmpty(model.Hash))
+                        _manager.GetModelByHash(model.Hash);
+                    else
+                    {
+                        _manager.GetModel(model.Name);
+                    }
+                }
+            });
         }
 
         private void OnPublish()
@@ -2837,12 +2999,19 @@ namespace Utopia.Components
                 if (File.Exists(path))
                     File.Delete(path);
 
+                if (string.IsNullOrEmpty(_visualVoxelModel.VoxelModel.Author))
+                {
+                    _visualVoxelModel.VoxelModel.Author = Author;
+                }
+
                 _visualVoxelModel.VoxelModel.SaveToFile(path);
 
-                using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new DrawingSize { Width = 512, Height = 512 }))
-                    Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, Path.ChangeExtension(path, ".png"));
+                var imgPath = Path.ChangeExtension(path, ".png");
 
-                WebApi.UploadModel(path);
+                RenderPng(imgPath);
+
+                _visualVoxelModel.VoxelModel.UpdateHash();
+                WebApi.UploadModel(path, _visualVoxelModel.VoxelModel.Hash.ToString());
 
                 _gui.MessageBox("Model published successfully.");
             }
@@ -2850,6 +3019,29 @@ namespace Utopia.Components
             {
                 _gui.MessageBox(x.Message, "Error");
             }
+        }
+
+        private void RenderPng(string filePath, bool customRotation = false)
+        {
+            using (var tex2d = _iconFactory.CreateVoxelIcon(_visualVoxelModel, new Size2 { Width = 2048, Height = 2048 }, null, null, !customRotation ? default(Matrix) : _transform * Matrix.RotationAxis(new Vector3(0,1,0),(float) Math.PI) ))
+                Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, filePath);
+
+            Image img;
+
+            using (var fs = File.OpenRead(filePath))
+                img = Image.FromStream(fs);
+
+            var newImage = new Bitmap(512, 512);
+            using (var gr = Graphics.FromImage(newImage))
+            {
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                gr.DrawImage(img, new System.Drawing.Rectangle(0, 0, 512, 512));
+            }
+
+            newImage.Save(filePath, ImageFormat.Png);
+            _gui.MessageBox("Image was saved to 'MyDocuments\\Utopia'");
         }
 
         private void OnPublishAll()
@@ -2865,14 +3057,22 @@ namespace Utopia.Components
             {
                 var modelPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".uvm");
                 var previewPath = Path.Combine(path, visualVoxelModel.VoxelModel.Name + ".png");
+
+                if (string.IsNullOrEmpty(visualVoxelModel.VoxelModel.Author))
+                {
+                    visualVoxelModel.VoxelModel.Author = Author;
+                }
+
                 visualVoxelModel.VoxelModel.SaveToFile(modelPath);
 
                 // create icon
 
-                using (var tex2d = _iconFactory.CreateVoxelIcon(visualVoxelModel, new DrawingSize { Width = 512, Height = 512 }))
+                using (var tex2d = _iconFactory.CreateVoxelIcon(visualVoxelModel, new Size2 { Width = 512, Height = 512 }))
                     Resource.ToFile(_d3DEngine.ImmediateContext, tex2d, ImageFileFormat.Png, previewPath);
 
-                WebApi.UploadModel(modelPath);
+                visualVoxelModel.VoxelModel.UpdateHash();
+
+                WebApi.UploadModel(modelPath, visualVoxelModel.VoxelModel.Hash.ToString());
 
                 count++;
             }
@@ -2888,7 +3088,7 @@ namespace Utopia.Components
             }
 
             float rotationAngle;
-            if (!float.TryParse(_rotateAngleInput.Text, out rotationAngle))
+            if (!float.TryParse(_rotateAngleInput.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out rotationAngle))
             {
                 _gui.MessageBox("Invalid angle value");
                 return;
@@ -2944,7 +3144,8 @@ namespace Utopia.Components
                 return;
             }
 
-
+            _clipboardState.Name = VisualVoxelModel.VoxelModel.States[SelectedStateIndex].Name;
+            
             VisualVoxelModel.VoxelModel.States[SelectedStateIndex] = _clipboardState;
             _clipboardState = new VoxelModelState(_clipboardState);
             NeedSave();
@@ -2972,13 +3173,10 @@ namespace Utopia.Components
             }
 
             float scaleFactor;
-            if (!float.TryParse(_scaleAngleInput.Text, out scaleFactor))
+            if (!float.TryParse(_scaleAngleInput.Text, NumberStyles.Float ,CultureInfo.InvariantCulture, out scaleFactor))
             {
-                if (!float.TryParse(_scaleAngleInput.Text.Replace('.', ','), out scaleFactor))
-                {
-                    _gui.MessageBox("Invalid factor value");
-                    return;
-                }
+                _gui.MessageBox("Invalid factor value");
+                return;
             }
 
             var state = VisualVoxelModel.VoxelModel.States[SelectedStateIndex];
@@ -3026,6 +3224,9 @@ namespace Utopia.Components
 
         private Range3I GetSelectionRange()
         {
+            if (_selectionStart == null || _selectionEnd == null)
+                return new Range3I(Vector3I.Zero, _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData.ChunkSize);
+
             var min = Vector3I.Min(_selectionStart.Value, _selectionEnd.Value);
             var max = Vector3I.Max(_selectionStart.Value, _selectionEnd.Value);
 
@@ -3042,7 +3243,7 @@ namespace Utopia.Components
 
         private bool IsSelectionApplicable()
         {
-            return _frameEditorTool == FrameEditorTools.Selection || _frameEditorTool == FrameEditorTools.Preset || _frameEditorTool == FrameEditorTools.FillBrush;
+            return _frameEditorTool == FrameEditorTools.Selection || _frameEditorTool == FrameEditorTools.Preset || _frameEditorTool == FrameEditorTools.ColorFillBrush;
         }
 
         private void OnFrameCopyPressed()
@@ -3087,11 +3288,10 @@ namespace Utopia.Components
                 return;
             }
 
+            BackupFrame();
             var pasteTo = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
             var size = Vector3I.Min(pasteTo.ChunkSize, _clipboardBlock.ChunkSize);
-
-            _backupBlock = new InsideDataProvider(pasteTo);
-
+            
             Range3I range;
 
             if (HaveSelection() && IsSelectionApplicable())
@@ -3127,11 +3327,11 @@ namespace Utopia.Components
                 _gui.MessageBox("Nowhere to paste. Select the part and frame");
                 return;
             }
+
+            BackupFrame();
             var pasteTo = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
             var size = Vector3I.Min(pasteTo.ChunkSize, _clipboardBlock.ChunkSize);
-
-            _backupBlock = new InsideDataProvider(pasteTo);
-
+            
             Range3I range;
 
             if (HaveSelection() && IsSelectionApplicable())
@@ -3193,9 +3393,10 @@ namespace Utopia.Components
                 _gui.MessageBox("Nowhere to delete. Select a part and a frame");
                 return;
             }
+            
+            BackupFrame();
             var pasteTo = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
-            _backupBlock = new InsideDataProvider(pasteTo);
-
+            
             Range3I range;
 
             if (HaveSelection() && IsSelectionApplicable())
@@ -3216,6 +3417,12 @@ namespace Utopia.Components
             }
 
             RebuildFrameVertices();
+        }
+
+        private void BackupFrame()
+        {
+            var pasteTo = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
+            _backupBlock = new InsideDataProvider(pasteTo);
         }
 
         private void OnFrameShift(EditorAxis editorAxis, bool plus)
@@ -3243,9 +3450,10 @@ namespace Utopia.Components
 
             if (plus) 
                 shiftVector = Vector3I.Zero - shiftVector;
+            
+            BackupFrame();
 
             var pasteTo = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
-            _backupBlock = new InsideDataProvider(pasteTo);
 
             Range3I range;
 
@@ -3277,10 +3485,9 @@ namespace Utopia.Components
         {
             Range3I range;
 
+            BackupFrame();
             var blockBuffer = _visualVoxelModel.VoxelModel.Frames[SelectedFrameIndex].BlockData;
-
-            _backupBlock = new InsideDataProvider(blockBuffer);
-
+            
             if (IsSelectionApplicable())
                 range = GetSelectionRange();
             else
@@ -3291,18 +3498,18 @@ namespace Utopia.Components
 
             foreach (var pos in range)
             {
-                var readFrom = pos;
+                var readFrom = pos - range.Position;
 
                 switch (editorAxis)
                 {
                     case EditorAxis.X:
-                        readFrom.X = range.Size.X - readFrom.X - 1;
+                        readFrom.X = range.Position.X + range.Size.X - readFrom.X - 1;
                         break;
                     case EditorAxis.Y:
-                        readFrom.Y = range.Size.Y - readFrom.Y - 1;
+                        readFrom.Y = range.Position.Y + range.Size.Y - readFrom.Y - 1;
                         break;
                     case EditorAxis.Z:
-                        readFrom.Z = range.Size.Z - readFrom.Z - 1;
+                        readFrom.Z = range.Position.Z + range.Size.Z - readFrom.Z - 1;
                         break;
                 }
 

@@ -59,6 +59,12 @@ namespace Utopia.Shared.Net.Messages
         public bool IsSwitch { get; set; }
 
         /// <summary>
+        /// Entity id that performs the transfer
+        /// </summary>
+        [ProtoMember(8)]
+        public uint SourceEntityId { get; set; }
+
+        /// <summary>
         /// Gets a message identification number
         /// </summary>
         public byte MessageId

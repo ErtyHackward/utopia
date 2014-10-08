@@ -99,20 +99,39 @@ namespace S33M3CoreComponents.Sprites2D
             GetSpriteDrawInfo(texture, sampler, drawGroupId).AddSprite(ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, spriteDepth);
         }
 
+        public void AddSprite(SpriteTexture texture, SamplerState sampler, ref Vector2 position, ref Vector2 size, ref RectangleF sourceRect, bool sourceRectInTextCoord, int textureArrayIndex, ref ByteColor color, int drawGroupId, float textureRotation, float spriteDepth = float.NaN)
+        {
+            if (float.IsNaN(spriteDepth))
+            {
+                spriteDepth = AutoDepth;
+                if (_enableDepthSprite) AutoDepth -= 0.0001f;
+            }
+
+            GetSpriteDrawInfo(texture, sampler, drawGroupId, textureRotation).AddSprite(ref position, ref size, ref sourceRect, sourceRectInTextCoord, textureArrayIndex, ref color, spriteDepth);
+        }
+
         /// <summary>
         /// Get the Buffer group where the sprite will be added, these compononents will be draw at the same time
         /// </summary>
         /// <param name="texture"></param>
         /// <param name="sampler"></param>
         /// <returns></returns>
-        public SpriteDrawInfo GetSpriteDrawInfo(SpriteTexture texture, SamplerState sampler, int drawGroupId)
+        public SpriteDrawInfo GetSpriteDrawInfo(SpriteTexture texture, SamplerState sampler, int drawGroupId, float textureRotation = 0)
         {
             SpriteDrawInfo spriteDrawInfo;
-            int textureHashCode = SpriteDrawInfo.ComputeHashCode(texture, sampler, drawGroupId);
+            int textureHashCode = SpriteDrawInfo.ComputeHashCode(texture, sampler, drawGroupId, textureRotation);
             if (_spritesByTexture.TryGetValue(textureHashCode, out spriteDrawInfo) == false)
             {
                 //The sprite group for this texture is not existing => Create it !
-                spriteDrawInfo = new SpriteDrawInfo(texture, sampler);
+                if (textureRotation != 0f)
+                {
+                    Matrix textureRotationMatrix = Matrix.Translation(-0.5f, -0.5f, 0) * Matrix.RotationYawPitchRoll(0f, 0f, textureRotation) * Matrix.Translation(0.5f, 0.5f, 0);
+                    spriteDrawInfo = new SpriteDrawInfo(texture, sampler, textureRotationMatrix);
+                }
+                else
+                {
+                    spriteDrawInfo = new SpriteDrawInfo(texture, sampler);
+                }
                 _spritesByTexture.Add(textureHashCode, spriteDrawInfo);
             }
 

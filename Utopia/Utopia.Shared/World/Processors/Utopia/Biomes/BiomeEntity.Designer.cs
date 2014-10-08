@@ -45,5 +45,12 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 return new StandardValuesCollection(EditorConfigHelper.Config.BluePrints.Values.Select(x => x.Name).OrderBy(x => x).ToList());
             }
         }
+
+      
+
+        public override string ToString()
+        {
+            return EntityName;
+        }
     }
 }

@@ -1,16 +1,22 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using S33M3CoreComponents.Physics.Verlet;
 using SharpDX;
 using Utopia.Shared.Configuration;
+using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Shared.Server.Structs;
 using Utopia.Shared.Structs;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.World;
 using S33M3CoreComponents.Maths;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Shared.Chunks
 {
+
     /// <summary>
     /// Base class for chunk landscape management
     /// </summary>
@@ -18,6 +24,9 @@ namespace Utopia.Shared.Chunks
     public abstract class LandscapeManager<TChunk> : ILandscapeManager 
         where TChunk : AbstractChunk
     {
+
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         protected WorldParameters _wp;
 
         /// <summary>
@@ -27,18 +36,12 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public TChunk GetChunkFromBlock(Vector3D globalPosition)
         {
-            return
-                GetChunk(new Vector3I(MathHelper.Floor(globalPosition.X / AbstractChunk.ChunkSize.X),
-                                      MathHelper.Floor(globalPosition.Y / AbstractChunk.ChunkSize.Y),
-                                      MathHelper.Floor(globalPosition.Z / AbstractChunk.ChunkSize.Z)));
+            return GetChunk(BlockHelper.EntityToChunkPosition(globalPosition));
         }
         
         public TChunk GetChunkFromBlock(Vector3I blockPosition)
         {
-            return
-                GetChunk(new Vector3I(MathHelper.Floor((double)blockPosition.X / AbstractChunk.ChunkSize.X),
-                                      MathHelper.Floor((double)blockPosition.Y / AbstractChunk.ChunkSize.Y),
-                                      MathHelper.Floor((double)blockPosition.Z / AbstractChunk.ChunkSize.Z)));
+            return GetChunk(BlockHelper.BlockToChunkPosition(blockPosition));
         }
 
         protected LandscapeManager(WorldParameters wp)
@@ -160,10 +163,12 @@ namespace Utopia.Shared.Chunks
         /// <param name="physicSimu"></param>
         /// <param name="localEntityBoundingBox"></param>
         /// <param name="newPosition2Evaluate"></param>
-        public void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        /// <param name="previousPosition"></param>
+        /// <param name="originalPosition"></param>
+        public void IsCollidingWithTerrain(VerletSimulator physicSimu, ref BoundingBox localEntityBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition)
         {
             Vector3D newPositionWithColliding = previousPosition;
-            TerraCubeWithPosition _collidingCube;
+            TerraCubeWithPosition collidingCube;
 
             //Create a Bounding box with my new suggested position, taking only the X that has been changed !
             //X Testing =====================================================
@@ -171,18 +176,28 @@ namespace Utopia.Shared.Chunks
             BoundingBox boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
             //If my new X position, make me placed "inside" a block, then invalid the new position
-            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
             {
                 //logger.Debug("ModelCollisionDetection X detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.X, previousPosition.X);
 
                 newPositionWithColliding.X = previousPosition.X;
-                if (_collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
+                if (collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
                 {
-                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
+                    float offsetValue = (float)((1 - collidingCube.BlockProfile.YBlockOffset));
                     if (physicSimu.OnOffsettedBlock > 0) offsetValue -= (1 - physicSimu.OnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
-                        physicSimu.OffsetBlockHitted = offsetValue;
+                        if (collidingCube.BlockProfile.YBlockOffset == 0 && collidingCube.Position.Y + 1 < AbstractChunk.ChunkSize.Y)
+                        {
+                            //Check if an other block is place over the hitted one
+                            var overcube = GetCubeAt(new Vector3I(collidingCube.Position.X, collidingCube.Position.Y + 1, collidingCube.Position.Z));
+                            if (overcube.Id == WorldConfiguration.CubeId.Air)
+                            {
+                                physicSimu.OffsetBlockHitted = offsetValue;
+                            }
+                        }else{
+                            physicSimu.OffsetBlockHitted = offsetValue;
+                        }
                     }
                 }
             }
@@ -192,18 +207,30 @@ namespace Utopia.Shared.Chunks
             boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
             //If my new Z position, make me placed "inside" a block, then invalid the new position
-            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
             {
                 //logger.Debug("ModelCollisionDetection Z detected tested {0}, assigned (= previous) {1}", newPositionWithColliding.Z, previousPosition.Z);
 
                 newPositionWithColliding.Z = previousPosition.Z;
-                if (_collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
+                if (collidingCube.BlockProfile.YBlockOffset > 0 || physicSimu.OnOffsettedBlock > 0)
                 {
-                    float offsetValue = (float)((1 - _collidingCube.BlockProfile.YBlockOffset));
+                    float offsetValue = (float)((1 - collidingCube.BlockProfile.YBlockOffset));
                     if (physicSimu.OnOffsettedBlock > 0) offsetValue -= (1 - physicSimu.OnOffsettedBlock);
                     if (offsetValue <= 0.5)
                     {
-                        physicSimu.OffsetBlockHitted = offsetValue;
+                        if (collidingCube.BlockProfile.YBlockOffset == 0 && collidingCube.Position.Y + 1 < AbstractChunk.ChunkSize.Y)
+                        {
+                            //Check if an other block is place over the hitted one
+                            var overcube = GetCubeAt(new Vector3I(collidingCube.Position.X, collidingCube.Position.Y + 1, collidingCube.Position.Z));
+                            if (overcube.Id == WorldConfiguration.CubeId.Air)
+                            {
+                                physicSimu.OffsetBlockHitted = offsetValue;
+                            }
+                        }
+                        else
+                        {
+                            physicSimu.OffsetBlockHitted = offsetValue;
+                        }
                     }
                 }
 
@@ -214,26 +241,26 @@ namespace Utopia.Shared.Chunks
             boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
 
             //If my new Y position, make me placed "inside" a block, then invalid the new position
-            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
             {
                 //If was Jummping "before" entering inside the cube
                 if (previousPosition.Y >= newPositionWithColliding.Y)
                 {
                     //If the movement between 2 Y is too large, use the GroundBelowEntity value
-                    if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1)
+                    if (Math.Abs(newPositionWithColliding.Y - previousPosition.Y) > 1 || physicSimu.isInContactWithLadder)
                     {
                         previousPosition.Y = physicSimu.GroundBelowEntity;
                     }
                     else
                     {
                         //Raise Up until the Ground, next the previous position
-                        if (_collidingCube.BlockProfile.YBlockOffset > 0)
+                        if (collidingCube.BlockProfile.YBlockOffset > 0)
                         {
-                            previousPosition.Y = MathHelper.Floor(previousPosition.Y + 1) - _collidingCube.BlockProfile.YBlockOffset;
+                            previousPosition.Y = MathHelper.Floor(previousPosition.Y + 1) - collidingCube.BlockProfile.YBlockOffset;
                         }
                         else
                         {
-                            previousPosition.Y = MathHelper.Floor(previousPosition.Y);
+                            previousPosition.Y = MathHelper.Floor(originalPosition.Y);
                         }
                     }
 
@@ -249,7 +276,7 @@ namespace Utopia.Shared.Chunks
             {
                 //No collision with Y, is the block below me solid to entity ?
                 boundingBox2Evaluate.Minimum.Y -= 0.01f;
-                if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+                if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
                 {
                     physicSimu.OnGround = true; // On ground ==> Activite the force that will counter the gravity !!
                 }
@@ -257,10 +284,10 @@ namespace Utopia.Shared.Chunks
             
             //Check to see if new destination is not blocking me
             boundingBox2Evaluate = new BoundingBox(localEntityBoundingBox.Minimum + newPositionWithColliding.AsVector3(), localEntityBoundingBox.Maximum + newPositionWithColliding.AsVector3());
-            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out _collidingCube))
+            if (IsSolidToPlayer(ref boundingBox2Evaluate, true, out collidingCube))
             {
-                //logger.Debug("STUCK tested {0}, assigned {1}, last Good position tested : {2}", newPositionWithColliding, previousPosition, memo);
-                newPositionWithColliding = previousPosition;
+                //logger.Debug("Block STUCK tested {0}, assigned {1}", newPositionWithColliding, previousPosition);
+                newPositionWithColliding = originalPosition;
                 newPositionWithColliding.Y += 0.1;
             }
 
@@ -288,6 +315,44 @@ namespace Utopia.Shared.Chunks
             }
 
             return new Vector3D(vector2.X, y + 1, vector2.Z);
+        }
+
+        public IEnumerable<IAbstractChunk> AroundChunks(Vector3D vector3D, float radius = 10)
+        {
+            // first we check current chunk, then 26 surrounding, then 16
+
+            var chunkPosition = new Vector3I((int)Math.Floor(vector3D.X / AbstractChunk.ChunkSize.X),
+                                             (int)Math.Floor(vector3D.Y / AbstractChunk.ChunkSize.Y),
+                                             (int)Math.Floor(vector3D.Z / AbstractChunk.ChunkSize.Z));
+
+            yield return GetChunk(chunkPosition);
+
+
+            for (int i = 1; i * AbstractChunk.ChunkSize.X < radius; i++) // can be easily rewrited to handle situation when X and Z is not equal, hope it will not happen...
+            {
+                for (int x = -i; x <= i; x++)
+                {
+                    for (int y = -i; y <= i; y++)
+                    {
+                        for (int z = -i; z <= i; z++)
+                        {
+                            // checking only border chunks
+                            if (x == -i || x == i || y == -i || y == i || z == i || z == -i)
+                            {
+                                var chunk = GetChunk(new Vector3I(chunkPosition.X + x, chunkPosition.Y + y, chunkPosition.Z + z));
+                                if (chunk != null)
+                                    yield return chunk;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<IStaticEntity> AroundEntities(Vector3D position, float radius)
+        {
+            var distanceSquared = radius * radius;
+            return AroundChunks(position, radius).SelectMany(chunk => chunk.Entities).Where(e => Vector3D.DistanceSquared(e.Position, position) <= distanceSquared);
         }
     }
 }

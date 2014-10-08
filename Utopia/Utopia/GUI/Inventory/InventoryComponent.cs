@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Ninject;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
 using S33M3CoreComponents.Sound;
 using S33M3DXEngine;
+using S33M3Resources.Structs.Vertex;
 using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
+using Utopia.Entities.Renderer;
+using Utopia.GUI.Crafting;
 using Utopia.Network;
+using Utopia.Resources.Effects.Entities;
+using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -20,6 +26,8 @@ using S33M3Resources.Structs;
 using SharpDX.Direct3D11;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.GUI;
+using Utopia.Shared.Settings;
+using Utopia.Shared.World;
 
 namespace Utopia.GUI.Inventory
 {
@@ -31,13 +39,12 @@ namespace Utopia.GUI.Inventory
         private readonly D3DEngine _engine;
         private readonly InputsManager _inputManager;
         private readonly GuiManager _guiManager;
-        
+
+        private readonly CubeRenderer _cubeRenderer;
         private readonly IconFactory _iconFactory;
-        private readonly ItemMessageTranslator _itemMessageTranslator;
-        private readonly Hud _hud;
-        private readonly ToolBarUi _toolBar;
+        private ToolBarUi _toolBar;
         private CharacterInventory _playerInventoryWindow;
-        private InventoryWindow _containerInventoryWindow;
+        private ContainerWindow _containerInventoryWindow;
 
         private InventoryCell _dragControl;
         private InventoryCell _hoverSlot;
@@ -46,12 +53,7 @@ namespace Utopia.GUI.Inventory
         private bool _inventoryActive;
 
         private SlotContainer<ContainedSlot> _sourceContainer;
-
-        [Inject]
-        public PlayerEntityManager PlayerManager { get; set; }
-
-        [Inject]
-        public ISoundEngine SoundEngine { get; set; }
+        private ItemMessageTranslator _itemMessageTranslator;
 
         /// <summary>
         /// Indicates if inventory is active now
@@ -84,7 +86,7 @@ namespace Utopia.GUI.Inventory
         /// <summary>
         /// Gets or sets optional container inventory window that will popup on container operations
         /// </summary>
-        public InventoryWindow ContainerInventoryWindow
+        public ContainerWindow ContainerInventoryWindow
         {
             get { return _containerInventoryWindow; }
             set 
@@ -95,6 +97,7 @@ namespace Utopia.GUI.Inventory
                 if (_containerInventoryWindow != null)
                 {
                     UnregisterInventoryWindow(_containerInventoryWindow);
+                    _containerInventoryWindow.CraftButton.Pressed -= CraftButton_Pressed;
                 }
 
                 _containerInventoryWindow = value;
@@ -102,7 +105,25 @@ namespace Utopia.GUI.Inventory
                 if (_containerInventoryWindow != null)
                 {
                     RegisterInventoryWindow(_containerInventoryWindow);
+                    _containerInventoryWindow.CraftButton.Pressed += CraftButton_Pressed;
                 }
+            }
+        }
+
+        void CraftButton_Pressed(object sender, EventArgs e)
+        {
+            if (_containerInventoryWindow.CanCraft)
+            {
+                var recipe = (Recipe)_containerInventoryWindow.RecipesList.SelectedItem;
+                var recipeIndex = _containerInventoryWindow.Player.EntityFactory.Config.Recipes.IndexOf(recipe);
+
+                var enabled = ItemMessageTranslator.Enabled;
+
+                ItemMessageTranslator.Enabled = false;
+                _containerInventoryWindow.Player.EntityState.PickedEntityLink = _containerInventoryWindow.Container.GetLink();
+                _containerInventoryWindow.Player.CraftUse(recipeIndex);
+                ItemMessageTranslator.Enabled = enabled;
+                _containerInventoryWindow.Update();
             }
         }
 
@@ -118,13 +139,34 @@ namespace Utopia.GUI.Inventory
         }
 
 
+        public bool IsToolbarSwitching { get; set; }
+
+        [Inject]
+        public ItemMessageTranslator ItemMessageTranslator
+        {
+            get { return _itemMessageTranslator; }
+            set { 
+                _itemMessageTranslator = value;
+                _itemMessageTranslator.Enabled = false;
+            }
+        }
+
+        [Inject]
+        public PlayerEntityManager PlayerManager { get; set; }
+
+        [Inject]
+        public ISoundEngine SoundEngine { get; set; }
+
+        [Inject]
+        public Hud Hud { get; set; }
+
+
         public InventoryComponent(
             D3DEngine engine,
             InputsManager inputManager, 
             GuiManager guiManager, 
             IconFactory iconFactory,
-            ItemMessageTranslator itemMessageTranslator, 
-            Hud hud)
+            VisualWorldParameters worldParameters)
         {
 
             IsDefferedLoadContent = true;
@@ -133,16 +175,10 @@ namespace Utopia.GUI.Inventory
             _inputManager = inputManager;
             _guiManager = guiManager;
             _iconFactory = iconFactory;
-            _itemMessageTranslator = itemMessageTranslator;
-            _hud = hud;
-            _toolBar = hud.ToolbarUi;
-            _toolBar.SlotEnter += _toolBar_SlotEnter;
-            _toolBar.SlotLeave += _toolBar_SlotLeave;
-
-            _hud.SlotClicked += HudSlotClicked;
+            
             _guiManager.Screen.Desktop.Clicked += DesktopClicked;
 
-            _itemMessageTranslator.Enabled = false;
+            _cubeRenderer = new CubeRenderer(engine, worldParameters);
 
             _dragOffset = new Point(InventoryWindow.CellSize / 2, InventoryWindow.CellSize / 2);
         }
@@ -172,7 +208,7 @@ namespace Utopia.GUI.Inventory
         
         public override void BeforeDispose()
         {
-            _hud.SlotClicked -= HudSlotClicked;
+            Hud.SlotClicked -= HudSlotClicked;
             _guiManager.Screen.Desktop.Clicked -= DesktopClicked;
         }
 
@@ -217,10 +253,24 @@ namespace Utopia.GUI.Inventory
             window.CellMouseDown -= charInventory_CellMouseDown;
         }
 
+        public override void Initialize()
+        {
+            _toolBar = Hud.ToolbarUi;
+            _toolBar.SlotEnter += _toolBar_SlotEnter;
+            _toolBar.SlotLeave += _toolBar_SlotLeave;
+
+            Hud.SlotClicked += HudSlotClicked;
+        }
+
         public override void LoadContent(DeviceContext context)
         {
             _infoWindow = new ItemInfoWindow(_iconFactory, _inputManager);
 
+            _cubeRenderer.LoadContent(context);
+
+            ContainerInventoryWindow.CubeRenderer = _cubeRenderer;
+            ContainerInventoryWindow.VoxelEffect = ToDispose(new HLSLVoxelModel(_engine.Device, Path.Combine(ClientSettings.EffectPack, @"Entities\VoxelModel.hlsl"), VertexVoxel.VertexDeclaration));
+            
             _dragControl = new InventoryCell(null, _iconFactory, new Vector2I(), _inputManager)
             {
                 Bounds = new UniRectangle(-100, -100, InventoryWindow.CellSize, InventoryWindow.CellSize),
@@ -230,23 +280,33 @@ namespace Utopia.GUI.Inventory
             };
         }
 
+        protected override void Dispose(bool disposeManagedResources)
+        {
+            _cubeRenderer.Dispose();
+
+            base.Dispose(disposeManagedResources);
+        }
+
         private void DesktopClicked(object sender, EventArgs e)
         {
             if (IsActive && _dragControl.Slot != null)
             {
                 // drop item to the world
-                _itemMessageTranslator.DropToWorld();
+                ItemMessageTranslator.DropToWorld();
                 EndDrag();
             }
         }
 
         private void HudSlotClicked(object sender, SlotClickedEventArgs e)
         {
-            var enabled = _itemMessageTranslator.Enabled;
+            var enabled = ItemMessageTranslator.Enabled;
 
             try
             {
-                _itemMessageTranslator.Enabled = true;
+                IsToolbarSwitching = true;
+                ItemMessageTranslator.Enabled = true;
+                
+
                 if (PlayerManager.PlayerCharacter.Toolbar[e.SlotIndex] != 0)
                 {
                     var player = PlayerManager.PlayerCharacter;
@@ -258,22 +318,40 @@ namespace Utopia.GUI.Inventory
                     if (slot == null)
                         return;
                     
+                    
                     ContainedSlot taken;
                     player.Inventory.TakeItem(slot.GridPosition, slot.ItemsCount);
                     player.Equipment.Equip(EquipmentSlotType.Hand, slot, out taken);
 
                     if (taken != null)
                     {
-                        player.Inventory.PutItem(taken.Item, slot.GridPosition, taken.ItemsCount);
+                        bool returned = false;
+                        var prevPos = player.ActiveToolInventoryPosition;
+
+                        // try to put item on previous pos
+                        if (prevPos.X >= 0 && prevPos.Y >= 0)
+                        {
+                            if (player.Inventory.PeekSlot(prevPos) == null)
+                            {
+                                returned = player.Inventory.PutItem(taken.Item, prevPos, taken.ItemsCount);
+                            }
+                        }
+
+                        // do exchange if we have no place to return
+                        if (!returned)
+                            player.Inventory.PutItem(taken.Item, slot.GridPosition, taken.ItemsCount);
                     }
-                    
+
+                    player.ActiveToolInventoryPosition = slot.GridPosition;
                 }
             }
             finally
             {
-                _itemMessageTranslator.Enabled = enabled;
+                IsToolbarSwitching = false;
+                ItemMessageTranslator.Enabled = enabled;
             }
         }
+
 
         private void ToolBarSlotClicked(object sender, InventoryWindowCellMouseEventArgs e)
         {
@@ -287,7 +365,7 @@ namespace Utopia.GUI.Inventory
                     GridPosition = e.Cell.InventoryPosition
                 });
 
-            _itemMessageTranslator.SetToolBar(e.Cell.InventoryPosition.Y, _dragControl.Slot.Item.StaticId);
+            ItemMessageTranslator.SetToolBar(e.Cell.InventoryPosition.Y, _dragControl.Slot.Item.StaticId);
 
             _sourceContainer.PutItem(_dragControl.Slot.Item, _dragControl.Slot.GridPosition,
                                      _dragControl.Slot.ItemsCount);
@@ -320,9 +398,29 @@ namespace Utopia.GUI.Inventory
             {
                 // taking item
                 var slot = e.Container.PeekSlot(e.SlotPosition);
-
+                
                 if (slot != null)
                 {
+                    if (ContainerInventoryWindow != null && e.MouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed && !keyboard.IsKeyDown(Keys.ShiftKey))
+                    {
+                        var targetContainer = e.Container != PlayerInventoryWindow.Content ? PlayerInventoryWindow.Content : ContainerInventoryWindow.Content;
+
+                        // quick transfer
+                        if (targetContainer == null)
+                        {
+                            targetContainer = PlayerManager.PlayerCharacter.Equipment;
+                        }
+
+                        if (targetContainer.CanPut(slot.Item, slot.ItemsCount) && e.Container.TakeItem(slot.GridPosition, slot.ItemsCount))
+                        {
+                            OnSlotTaken(slot);
+                            targetContainer.PutItem(slot.Item, slot.ItemsCount);
+                            OnSlotPut(slot);
+                        }
+                        
+                        return;
+                    }
+
                     var itemsCount = slot.ItemsCount;
 
                     if (e.MouseState.RightButton == S33M3CoreComponents.Inputs.MouseHandler.ButtonState.Pressed)
@@ -376,17 +474,27 @@ namespace Utopia.GUI.Inventory
                 if (slot != null && !slot.CanStackWith(_dragControl.Slot))
                 {
                     // exchange
-                    var prevPosition = _dragControl.Slot.GridPosition;
-                    _dragControl.Slot.GridPosition = e.SlotPosition;
-                    ContainedSlot slotTaken;
-                    if (!e.Container.PutItemExchange(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount, out slotTaken))
-                        throw new InvalidOperationException();
 
-                    OnSlotPut(_dragControl.Slot);
+                    // first check if we can perform exchange here, we can't if we took not the whole pack
+                    var srcSlot = _sourceContainer.PeekSlot(_dragControl.Slot.GridPosition);
+                    if (srcSlot != null)
+                    {
+                        CancelDrag();
+                    }
+                    else
+                    {
+                        var prevPosition = _dragControl.Slot.GridPosition;
+                        _dragControl.Slot.GridPosition = e.SlotPosition;
+                        ContainedSlot slotTaken;
+                        if (!e.Container.PutItemExchange(_dragControl.Slot.Item, _dragControl.Slot.GridPosition, _dragControl.Slot.ItemsCount, out slotTaken))
+                            throw new InvalidOperationException();
 
-                    slotTaken.GridPosition = prevPosition;
-                    UpdateDrag(slotTaken);
-                    CancelDrag();
+                        OnSlotPut(_dragControl.Slot);
+
+                        slotTaken.GridPosition = prevPosition;
+                        UpdateDrag(slotTaken);
+                        CancelDrag();
+                    }
                 }
                 else
                 {
@@ -470,7 +578,7 @@ namespace Utopia.GUI.Inventory
                 if (_containerInventoryWindow == null)
                     throw new InvalidOperationException("Unable to open container inventory because no inventory windows is associated");
 
-                _containerInventoryWindow.Content = otherParty.Content;
+                _containerInventoryWindow.Container = otherParty;
                 windows.Add(_containerInventoryWindow);
             }
             
@@ -478,12 +586,18 @@ namespace Utopia.GUI.Inventory
             foreach (var inventoryWindow in windows)
             {
                 inventoryWindow.LayoutFlags = ControlLayoutFlags.Center;
+                inventoryWindow.IsVisible = true;
                 desktop.Children.Add(inventoryWindow);
             }
             
             desktop.UpdateLayout();
 
-            _itemMessageTranslator.Enabled = true;
+            if (otherParty != null && _containerInventoryWindow != null)
+            {
+                _containerInventoryWindow.Update();
+            }
+
+            ItemMessageTranslator.Enabled = true;
             _inventoryActive = true;
 
             OnSwitchInventory(false);
@@ -500,7 +614,7 @@ namespace Utopia.GUI.Inventory
             }
 
             _guiManager.Screen.Desktop.Children.Remove(_playerInventoryWindow);
-            _itemMessageTranslator.Enabled = false;
+            ItemMessageTranslator.Enabled = false;
             _inventoryActive = false;
 
             OnSwitchInventory(true);

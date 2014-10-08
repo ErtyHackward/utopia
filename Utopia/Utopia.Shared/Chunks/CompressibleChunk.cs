@@ -93,6 +93,7 @@ namespace Utopia.Shared.Chunks
                 zip.CopyTo(decompressed);
                 decompressed.Position = 0;
                 BlockData = (ChunkDataProvider)RuntimeTypeModel.Default.DeserializeWithLengthPrefix(decompressed, BlockData, typeof(ChunkDataProvider), PrefixStyle.Fixed32, 0);
+                if (Entities.Count > 0) Entities.Clear();
                 Entities = (EntityCollection)RuntimeTypeModel.Default.DeserializeWithLengthPrefix(decompressed, Entities, typeof(EntityCollection), PrefixStyle.Fixed32, 0);
             }
         }

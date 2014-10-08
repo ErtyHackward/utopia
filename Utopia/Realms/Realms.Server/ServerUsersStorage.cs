@@ -1,7 +1,8 @@
 ﻿using System;
-using Utopia.Server.Managers;
 using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Web;
+using Utopia.Shared.Server.Managers;
+using Utopia.Shared.Structs;
 
 namespace Realms.Server
 {
@@ -12,15 +13,19 @@ namespace Realms.Server
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly SQLiteStorageManager _storage;
+        private readonly SqliteStorageManager _storage;
         private readonly ServerWebApi _webApi;
 
-        public ServerUsersStorage(SQLiteStorageManager storage, ServerWebApi webApi)
+        public UserRole DefaultRole { get; set; }
+
+        public ServerUsersStorage(SqliteStorageManager storage, ServerWebApi webApi)
         {
             if (storage == null) 
                 throw new ArgumentNullException("storage");
             if (webApi == null) 
                 throw new ArgumentNullException("webApi");
+
+            DefaultRole = UserRole.Guest;
 
             _storage = storage;
             _webApi = webApi;
@@ -45,7 +50,7 @@ namespace Realms.Server
         /// <param name="passwordHash">User SHA1 password hash</param>
         /// <param name="data">Filled login data structure if login succeed</param>
         /// <returns>true if login succeed otherwise false</returns>
-        public bool Login(string login, string passwordHash, out Utopia.Shared.Structs.LoginData data)
+        public bool Login(string login, string passwordHash, out LoginData data)
         {
             // check if we have this user in our local database
             if (_storage.Login(login, passwordHash, out data))
@@ -53,13 +58,20 @@ namespace Realms.Server
 
             try
             {
-                // we need to authenticate user from gloabal server
+                // we need to authenticate user from global server
                 var responce = _webApi.UserAuthenticate(login, passwordHash);
-
+                
                 if (responce != null && responce.Valid)
                 {
+                    var role = DefaultRole;
+
+                    if (_storage.GetUsersCount() == 0)
+                        role = UserRole.Administrator;
+                    
+                    logger.Info("Creating new user record {0} {1}", login, role);
+
                     // create or update local registration 
-                    _storage.Register(login, passwordHash, Utopia.Shared.Structs.UserRole.Guest);
+                    _storage.Register(login, passwordHash, role);
                     return _storage.Login(login, passwordHash, out data);
                 }
 
@@ -80,6 +92,31 @@ namespace Realms.Server
         public void SetData(string login, byte[] state)
         {
             _storage.SetData(login, state);
+        }
+
+        public int GetUsersCount()
+        {
+            return _storage.GetUsersCount();
+        }
+
+        public bool SetRole(string login, UserRole role)
+        {
+            return _storage.SetRole(login, role);
+        }
+
+        public UserRole GetRole(string login)
+        {
+            return _storage.GetRole(login);
+        }
+
+        public void AddBan(string login, TimeSpan time)
+        {
+            _storage.AddBan(login, time);
+        }
+
+        public bool IsBanned(string login, out TimeSpan timeLeft)
+        {
+            return _storage.IsBanned(login, out timeLeft);
         }
     }
 }

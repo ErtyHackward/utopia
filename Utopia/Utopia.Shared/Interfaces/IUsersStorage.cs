@@ -1,3 +1,4 @@
+using System;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Interfaces
@@ -8,13 +9,9 @@ namespace Utopia.Shared.Interfaces
     public interface IUsersStorage
     {
         /// <summary>
-        /// Tries to register user, or update his passwordHash or role 
+        /// Gets or sets new user role (except first one)
         /// </summary>
-        /// <param name="login">User login</param>
-        /// <param name="passwordHash">user password</param>
-        /// <param name="role">User role id</param>
-        /// <returns>Returns true if register successfull otherwise false</returns>
-        bool Register(string login, string passwordHash, UserRole role);
+        UserRole DefaultRole { get; set; }
 
         /// <summary>
         /// Checks whether the specified user registered and password match
@@ -31,5 +28,30 @@ namespace Utopia.Shared.Interfaces
         /// <param name="login">User login</param>
         /// <param name="state">custom byte array</param>
         void SetData(string login, byte[] state);
+
+        /// <summary>
+        /// Returns current cached user accounts
+        /// </summary>
+        /// <returns></returns>
+        int GetUsersCount();
+
+        /// <summary>
+        /// Changes the role of the user
+        /// </summary>
+        /// <param name="login"></param>
+        /// <param name="role"></param>
+        bool SetRole(string login, UserRole role);
+
+        /// <summary>
+        /// Returns specified user role
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
+        UserRole GetRole(string login);
+
+        void AddBan(string login, TimeSpan time);
+
+        bool IsBanned(string login, out TimeSpan timeLeft);
+
     }
 }

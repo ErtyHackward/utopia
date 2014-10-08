@@ -24,7 +24,7 @@ namespace S33M3CoreComponents.Sound
         private bool _3DSoundEntitiesPositionsChanged = false;
         private Listener _listener;
         private float _generalSoundVolume;
-        private int _maxVoicePoolPerFileType = 8; //Can play up to 32 differents song in parallel for each file type
+        private int _maxVoicePoolPerFileType = 16; //Can play up to 32 differents song in parallel for each file type
         private D3DEngine _d3dEngine;
 
         //XAudio2 variables
@@ -206,7 +206,7 @@ namespace S33M3CoreComponents.Sound
 
         #region Sounds repository management - creation/buffering
 
-        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, SourceCategory Category, bool? streamedSound = null, float soundPower = 16)
+        public ISoundDataSource AddSoundSourceFromFile(string FilePath, string soundAlias, SourceCategory Category, bool? streamedSound = null, float soundPower = 16, int priority = 0)
         {
             ISoundDataSource soundDataSource;
 
@@ -251,6 +251,7 @@ namespace S33M3CoreComponents.Sound
                     soundDataSource = new SoundStreamedDataSource(fi);
                 }
 
+                soundDataSource.Priority = priority;
                 soundDataSource.Alias = soundAlias;
                 soundDataSource.Power = soundPower;
                 soundDataSource.Category = Category;
@@ -327,7 +328,7 @@ namespace S33M3CoreComponents.Sound
             return StartPlay2D(AddSoundSourceFromFile(null, soundAlias, Category), volume, playLooped, fadeIn, minDefferedStart, maxDefferedStart);
         }
 
-        public ISoundVoice StartPlay2D(string FilePath, string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0)
+        public ISoundVoice StartPlay2D(string FilePath, string soundAlias, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint fadeIn = 0, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
         {
             return StartPlay2D(AddSoundSourceFromFile(FilePath, soundAlias, Category), playLooped, fadeIn, minDefferedStart, maxDefferedStart);
         }
@@ -381,7 +382,7 @@ namespace S33M3CoreComponents.Sound
 
         public ISoundVoice StartPlay3D(ISoundDataSourceBase soundSource, Vector3 position, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(soundSource.FilePath, soundSource.Alias, soundSource.Category, soundSource.isStreamed, soundSource.Power), position, soundSource.Volume, playLooped, minDefferedStart, maxDefferedStart);
+            return StartPlay3D(AddSoundSourceFromFile(soundSource.FilePath, soundSource.Alias, soundSource.Category, soundSource.isStreamed, soundSource.Power, soundSource.Priority), position, soundSource.Volume, playLooped, minDefferedStart, maxDefferedStart);
         }
 
         public ISoundVoice StartPlay3D(string soundAlias, float volume, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0)
@@ -394,9 +395,9 @@ namespace S33M3CoreComponents.Sound
             return StartPlay3D(AddSoundSourceFromFile(null, soundAlias, Category), position, playLooped, minDefferedStart, maxDefferedStart);
         }
 
-        public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0)
+        public ISoundVoice StartPlay3D(string FilePath, string soundAlias, Vector3 position, SourceCategory Category = SourceCategory.FX, bool playLooped = false, uint minDefferedStart = 0, uint maxDefferedStart = 0, int priority = 0)
         {
-            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias, Category), position, playLooped, minDefferedStart, maxDefferedStart);
+            return StartPlay3D(AddSoundSourceFromFile(FilePath, soundAlias, Category, priority: priority), position, playLooped, minDefferedStart, maxDefferedStart);
         }
 
         #endregion
@@ -487,6 +488,8 @@ namespace S33M3CoreComponents.Sound
             }
 
             //Check for a voice IDLE in the voice pool for this type of sound file.
+            long oldestTimerTick = -1;
+            ISoundVoice oldestSoundVoice = null;
             for (int i = 0; i < _maxVoicePoolPerFileType; i++)
             {
                 soundVoice = voiceQueue[i];
@@ -503,15 +506,36 @@ namespace S33M3CoreComponents.Sound
                     return true; //Return a newly created voice 
                 }
                 if (soundVoice.IsPlaying == false)
-                {
+                {                    
                     //logger.Info("Reuse Voice Id {0}, for queue {1} song playing {2}", i, dataSource2Bplayed.WaveFormat.ToString(), dataSource2Bplayed.SoundAlias);
 
                     return true;  //Return an already created voice, that was waiting to play a sound
                 }
+                else
+                {
+                    //If a priority is given, then try to find the oldest sound with lower or equal priority
+                    if (dataSource2Bplayed.Priority > 0 && soundVoice.Priority <= dataSource2Bplayed.Priority)
+                    {
+                        if (oldestTimerTick < soundVoice.PlayingTime.ElapsedTicks)
+                        {
+                            oldestSoundVoice = soundVoice;
+                            oldestTimerTick = soundVoice.PlayingTime.ElapsedTicks;
+                        }
+                    }
+                }
             }
 
-            soundVoice = null;
-            return false;
+            if (oldestSoundVoice != null)
+            {
+                oldestSoundVoice.Stop();
+                soundVoice = oldestSoundVoice;
+                return true;
+            }
+            else
+            {
+                soundVoice = null;
+                return false;
+            }
         }
 
 

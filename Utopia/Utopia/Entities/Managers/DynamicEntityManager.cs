@@ -40,6 +40,8 @@ using Utopia.Resources.Effects.Entities;
 using Utopia.Resources.Effects;
 using Utopia.Resources.Sprites;
 using Utopia.Shared.Configuration;
+using S33M3CoreComponents.Sound;
+using Utopia.Particules;
 
 namespace Utopia.Entities.Managers
 {
@@ -66,7 +68,8 @@ namespace Utopia.Entities.Managers
         private HLSLVoxelModelInstanced _voxelModelEffect;
         private HLSLVoxelModel _voxelToolEffect;
 
-        private Sprite3DRenderer<Sprite3DTextProc> _dynamicEntityNameRenderer;
+        private Sprite3DRenderer<Sprite3DTextProc> _dynamicEntityNameRenderer; //Rendering Player Name
+        private Sprite3DRenderer<Sprite3DColorBillBoardProc> _dynamicEntityEnergyBarRenderer; //Rendering Player Name
         private SpriteFont _dynamicEntityNameFont;
 
         private readonly Dictionary<uint, VisualDynamicEntity> _dynamicEntitiesDico = new Dictionary<uint, VisualDynamicEntity>();
@@ -76,13 +79,29 @@ namespace Utopia.Entities.Managers
         private readonly WorldFocusManager _worldFocusManager;
         private readonly VisualWorldParameters _visualWorldParameters;
         private readonly SingleArrayChunkContainer _chunkContainer;
-        private readonly IWorldChunks2D _worldChunks;
+        private IWorldChunks2D _worldChunks;
+
         private int _staticEntityViewRange;
-        private IDynamicEntity _playerEntity;
+        private ISoundEngine _soundEngine;
+
+        private HLSLCubeTool _cubeToolEffect;
+        private IMeshFactory _milkShapeMeshfactory;
+        private ShaderResourceView _cubeTextureView;
+        private VertexBuffer<VertexMesh> _cubeVb;
+        private IndexBuffer<ushort> _cubeIb;
+        private Dictionary<int, int> _materialChangeMapping;
+        private IPlayerManager _playerEntityManager;
+        private ISkyDome _skyDome;
+        private SharedFrameCB _sharedFrameCB;
+        private UtopiaParticuleEngine _utopiaParticuleEngine;
 
         //Cube Rendering
         private Mesh _cubeMesh;
         private Mesh _cubeMeshBluePrint;
+
+        //HealthBar rendering
+        private ByteColor hbColor = Color.Red;
+        private ByteColor colorReceived = Color.White;
 
         private Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>> _toolsModels = new Dictionary<string, KeyValuePair<VisualVoxelModel, VoxelModelInstance>>();
         
@@ -91,59 +110,11 @@ namespace Utopia.Entities.Managers
         #endregion
 
         #region Public Properties
-        public List<IVisualVoxelEntityContainer> DynamicEntities { get; set; }
-        /// <summary>
-        /// Gets or sets current player entity to display
-        /// Set to null in first person mode
-        /// </summary>
-        public IDynamicEntity PlayerEntity
-        {
-            get { return _playerEntity; }
-            set
-            {
-                if (_playerEntity == value)
-                    return;
-
-                if (value != null)
-                {
-                    AddEntity(value, false);
-                }
-                else
-                {
-                    RemoveEntity(_playerEntity);
-                }
-
-                _playerEntity = value;
-            }
-        }
+        public List<VisualVoxelEntity> DynamicEntities { get; set; }
         #endregion
 
         public event EventHandler<DynamicEntityEventArgs> EntityAdded;
         public event EventHandler<DynamicEntityEventArgs> EntityRemoved;
-
-        #region DI
-        [Inject]
-        public IPlayerManager PlayerEntityManager
-        {
-            get { return _playerEntityManager; }
-            set { _playerEntityManager = value; }
-        }
-
-        [Inject]
-        public ISkyDome SkyDome
-        {
-            get { return _skyDome; }
-            set { _skyDome = value; }
-        }
-
-        [Inject]
-        public SharedFrameCB SharedFrameCB
-        {
-            get { return _sharedFrameCB; }
-            set { _sharedFrameCB = value; }
-        }
-
-        #endregion
 
         public DynamicEntityManager(D3DEngine d3DEngine,
                                     VoxelModelManager voxelModelManager,
@@ -151,22 +122,36 @@ namespace Utopia.Entities.Managers
                                     WorldFocusManager worldFocusManager,
                                     VisualWorldParameters visualWorldParameters,
                                     SingleArrayChunkContainer chunkContainer,
-                                    IWorldChunks2D worldChunks)
-        {
-            if (worldChunks == null) throw new ArgumentNullException("worldChunks");
+                                    IPlayerManager playerEntityManager,
+                                    ISkyDome skyDome,
+                                    SharedFrameCB sharedFrameCB,
+                                    IWorldChunks2D worldChunks,
+                                    ISoundEngine soundEngine,
+                                    UtopiaParticuleEngine utopiaParticuleEngine
+                                    )
 
+        {
+            
             _d3DEngine = d3DEngine;
             _voxelModelManager = voxelModelManager;
             _camManager = camManager;
             _chunkContainer = chunkContainer;
-            _worldChunks = worldChunks;
+            _soundEngine = soundEngine;
             _worldFocusManager = worldFocusManager;
             _visualWorldParameters = visualWorldParameters;
+            _playerEntityManager = playerEntityManager;
+            _playerEntityManager.UtopiaParticuleEngine = utopiaParticuleEngine;
+            _skyDome = skyDome;
+            _sharedFrameCB = sharedFrameCB;
+            _worldChunks = worldChunks;
+            _utopiaParticuleEngine = utopiaParticuleEngine;
 
             _voxelModelManager.VoxelModelAvailable += VoxelModelManagerVoxelModelReceived;
             _camManager.ActiveCameraChanged += CamManagerActiveCameraChanged;
 
-            DynamicEntities = new List<IVisualVoxelEntityContainer>();
+            _playerEntityManager.PlayerEntityChanged += _playerEntityManager_PlayerEntityChanged;
+
+            DynamicEntities = new List<VisualVoxelEntity>();
 
             DrawOrders.UpdateIndex(VOXEL_DRAW, 99, "VOXEL_DRAW");
             SPRITENAME_DRAW = DrawOrders.AddIndex(1060, "NAME_DRAW");
@@ -176,6 +161,7 @@ namespace Utopia.Entities.Managers
 
         public override void BeforeDispose()
         {
+            _playerEntityManager.PlayerEntityChanged -= _playerEntityManager_PlayerEntityChanged;
             _voxelModelManager.VoxelModelAvailable -= VoxelModelManagerVoxelModelReceived;
             _camManager.ActiveCameraChanged -= CamManagerActiveCameraChanged;
             foreach (var item in _dynamicEntitiesDico.Values) item.Dispose();
@@ -199,21 +185,14 @@ namespace Utopia.Entities.Managers
             _milkShapeMeshfactory.LoadMesh(@"\Meshes\block.txt", out _cubeMeshBluePrint, 0);
         }
 
-
-        private HLSLCubeTool _cubeToolEffect;
-        private IMeshFactory _milkShapeMeshfactory;
-        private ShaderResourceView _cubeTextureView;
-        private VertexBuffer<VertexMesh> _cubeVb;
-        private IndexBuffer<ushort> _cubeIb;
-        private Dictionary<int, int> _materialChangeMapping;
-        private IPlayerManager _playerEntityManager;
-        private ISkyDome _skyDome;
-        private SharedFrameCB _sharedFrameCB;
-
         public override void LoadContent(DeviceContext context)
         {
-            ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
-            ToDispose(_cubeTextureView);
+
+            //ArrayTexture.CreateTexture2DFromFiles(context.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer", out _cubeTextureView);
+            //ToDispose(_cubeTextureView);
+            _cubeTextureView = _visualWorldParameters.CubeTextureManager.CubeArrayTexture;
+
+
             //Create Vertex/Index Buffer to store the loaded cube mesh.
             _cubeVb = ToDispose(new VertexBuffer<VertexMesh>(context.Device, _cubeMeshBluePrint.Vertices.Length, SharpDX.Direct3D.PrimitiveTopology.TriangleList, "Block VB"));
             _cubeIb = ToDispose(new IndexBuffer<ushort>(context.Device, _cubeMeshBluePrint.Indices.Length, "Block IB"));
@@ -239,6 +218,12 @@ namespace Utopia.Entities.Managers
                                                                         DXStates.Blenders.Enabled,
                                                                         DXStates.DepthStencils.DepthReadWriteEnabled,
                                                                         context));
+            Sprite3DColorBillBoardProc energyBarProcessor = ToDispose(new Sprite3DColorBillBoardProc(ToDispose(new UtopiaIncludeHandler()), _sharedFrameCB.CBPerFrame, ClientSettings.EffectPack + @"Sprites\PointSpriteColor3DBillBoard.hlsl"));
+            _dynamicEntityEnergyBarRenderer = ToDispose(new Sprite3DRenderer<Sprite3DColorBillBoardProc>(energyBarProcessor,
+                                                                                                         DXStates.Rasters.Default,
+                                                                                                         DXStates.Blenders.Enabled,
+                                                                                                         DXStates.DepthStencils.DepthReadWriteEnabled,
+                                                                                                         context));
         }
 
         public override void UnloadContent()
@@ -282,14 +267,6 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private bool IsEntityVisible(Vector3D pos)
-        {
-            if (_worldChunks.SliceValue == -1)
-                return true;
-
-            return pos.Y < _worldChunks.SliceValue + 1 && pos.Y > _worldChunks.SliceValue - 7;
-        }
-
         public override void Draw(DeviceContext context, int index)
         {
             if (index == VOXEL_DRAW)
@@ -300,7 +277,7 @@ namespace Utopia.Entities.Managers
 
             if (index == SPRITENAME_DRAW)
             {
-                DrawEntitiesName(context);
+                DrawEntitiesOverHeadData(context);
                 return;
             }
         }
@@ -309,7 +286,6 @@ namespace Utopia.Entities.Managers
         {
             // as we store all entites in one collection
             // we will enumerate by all of them and add a player entity separately
-
             yield return _playerEntityManager.Player;
 
             foreach (var entity in _dynamicEntitiesDico.Values.Select(visualDynamicEntity => visualDynamicEntity.DynamicEntity))
@@ -318,16 +294,12 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        #endregion
-
-        #region Private Methods
-
         public void VoxelDraw(DeviceContext context, Matrix viewProjection)
         {
             //Applying Correct Render States
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
             _voxelModelEffect.Begin(context);
-            _voxelModelEffect.CBPerFrame.Values.LightDirection = _skyDome.LightDirection;
+            _voxelModelEffect.CBPerFrame.Values.SunVector = _skyDome.LightDirection;
             _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
             _voxelModelEffect.CBPerFrame.IsDirty = true;
             _voxelModelEffect.Apply(context);
@@ -342,7 +314,10 @@ namespace Utopia.Entities.Managers
                     var modelInstance = pairs.Value;
                     //Draw only the entities that are in Client view range
                     //if (_visualWorldParameters.WorldRange.Contains(entityToRender.VisualEntity.Position.ToCubePosition()))
-                    if (MVector3.Distance2D(entityToRender.VisualVoxelEntity.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange)
+                    bool isInRenderingRange = MVector3.Distance2D(entityToRender.VoxelEntity.Position, _camManager.ActiveCamera.WorldPosition.ValueInterp) <= _staticEntityViewRange;
+                    //Can only see dead persons if your are dead yourself or if its your own body !
+                    bool showCharacters = entityToRender.DynamicEntity.HealthState != DynamicEntityHealthState.Dead || IsLocalPlayer(entityToRender.DynamicEntity.DynamicId) || _playerEntityManager.Player.HealthState == DynamicEntityHealthState.Dead;
+                    if (isInRenderingRange && showCharacters)
                     {
                         modelInstance.World = Matrix.Scaling(1f / 16) * Matrix.Translation(entityToRender.WorldPosition.ValueInterp.AsVector3());
                         modelInstance.LightColor = entityToRender.ModelLight.ValueInterp;
@@ -351,15 +326,11 @@ namespace Utopia.Entities.Managers
                     {
                         modelInstance.World = Matrix.Zero;
                     }
-
-                    if (!IsEntityVisible(entityToRender.DynamicEntity.Position))
-                        modelInstance.World = Matrix.Zero;
-                    
                 }
 
                 if (modelAndInstances.Value.VisualModel != null && modelAndInstances.Value.Instances != null)
                 {
-                    var instancesToDraw = modelAndInstances.Value.Instances.Values.Where(x => x.World != Matrix.Zero).ToList();
+                    var instancesToDraw = modelAndInstances.Value.Instances.Values.Where(x => x.World != Matrix.Zero).ToList(); //Draw only those where the matrix is different than Zero
                     modelAndInstances.Value.VisualModel.DrawInstanced(_d3DEngine.ImmediateContext, _voxelModelEffect, instancesToDraw);
                 }
             }
@@ -383,7 +354,7 @@ namespace Utopia.Entities.Managers
                     }
                     else if (charEntity.Equipment.RightTool is IVoxelEntity)
                     {
-                        IVoxelEntity voxelItem = charEntity.Equipment.RightTool as IVoxelEntity;
+                        var voxelItem = charEntity.Equipment.RightTool as IVoxelEntity;
                         if (!string.IsNullOrEmpty(voxelItem.ModelName)) //Check if a voxel model is associated with the entity
                         {
                             DrawTool(voxelItem, charEntity);
@@ -393,9 +364,201 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private void DrawEntitiesName(DeviceContext context)
+        /// <summary>
+        /// Add an entity to the dynamic entity collection, all visual part of the entity (voxel) will be created here
+        /// </summary>
+        /// <param name="entity">the entity</param>
+        /// <param name="withNetworkInterpolation">the entity movement will be interpolated between each move/rotate changes</param>
+        public void AddEntity(ICharacterEntity entity, bool withNetworkInterpolation)
+        {
+            string entityVoxelName = entity.ModelName;
+
+            if (entity.HealthState == DynamicEntityHealthState.Dead)
+            {
+                entityVoxelName = "Ghost";
+            }
+            
+            //Do we already have this entity ??
+            if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId) == false)
+            {
+                //subscribe to entity state/afllication changes
+                entity.HealthStateChanged += EntityHealthStateChanged;
+                entity.HealthChanged += entity_HealthChanged;
+                entity.AfflictionStateChanged += EntityAfflictionStateChanged;
+
+                ModelAndInstances modelWithInstances;
+                //Does the entity model exist in the collection ?
+                //If yes, will send back the instance Ids registered to this Model
+                if (!_models.TryGetValue(entityVoxelName, out modelWithInstances))
+                {
+                    //Model not existing ====
+                    // load a new model
+                    modelWithInstances = new ModelAndInstances
+                    {
+                        VisualModel = _voxelModelManager.GetModel(entityVoxelName), //Get the model from the VoxelModelManager
+                        Instances = new Dictionary<uint, VoxelModelInstance>()       //Create a new dico of modelInstance  
+                    };
+
+                    //If the voxel model was send back by the manager, create the Mesh from it (Vx and idx buffers)
+                    if (modelWithInstances.VisualModel != null)
+                    {
+                        // todo: probably do this in another thread
+                        modelWithInstances.VisualModel.BuildMesh();
+                    }
+                    _models.Add(entityVoxelName, modelWithInstances);
+                }
+
+                VoxelModelInstance instance;
+
+                //If the Model has a Voxel Model (Search by Name)
+                if (modelWithInstances.VisualModel != null)
+                {
+                    //Create a new Instance of the Model
+                    instance = new VoxelModelInstance(modelWithInstances.VisualModel.VoxelModel);
+                    entity.ModelInstance = instance;
+                    modelWithInstances.Instances.Add(entity.DynamicId, instance);
+                }
+                else
+                {
+                    //Add a new instance for the model, but without Voxel Body (=null instance)
+                    modelWithInstances.Instances.Add(entity.DynamicId, null);
+                }
+
+                VisualDynamicEntity newEntity = CreateVisualEntity(entity);
+                newEntity.WithNetworkInterpolation = withNetworkInterpolation;
+                _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
+                DynamicEntities.Add(newEntity);
+                
+                OnEntityAdded(new DynamicEntityEventArgs { Entity = entity });
+            }
+        }
+
+        public void RemoveEntity(ICharacterEntity entity)
+        {
+            if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
+            {
+                ModelAndInstances instances;
+                if (!_models.TryGetValue(entity.ModelInstance.VoxelModel.Name, out instances))
+                {
+                    throw new InvalidOperationException("we have no such model");
+                }
+                instances.Instances.Remove(entity.DynamicId);
+
+                VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entity.DynamicId];
+                DynamicEntities.Remove(visualEntity);
+                _dynamicEntitiesDico.Remove(entity.DynamicId);
+
+                entity.HealthStateChanged -= EntityHealthStateChanged;
+                entity.HealthChanged -= entity_HealthChanged;
+                entity.AfflictionStateChanged -= EntityAfflictionStateChanged;
+
+                visualEntity.Dispose();
+
+                OnEntityRemoved(new DynamicEntityEventArgs { Entity = entity });
+            }
+        }
+
+        public void RemoveEntityById(uint entityId, bool dispose = true)
+        {
+            VisualDynamicEntity entity;
+            if (_dynamicEntitiesDico.TryGetValue(entityId, out entity))
+            {
+                ModelAndInstances instances;
+                if (!_models.TryGetValue(entity.VoxelEntity.ModelInstance.VoxelModel.Name, out instances))
+                {
+                    throw new InvalidOperationException("we have no such model");
+                }
+                instances.Instances.Remove(entityId);
+
+                VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entityId];
+                DynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
+                _dynamicEntitiesDico.Remove(entityId);
+
+                visualEntity.DynamicEntity.HealthStateChanged -= EntityHealthStateChanged;
+                entity.DynamicEntity.HealthChanged -= entity_HealthChanged;
+                visualEntity.DynamicEntity.AfflictionStateChanged -= EntityAfflictionStateChanged;
+
+                if (dispose) visualEntity.Dispose();
+                OnEntityRemoved(new DynamicEntityEventArgs { Entity = visualEntity.DynamicEntity });
+            }
+        }
+
+        public ICharacterEntity GetEntityById(uint p)
+        {
+            VisualDynamicEntity e;
+
+            if (_dynamicEntitiesDico.TryGetValue(p, out e))
+            {
+                return e.DynamicEntity;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns entity by a link or null, will also look into the Local player
+        /// </summary>
+        /// <param name="link"></param>
+        /// <returns></returns>
+        public IDynamicEntity FindEntity(EntityLink link)
+        {
+            if (!link.IsDynamic)
+                throw new ArgumentException("The link is not pointing to a dynamic entity");
+
+            if (IsLocalPlayer(link.DynamicEntityId)) return _playerEntityManager.Player;
+
+            return GetEntityById(link.DynamicEntityId);
+        }
+
+        /// <summary>
+        /// Change the voxel body from a dynamic entity
+        /// </summary>
+        /// <param name="entityId">The concerned dynamic entity</param>
+        /// <param name="modelName">the voxel body to assign, if null, the default model body will be set</param>
+        /// <param name="assignModelToEntity"></param>
+        public void UpdateEntityVoxelBody(uint entityId, string modelName = null, bool assignModelToEntity = true)
+        {
+            //If own player, and not body displayed, don't do it
+            var entity = (CharacterEntity)GetEntityById(entityId);
+            if (entity != null)
+            {
+                RemoveEntityById(entityId);
+                if (assignModelToEntity && modelName != null) entity.ModelName = modelName;
+                entity.ModelInstance = null;
+                AddEntity(entity, _playerEntityManager.Player.DynamicId != entityId);
+            }
+        }
+
+        public void UpdateEntity(ICharacterEntity entity)
+        {
+            VisualDynamicEntity visualEntity;
+
+            if (!_dynamicEntitiesDico.TryGetValue(entity.DynamicId, out visualEntity))
+                return;
+
+            var oldEntity = visualEntity.DynamicEntity;
+
+            entity.ModelInstance = oldEntity.ModelInstance;
+
+            visualEntity.DynamicEntity = entity;
+            visualEntity.Entity = entity;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private bool IsLocalPlayer(uint dynamicId)
+        {
+            return _playerEntityManager.Player.DynamicId == dynamicId;
+        }
+        /// <summary>
+        /// Will draw : Name & Health Bar
+        /// </summary>
+        /// <param name="context"></param>
+        private void DrawEntitiesOverHeadData(DeviceContext context)
         {
             _dynamicEntityNameRenderer.Begin(context, true);
+            _dynamicEntityEnergyBarRenderer.Begin(context, true);
 
             foreach (VisualDynamicEntity dynamicEntity in _dynamicEntitiesDico.Values.Where(x => x.ModelInstance != null && x.ModelInstance.World != Matrix.Zero))
             {
@@ -408,7 +571,8 @@ namespace Utopia.Entities.Managers
                 if (dynamicEntity.DynamicEntity is CharacterEntity)
                 {
                     Name = ((CharacterEntity)dynamicEntity.DynamicEntity).CharacterName;
-                    if (_playerEntity == dynamicEntity.DynamicEntity)
+                    //Is it the local player ?
+                    if (IsLocalPlayer(dynamicEntity.DynamicEntity.DynamicId))
                     {
                         color = Color.Yellow;
                     }
@@ -427,9 +591,19 @@ namespace Utopia.Entities.Managers
                 var distance = MVector3.Distance(dynamicEntity.WorldPosition.ValueInterp, _camManager.ActiveCamera.WorldPosition.ValueInterp);
                 float scaling = Math.Min( 0.040f, Math.Max(0.01f, 0.01f / 12 * (float)distance ));
                 _dynamicEntityNameRenderer.Processor.DrawText(Name, ref textPosition, scaling, ref color, _camManager.ActiveCamera, MultiLineHandling: isMultiline);
+
+                //HBar rendering
+                if (!IsLocalPlayer(dynamicEntity.DynamicEntity.DynamicId) && dynamicEntity.DynamicEntity.Health.CurrentAsPercent < 1 && dynamicEntity.DynamicEntity.Health.CurrentAsPercent > 0)
+                {
+                    var size = new Vector2((dynamicEntity.ModelInstance.State.BoundingBox.Maximum.X / 8) * dynamicEntity.DynamicEntity.Health.CurrentAsPercent, 0.1f);
+                    Vector3 hbPosition = textPosition;
+                    hbPosition.Y += 0.05f;
+                    _dynamicEntityEnergyBarRenderer.Processor.Draw(ref hbPosition, ref size, ref hbColor, ref colorReceived);
+                }
             }
 
             _dynamicEntityNameRenderer.End(context);
+            _dynamicEntityEnergyBarRenderer.End(context);
         }
 
         private void DrawTool(IVoxelEntity voxelTool, CharacterEntity charEntity)
@@ -470,12 +644,12 @@ namespace Utopia.Entities.Managers
             var blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.CubeId];
 
             //Prapare to creation a new mesh with the correct texture mapping ID
-            _materialChangeMapping[0] = blockProfile.Tex_Back;    //Change the Back Texture Id
-            _materialChangeMapping[1] = blockProfile.Tex_Front;   //Change the Front Texture Id
-            _materialChangeMapping[2] = blockProfile.Tex_Bottom;  //Change the Bottom Texture Id
-            _materialChangeMapping[3] = blockProfile.Tex_Top;     //Change the Top Texture Id
-            _materialChangeMapping[4] = blockProfile.Tex_Left;    //Change the Left Texture Id
-            _materialChangeMapping[5] = blockProfile.Tex_Right;   //Change the Right Texture Id
+            _materialChangeMapping[0] = blockProfile.Tex_Back.TextureArrayId;    //Change the Back Texture Id
+            _materialChangeMapping[1] = blockProfile.Tex_Front.TextureArrayId;   //Change the Front Texture Id
+            _materialChangeMapping[2] = blockProfile.Tex_Bottom.TextureArrayId;  //Change the Bottom Texture Id
+            _materialChangeMapping[3] = blockProfile.Tex_Top.TextureArrayId;     //Change the Top Texture Id
+            _materialChangeMapping[4] = blockProfile.Tex_Left.TextureArrayId;    //Change the Left Texture Id
+            _materialChangeMapping[5] = blockProfile.Tex_Right.TextureArrayId;   //Change the Right Texture Id
 
             //Create the cube Mesh from the blue Print one
             _cubeMesh = _cubeMeshBluePrint.Clone(_materialChangeMapping);
@@ -500,166 +674,43 @@ namespace Utopia.Entities.Managers
             context.DrawIndexed(_cubeIb.IndicesCount, 0, 0);
         }
 
-        //Raised Events
+        //Raised Events when an entity is added that is not the local player
         private void OnEntityAdded(DynamicEntityEventArgs e)
         {
             if (EntityAdded != null) EntityAdded(this, e);
         }
 
-        public void OnEntityRemoved(DynamicEntityEventArgs e)
+        private void OnEntityRemoved(DynamicEntityEventArgs e)
         {
             if (EntityRemoved != null) EntityRemoved(this, e);
         }
 
+
         //Dynamic Entity management
-        private VisualDynamicEntity CreateVisualEntity(IDynamicEntity entity)
+        private VisualDynamicEntity CreateVisualEntity(ICharacterEntity entity)
         {
-            return new VisualDynamicEntity(entity, new VisualVoxelEntity(entity, _voxelModelManager));
+            return new VisualDynamicEntity(entity, _voxelModelManager);
         }
 
-        public void AddEntity(IDynamicEntity entity, bool withNetworkInterpolation)
-        {
-            Trace.Assert(entity.DynamicId != 0);
-
-            //Do we already have this entity ??
-            if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId) == false)
-            {
-                ModelAndInstances modelWithInstances;
-                //Does the entity model exist in the collection ?
-                //If yes, will send back the instance Ids registered to this Model
-                if (!_models.TryGetValue(entity.ModelName, out modelWithInstances))
-                {
-                    //Model not existing ====
-                    // load a new model
-                    modelWithInstances = new ModelAndInstances
-                    {
-                        VisualModel = _voxelModelManager.GetModel(entity.ModelName), //Get the model from the VoxelModelManager
-                        Instances = new Dictionary<uint, VoxelModelInstance>()       //Create a new dico of modelInstance  
-                    };
-
-                    //If the voxel model was send back by the manager, create the Mesh from it (Vx and idx buffers)
-                    if (modelWithInstances.VisualModel != null)
-                    {
-                        // todo: probably do this in another thread
-                        modelWithInstances.VisualModel.BuildMesh();
-                    }
-                    _models.Add(entity.ModelName, modelWithInstances);
-                }
-
-                VisualDynamicEntity newEntity = CreateVisualEntity(entity);
-                newEntity.WithNetworkInterpolation = withNetworkInterpolation;
-                _dynamicEntitiesDico.Add(entity.DynamicId, newEntity);
-                DynamicEntities.Add(newEntity);
-
-                //If the Model has a Voxel Model (Search by Name)
-                if (modelWithInstances.VisualModel != null)
-                {
-                    //Create a new Instance of the Model
-                    var instance = new VoxelModelInstance(modelWithInstances.VisualModel.VoxelModel);
-                    entity.ModelInstance = instance;
-                    modelWithInstances.Instances.Add(entity.DynamicId, instance);
-                    _dynamicEntitiesDico[entity.DynamicId].ModelInstance = instance;
-                }
-                else
-                {
-                    //Add a new instance for the model, but without Voxel Body (=null instance)
-                    modelWithInstances.Instances.Add(entity.DynamicId, null);
-                }
-
-                OnEntityAdded(new DynamicEntityEventArgs { Entity = entity });
-            }
-        }
-
-        public void UpdateEntity(IDynamicEntity entity)
-        {
-            Trace.Assert(entity.DynamicId != 0);
-
-            var visualEntity = _dynamicEntitiesDico[entity.DynamicId];
-
-            var oldEntity = visualEntity.DynamicEntity;
-
-            entity.ModelInstance = oldEntity.ModelInstance;
-            
-            visualEntity.DynamicEntity = entity;
-            visualEntity.VisualVoxelEntity.Entity = entity;
-            
-        }
-
-        public void RemoveEntity(IDynamicEntity entity)
-        {
-            if (_dynamicEntitiesDico.ContainsKey(entity.DynamicId))
-            {
-                ModelAndInstances instances;
-                if (!_models.TryGetValue(entity.ModelName, out instances))
-                {
-                    throw new InvalidOperationException("we have no such model");
-                }
-                instances.Instances.Remove(entity.DynamicId);
-
-                VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entity.DynamicId];
-                DynamicEntities.Remove(visualEntity);
-                _dynamicEntitiesDico.Remove(entity.DynamicId);
-                visualEntity.Dispose();
-
-                OnEntityRemoved(new DynamicEntityEventArgs { Entity = entity });
-            }
-        }
-
-        public void RemoveEntityById(uint entityId, bool dispose = true)
-        {
-            VisualDynamicEntity entity;
-            if (_dynamicEntitiesDico.TryGetValue(entityId, out entity))
-            {
-                ModelAndInstances instances;
-                if (!_models.TryGetValue(entity.VisualVoxelEntity.VoxelEntity.ModelName, out instances))
-                {
-                    throw new InvalidOperationException("we have no such model");
-                }
-                instances.Instances.Remove(entityId);
-
-                VisualDynamicEntity visualEntity = _dynamicEntitiesDico[entityId];
-                DynamicEntities.Remove(_dynamicEntitiesDico[entityId]);
-                _dynamicEntitiesDico.Remove(entityId);
-                if (dispose) visualEntity.Dispose();
-                OnEntityRemoved(new DynamicEntityEventArgs { Entity = visualEntity.DynamicEntity });
-            }
-        }
-
-        public IDynamicEntity GetEntityById(uint p)
-        {
-            VisualDynamicEntity e;
-            if (_dynamicEntitiesDico.TryGetValue(p, out e))
-            {
-                return e.DynamicEntity;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Returns entity by a link or null
-        /// </summary>
-        /// <param name="link"></param>
-        /// <returns></returns>
-        public IDynamicEntity FindEntity(EntityLink link)
-        {
-            if (!link.IsDynamic)
-                throw new ArgumentException("The link is not pointing to a dynamic entity");
-
-            return GetEntityById(link.DynamicEntityId);
-        }
 
         #region Events handling
+
+        private void _playerEntityManager_PlayerEntityChanged(object sender, PlayerEntityChangedEventArgs e)
+        {
+            //Player character has been updated.
+            UpdateEntity(_playerEntityManager.Player);
+        }
+
         private void CamManagerActiveCameraChanged(object sender, CameraChangedEventArgs e)
         {
-            //if (e.Camera.CameraType == CameraType.FirstPerson)
-            //{
-            //    PlayerEntity = null;
-            //}
-            //else
-            //{
-            //    PlayerEntity = null;
-            //    PlayerEntity = _playerEntityManager.Player;
-            //}
+            if (e.Camera.CameraType == CameraType.FirstPerson)
+            {
+                RemoveEntity(_playerEntityManager.Player);
+            }
+            else
+            {
+                AddEntity(_playerEntityManager.Player, false);
+            }
         }
 
         private void VoxelModelManagerVoxelModelReceived(object sender, VoxelModelReceivedEventArgs e)
@@ -681,10 +732,63 @@ namespace Utopia.Entities.Managers
                         modelAndInstances.Value.Instances[id] = instance;
 
                         var vde = _dynamicEntitiesDico[id];
-                        vde.ModelInstance = instance;
                         vde.DynamicEntity.ModelInstance = instance;
                     }
                 }
+            }
+        }
+
+        //Handle Entity HealthState change
+        private void EntityHealthStateChanged(object sender, EntityHealthStateChangeEventArgs e)
+        {
+            //Check if the entity entered the Dead state
+            switch (e.NewState)
+            {
+                case DynamicEntityHealthState.Normal:
+                    if (e.PreviousState == DynamicEntityHealthState.Dead)
+                    {
+                        //Force a refresh of voxel body
+                        UpdateEntityVoxelBody(e.DynamicEntity.DynamicId, null);
+                    }
+                    break;
+                case DynamicEntityHealthState.Drowning:
+                    break;
+                case DynamicEntityHealthState.Dead:
+                        //Force a refresh of voxel body
+                        UpdateEntityVoxelBody(e.DynamicEntity.DynamicId, null);
+
+                        //Play dead sound only if player not active player
+                        if (!IsLocalPlayer(e.DynamicEntity.DynamicId))
+                        {
+                            _soundEngine.StartPlay3D("Dying", 1.0f, e.DynamicEntity.Position.AsVector3());
+                        }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void EntityAfflictionStateChanged(object sender, EntityAfflicationStateChangeEventArgs e)
+        {
+            //if (IsLocalPlayer(e.DynamicEntity.DynamicId)) return; //If local player do nothing ? 
+            
+            //Handle Affliction change for an entity here if needed
+            //Should "only" trigger visual aspect of it.
+        }
+
+        private void entity_HealthChanged(object sender, EntityHealthChangeEventArgs e)
+        {
+            //Play "Hurt" sound only if not local player, for local player it will be handled by the playercharachter class
+            if (e.Change < -2 && !IsLocalPlayer(e.ImpactedEntity.DynamicId))
+            {
+                _soundEngine.StartPlay3D("Hurt", 1.0f, e.ImpactedEntity.Position.AsVector3());
+            }
+
+            //Start Bleeding if needed !
+            if (e.Change < 2)
+            {
+                //Damage received !
+                _utopiaParticuleEngine.AddDynamicEntityParticules(e.HealthChangeHitLocation, e.HealthChangeHitLocationNormal, UtopiaParticuleEngine.DynamicEntityParticuleType.Blood);
             }
         }
 

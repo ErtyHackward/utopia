@@ -7,6 +7,8 @@ using Utopia.Shared.Net.Messages;
 using S33M3DXEngine.Main;
 using Utopia.Shared.Net.Interfaces;
 using S33M3DXEngine.Debug.Interfaces;
+using Utopia.Shared.Structs;
+using System.Collections.Generic;
 
 namespace Utopia.Network
 {
@@ -15,10 +17,17 @@ namespace Utopia.Network
     /// </summary>
     public class ServerComponent : GameComponent, IDebugInfo
     {
+        private ServerConnection _serverConnection;
+        private bool _entered;
+        private ErrorMessage _lastError;
+        private bool _tryingGlobal;
+        private bool _needToTryLocal;
+        private BlocksChangedMessageBuffer _blocksChangedMessageBuffer;
+
         #region Public variables/Properties
         //Initilialization received Data, should be move inside a proper class/struct !
         public IDynamicEntity Player { get; set; }
-        public DateTime WorldDateTime { get; set; }
+        public UtopiaTime WorldDateTime { get; set; }
         public double TimeFactor { get; set; }
         public GameInformationMessage GameInformations { get; set; }
 
@@ -26,7 +35,50 @@ namespace Utopia.Network
         public string DisplayName { get; set; }
 
         public string Address { get; set; }
-        public ServerConnection ServerConnection { get; set; }
+
+        public string LocalAddress { get; set; }
+        
+        public ServerConnection ServerConnection
+        {
+            get { return _serverConnection; }
+            set {
+
+                if (_serverConnection != value)
+                {
+                    if (_serverConnection != null)
+                    {
+                        _serverConnection.StatusChanged -= _serverConnection_StatusChanged;
+                    }
+                    
+                    _serverConnection = value;
+
+                    if (_serverConnection != null)
+                    {
+                        _serverConnection.StatusChanged += _serverConnection_StatusChanged;
+                    }
+                }
+            }
+        }
+
+        public string LastErrorText {
+            get
+            {
+                string text = null;
+
+                if (_lastError != null)
+                {
+                    text = "Server error: " + _lastError.Message;
+                }
+
+                if (_serverConnection.LastException != null)
+                {
+                    text += "Exception: " + _serverConnection.LastException.Message;
+                }
+
+                return text;
+            }
+        }
+
         #endregion
 
         #region Events
@@ -119,13 +171,27 @@ namespace Utopia.Network
         /// </summary>
         public event EventHandler<ProtocolMessageEventArgs<UseFeedbackMessage>> MessageUseFeedback;
         /// <summary>
-        /// Occurs when GetVoxelModelsMessage is received
+        /// Occurs when EntityDataMessage is received
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<GetVoxelModelsMessage>> MessageGetVoxelModels;
+        public event EventHandler<ProtocolMessageEventArgs<EntityDataMessage>> MessageEntityData;
         /// <summary>
-        /// Occurs when VoxelModelDataMessage is received
+        /// Occurs when the connection status has changed
         /// </summary>
-        public event EventHandler<ProtocolMessageEventArgs<VoxelModelDataMessage>> MessageVoxelModelData;
+        public event EventHandler<ServerConnectionStatusEventArgs> ConnectionStatusChanged;
+        /// <summary>
+        /// Occurs when the connection status has changed
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityHealthMessage>> MessageEntityHealth;
+        /// <summary>
+        /// Occurs when the connection status has changed
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityHealthStateMessage>> MessageEntityHealthState;
+        /// <summary>
+        /// Occurs when the connection status has changed
+        /// </summary>
+        public event EventHandler<ProtocolMessageEventArgs<EntityAfflictionStateMessage>> MessageEntityAfflictionState;
+
+
         #endregion
 
         [Inject]
@@ -133,8 +199,8 @@ namespace Utopia.Network
 
         public ServerComponent()
         {
-            
             this.MessageGameInformation += ServerComponent_MessageGameInformation;
+            _blocksChangedMessageBuffer = new BlocksChangedMessageBuffer();
         }
 
         public override void BeforeDispose()
@@ -158,17 +224,29 @@ namespace Utopia.Network
                 ServerConnection.Dispose();
         }
 
-        public bool BindingServer(string address)
+        public bool BindingServer(string address, string localAddress)
         {
             if (ServerConnection != null && ServerConnection.Status == TcpConnectionStatus.Connected) 
                 ServerConnection.Dispose();
 
             Address = address;
-
+            LocalAddress = localAddress;
+            
             if (ServerConnection != null)
                 ServerConnection.Dispose();
             ServerConnection = new ServerConnection();
             return true;
+        }
+
+        private void ParseAddress(string address, out string addr, out int port)
+        {
+            port = 4815;
+            addr = address;
+            if (address.Contains(":"))
+            {
+                addr = address.Substring(0, address.IndexOf(':'));
+                port = int.Parse(address.Substring(address.IndexOf(':') + 1));
+            }
         }
 
         public void ConnectToServer(string userName, string displayName, string passwordHash)
@@ -176,18 +254,27 @@ namespace Utopia.Network
             Login = userName;
             DisplayName = displayName;
 
+            _entered = false;
+
             if (ServerConnection.LoggedOn)
                 ServerConnection.Disconnect();
             
             ServerConnection.Login = userName;
             ServerConnection.DisplayName = displayName;
             ServerConnection.Password = passwordHash;
-            ServerConnection.ClientVersion = 1;
+            ServerConnection.ClientVersion = ServerConnection.ProtocolVersion;
             ServerConnection.Register = false;
 
             if (ServerConnection.Status != TcpConnectionStatus.Connected)
             {
-                ServerConnection.Connect(Address, 4815);
+                string addr;
+                int port;
+
+                ParseAddress(Address, out addr, out port);
+                _tryingGlobal = true;
+                _needToTryLocal = !string.IsNullOrEmpty(LocalAddress);
+
+                ServerConnection.Connect(addr, port);
             }
             else
             {
@@ -199,10 +286,22 @@ namespace Utopia.Network
         {
             if (ServerConnection != null)
             {
-                foreach (IBinaryMessage data in ServerConnection.FetchPendingMessages())
+                foreach (var data in ServerConnection.FetchPendingMessages())
                 {
                     InvokeEventForNetworkDataReceived(data);
                 }
+
+                //Time based flush of blockChangeBuffer
+                OnMessageBlockChange(_blocksChangedMessageBuffer.Flush(elapsedTime, false));
+            }
+        }
+
+        public void EnterTheWorld()
+        {
+            if (!_entered)
+            {
+                _entered = true;
+                ServerConnection.Send(new EntityInMessage());
             }
         }
         #endregion
@@ -214,7 +313,6 @@ namespace Utopia.Network
         }
         #endregion
 
-
         #region Events Raising
         public void OnMessageLogin(LoginMessage ea)
         {
@@ -223,8 +321,7 @@ namespace Utopia.Network
 
         protected void OnMessageChunkData(ChunkDataMessage ea)
         {
-            if (MessageChunkData != null) 
-                MessageChunkData(this, new ProtocolMessageEventArgs<ChunkDataMessage> { Message = ea });
+            if (MessageChunkData != null) MessageChunkData(this, new ProtocolMessageEventArgs<ChunkDataMessage> { Message = ea });
         }
 
         protected void OnMessageChat(ChatMessage ea)
@@ -234,12 +331,13 @@ namespace Utopia.Network
 
         protected void OnMessageError(ErrorMessage ea)
         {
+            _lastError = ea;
             if (MessageError != null) MessageError(this, new ProtocolMessageEventArgs<ErrorMessage> { Message = ea });
         }
 
         protected void OnMessageBlockChange(BlocksChangedMessage ea)
         {
-            if (MessageBlockChange != null) MessageBlockChange(this, new ProtocolMessageEventArgs<BlocksChangedMessage> { Message = ea });
+            if (MessageBlockChange != null && ea != null) MessageBlockChange(this, new ProtocolMessageEventArgs<BlocksChangedMessage> { Message = ea });
         }
 
         protected void OnMessagePosition(EntityPositionMessage ea)
@@ -328,15 +426,31 @@ namespace Utopia.Network
             if (MessageUseFeedback != null) MessageUseFeedback(this, new ProtocolMessageEventArgs<UseFeedbackMessage> { Message = ea });
         }
 
-        protected void OnMessageGetVoxelModels(GetVoxelModelsMessage ea)
+        protected virtual void OnMessageEntityData(EntityDataMessage ea)
         {
-            if (MessageGetVoxelModels != null) MessageGetVoxelModels(this, new ProtocolMessageEventArgs<GetVoxelModelsMessage> { Message = ea });
+            if (MessageEntityData != null) MessageEntityData(this, new ProtocolMessageEventArgs<EntityDataMessage> { Message = ea });
         }
 
-        protected void OnMessageVoxelModelData(VoxelModelDataMessage ea)
+        protected virtual void OnConnectionStatusChanged(ServerConnectionStatusEventArgs e)
         {
-            if (MessageVoxelModelData != null) MessageVoxelModelData(this, new ProtocolMessageEventArgs<VoxelModelDataMessage> { Message = ea });
+            if (ConnectionStatusChanged != null) ConnectionStatusChanged(this, e);
         }
+
+        protected void OnMessageEntityHealth(EntityHealthMessage ea)
+        {
+            if (MessageEntityHealth != null) MessageEntityHealth(this, new ProtocolMessageEventArgs<EntityHealthMessage>() { Message = ea });
+        }
+
+        protected void OnMessageEntityHealthState(EntityHealthStateMessage ea)
+        {
+            if (MessageEntityHealthState != null) MessageEntityHealthState(this, new ProtocolMessageEventArgs<EntityHealthStateMessage>() { Message = ea });
+        }
+
+        protected void OnMessageEntityAfflictionState(EntityAfflictionStateMessage ea)
+        {
+            if (MessageEntityAfflictionState != null) MessageEntityAfflictionState(this, new ProtocolMessageEventArgs<EntityAfflictionStateMessage>() { Message = ea });
+        }
+
         #endregion
 
         #region Private Methods
@@ -351,6 +465,11 @@ namespace Utopia.Network
             if (msg is ITimeStampedMsg)
             {
                 ((ITimeStampedMsg)msg).MessageRecTime = DateTime.Now;
+            }
+
+            if ((MessageTypes)msg.MessageId != MessageTypes.BlockChange)
+            {
+                OnMessageBlockChange(_blocksChangedMessageBuffer.Flush(0, true));
             }
             
             switch ((MessageTypes)msg.MessageId)
@@ -371,7 +490,7 @@ namespace Utopia.Network
                     OnMessageGameInformation((GameInformationMessage)msg);
                     break;
                 case MessageTypes.BlockChange:
-                    OnMessageBlockChange((BlocksChangedMessage)msg);
+                    _blocksChangedMessageBuffer.Add((BlocksChangedMessage)msg);
                     break;
                 case MessageTypes.EntityPosition:
                     OnMessagePosition((EntityPositionMessage)msg);
@@ -421,21 +540,68 @@ namespace Utopia.Network
                 case MessageTypes.UseFeedback:
                     OnMessageUseFeedback((UseFeedbackMessage)msg);
                     break;
-                case MessageTypes.GetVoxelModels:
-                    OnMessageGetVoxelModels((GetVoxelModelsMessage)msg);
+                case MessageTypes.EntityData:
+                    OnMessageEntityData((EntityDataMessage)msg);
                     break;
-                case MessageTypes.VoxelModelData:
-                    OnMessageVoxelModelData((VoxelModelDataMessage)msg);
+                case MessageTypes.EntityHealth:
+                    OnMessageEntityHealth((EntityHealthMessage)msg);
+                    break;
+                case MessageTypes.EntityHealthState:
+                    OnMessageEntityHealthState((EntityHealthStateMessage)msg);
+                    break;
+                case MessageTypes.EntityAfflictionState:
+                    OnMessageEntityAfflictionState((EntityAfflictionStateMessage)msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("msg", "Invalid message received from server");
             }
         }
+
+        void _serverConnection_StatusChanged(object sender, TcpConnectionStatusEventArgs e)
+        {
+            bool final = true;
+            if (e.Status == TcpConnectionStatus.Disconnected)
+            {
+                foreach (var message in ServerConnection.FetchPendingMessages())
+                {
+                    var error = message as ErrorMessage;
+                    if (error != null)
+                        _lastError = error;
+                }
+
+                if (_tryingGlobal && _needToTryLocal)
+                {
+                    // doing second attempt
+                    string addr;
+                    int port;
+
+                    ParseAddress(LocalAddress, out addr, out port);
+                    _tryingGlobal = false;
+                    _needToTryLocal = false;
+                    final = false;
+
+                    ServerConnection.Connect(addr, port);
+                }
+            }
+
+            if (e.Status == TcpConnectionStatus.Connected)
+            {
+                _needToTryLocal = false;
+            }
+
+            var ea = new ServerConnectionStatusEventArgs 
+            { 
+                Status = e.Status,
+                Final = final,
+            };
+
+            OnConnectionStatusChanged(ea);
+        }
         #endregion
 
         #region IDebugInfo Implementation
         public bool ShowDebugInfo { get; set; }
-
+        
         public string GetDebugInfo()
         {
             if (ShowDebugInfo)
@@ -448,6 +614,13 @@ namespace Utopia.Network
             }
         }
         #endregion
+
+
     }
 
+
+    public class ServerConnectionStatusEventArgs : TcpConnectionStatusEventArgs
+    {
+        public bool Final { get; set; }
+    }
 }

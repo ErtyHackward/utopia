@@ -4,24 +4,43 @@ using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
 using S33M3Resources.Structs;
 using Utopia.Entities;
+using Utopia.Entities.Managers;
 using Utopia.GUI.Inventory;
+using Utopia.Shared.Configuration;
 
 namespace Realms.Client.Components.GUI.Inventory
 {
-    public class ContainerInventory : InventoryWindow
+    public class ContainerInventory : ContainerWindow
     {
         private readonly SandboxCommonResources _commonResources;
-        private SpriteTexture _stInventoryWindow;
 
-        public ContainerInventory(D3DEngine engine, IconFactory iconFactory, InputsManager inputManager, SandboxCommonResources commonResources) : 
-            base(null, iconFactory, new Point(20,20), new Point(20,20), inputManager)
+        private SpriteTexture _stBtnCraft;
+        private SpriteTexture _stBtnCraftDown;
+        private SpriteTexture _stBtnCraftHover;
+        
+        public ContainerInventory(
+            D3DEngine engine, 
+            IconFactory iconFactory, 
+            InputsManager inputManager, 
+            SandboxCommonResources commonResources, 
+            WorldConfiguration config,
+            PlayerEntityManager playerEntityManager
+            ) : base(config, playerEntityManager, iconFactory, inputManager)
         {
             _commonResources = commonResources;
-            _stInventoryWindow = new SpriteTexture(engine.Device, @"Images\Inventory\inventory_window_container.png");
 
-            CustomWindowImage = _stInventoryWindow;
-            Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(312, 388);
+            _stBtnCraft = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close.png"));
+            _stBtnCraftDown = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_down.png"));
+            _stBtnCraftHover = ToDispose(new SpriteTexture(engine.Device, @"Images\Inventory\inventory_close_hover.png"));
 
+            //Bounds.Size = new S33M3CoreComponents.GUI.Nuclex.UniVector(312, 388);
+            InitializeComponent();
+
+            _craftButton.CustomImage = _stBtnCraft;
+            _craftButton.CustomImageDown = _stBtnCraftDown;
+            _craftButton.CustomImageHover = _stBtnCraftHover;
+            _craftButton.CustomFont = _commonResources.FontBebasNeue25;
+            _craftButton.Text = "CRAFT";
         }
 
         protected override void CellsCreated()
@@ -43,6 +62,14 @@ namespace Realms.Client.Components.GUI.Inventory
                     cell.DrawIconsGroupId = 5;
                     cell.DrawIconsActiveCellId = 6;
                 }
+            }
+
+            foreach (var ingredientCell in _ingredientCells)
+            {
+                ingredientCell.CustomBackground = _commonResources.StInventorySlot;
+                ingredientCell.CustomBackgroundHover = _commonResources.StInventorySlotHover;
+                ingredientCell.DrawIconsGroupId = 5;
+                ingredientCell.DrawIconsActiveCellId = 6;
             }
         }
     }

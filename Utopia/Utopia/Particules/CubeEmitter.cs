@@ -26,6 +26,7 @@ using Utopia.Shared.Structs.Landscape;
 using System.Threading.Tasks;
 using Utopia.Resources.Sprites;
 using Utopia.Shared.Settings;
+using Utopia.Worlds.Weather;
 
 namespace Utopia.Particules
 {
@@ -54,7 +55,7 @@ namespace Utopia.Particules
 
         private double _maxRenderingDistanceSquared;
         private double _maxRenderingDistance;
-
+        private IWeather _weather;
         private Sprite3DRenderer<CubeColorProc> _particuleRenderer;
 
         #endregion
@@ -89,7 +90,8 @@ namespace Utopia.Particules
                            VisualWorldParameters visualWorldParameters,
                            IWorldChunks2D worldChunk,
                            ILandscapeManager landscapeManager,
-                           double maxRenderingDistance)
+                           double maxRenderingDistance,
+                           IWeather weather)
         {
             if (landscapeManager == null) throw new ArgumentNullException("landscapeManager");
 
@@ -98,15 +100,14 @@ namespace Utopia.Particules
             _cubeTexturePath = cubeTexturePath;
             _visualWorldParameters = visualWorldParameters;
             _biomeColorFilePath = biomeColorFilePath;
-
+            _weather = weather;
             MaxRenderingDistance = maxRenderingDistance;
             _worldChunk = worldChunk;
             _landscapeManager = landscapeManager;
             _isStopped = false;
             _maximumAge = maximumAge;
             _particules = new List<ColoredParticule>();
-
-            _colorsBiome = new Bitmap[2];
+            
             _rnd = new FastRandom();
 
             _cubeBB = new BoundingBox(new Vector3(-size / 2.0f, -size / 2.0f, -size / 2.0f), new Vector3(size / 2.0f, size / 2.0f, size / 2.0f));
@@ -120,7 +121,7 @@ namespace Utopia.Particules
 
             //Create the processor that will be used by the Sprite3DRenderer
             CubeColorProc processor = ToDispose(new CubeColorProc(ToDispose(new DefaultIncludeHandler()), sharedFrameBuffer));
-
+            
             //Create a sprite3Drenderer that will use the previously created processor to accumulate text data for drawing.
             _particuleRenderer = ToDispose(new Sprite3DRenderer<CubeColorProc>(processor,
                                                                                             DXStates.Rasters.Default,
@@ -166,7 +167,7 @@ namespace Utopia.Particules
 
                 //Get Color
                 var color = palette[_rnd.Next(24)];
-                if (color.A < 255 && profile.BiomeColorArrayTexture <= 1)
+                if (color.A < 255)
                 {
                     ApplyBiomeColor(ref color, profile.BiomeColorArrayTexture, chunk.BlockData.GetColumnInfo(CubeLocation.X - chunk.ChunkPositionBlockUnit.X, CubeLocation.Z - chunk.ChunkPositionBlockUnit.Y));
                 }
@@ -249,21 +250,28 @@ namespace Utopia.Particules
         #region Private Methods
         private void LoadBiomeColorsTexture()
         {
-            //Load GrassColor
-            var grassColorBiomePath = Directory.GetFiles(_biomeColorFilePath, "01*.png")[0];
-            _colorsBiome[0] = (Bitmap)ToDispose(Bitmap.FromFile(grassColorBiomePath));
 
-            //Load FoliageColor
-            var foliageColorBiomePath = Directory.GetFiles(_biomeColorFilePath, "02*.png")[0];
-            _colorsBiome[1] = (Bitmap)ToDispose(Bitmap.FromFile(grassColorBiomePath));
+            List<Bitmap> biomeMaps = new List<Bitmap>();
+            foreach (var biomeColorImg in Directory.GetFiles(_biomeColorFilePath, "*.png"))
+            {
+                biomeMaps.Add((Bitmap)ToDispose(Bitmap.FromFile(biomeColorImg)));
+            }
+
+            _colorsBiome = biomeMaps.ToArray();
         }
 
         private void ApplyBiomeColor(ref Color baseColor, byte biomeColorId, ChunkColumnInfo ci)
         {
+            //Apply weather offset
+            var m = ((ci.Moisture / 256f) * 0.6f) + 0.2f;
+            var moistureAmount = MathHelper.Clamp(m + _weather.MoistureOffset, 0f, 1f);
+            var t = ((ci.Temperature / 256f) * 0.6f) + 0.2f;
+            var tempAmount = MathHelper.Clamp(t + _weather.TemperatureOffset, 0f, 1f);
+
             //X = Moisture
-            int moisture = (int)MathHelper.FullLerp(0, _colorsBiome[biomeColorId].Width - 1, 0.0, 255.0, ci.Moisture);
+            int moisture = (int)MathHelper.FullLerp(0, _colorsBiome[biomeColorId].Width - 1, 0.0, 1.0, moistureAmount);
             //Y = Temperature
-            int temp = (int)MathHelper.FullLerp(0, _colorsBiome[biomeColorId].Height - 1, 0.0, 255.0, ci.Temperature);
+            int temp = (int)MathHelper.FullLerp(0, _colorsBiome[biomeColorId].Height - 1, 0.0, 1.0, tempAmount);
 
             var sampledColor = _colorsBiome[biomeColorId].GetPixel(moisture, temp);
 
@@ -278,14 +286,13 @@ namespace Utopia.Particules
 
         private void CreateColorsSetPerCubeTexture()
         {
-            Dictionary<int, Color[]> perBitmapColorSampling = new Dictionary<int, Color[]>(); ;
+            Dictionary<string, Color[]> perBitmapColorSampling = new Dictionary<string, Color[]>(); ;
 
             //Sample each cubeTextures bmp
             foreach (var file in Directory.GetFiles( _cubeTexturePath, _fileNamePatern))
             {
                 //Get Texture ID.
-                string fileName = Path.GetFileName(file);
-                int id = int.Parse(fileName.Substring(2, fileName.IndexOf('_') - 2));
+                string fileName = Path.GetFileNameWithoutExtension(file);
 
                 //Load files
                 using (var image = (Bitmap)Bitmap.FromFile(file))
@@ -301,20 +308,29 @@ namespace Utopia.Particules
                             colorArray[i] = new Color(color.R, color.G, color.B, color.A);
                         }
                     }
-                    perBitmapColorSampling.Add(id, colorArray);
+                    perBitmapColorSampling.Add(fileName, colorArray);
                 }
             }
             
             //for each define cubes profiles, merge 6 faces color sampled to give a collections a sampled color per Cube (24 colors)
             foreach (var blockProfile in _visualWorldParameters.WorldParameters.Configuration.GetAllCubesProfiles())
             {
+                if (blockProfile.Textures == null || blockProfile.Textures.Count(x => x.Texture.Name == null) > 0) continue;
                 List<Color> colorArray = new List<Color>();
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top]);
-                colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom]);
+
+                try
+                {
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Back.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Front.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Left.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Right.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Top.Texture.Name]);
+                    colorArray.AddRange(perBitmapColorSampling[blockProfile.Tex_Bottom.Texture.Name]);
+                }
+                catch (KeyNotFoundException e)
+                {
+                    logger.Error(e);
+                }
                 _cubeColorSampled.Add(blockProfile.Id, colorArray.ToArray());
             }
 

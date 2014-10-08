@@ -104,8 +104,8 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             Rectangle scissorRegion = new Rectangle(
                                                 Math.Max(clipX, (int)viewport.X),
                                                 Math.Max(clipY, (int)viewport.Y),
-                                                Math.Max(clipX, (int)viewport.X) + (Math.Min(clipRight, viewportRight) - clipX) + (clipX - Math.Max(clipX, (int)viewport.X)),
-                                                Math.Max(clipY, (int)viewport.Y) + (Math.Min(clipBottom, viewportBottom) - clipY) + (clipY - Math.Max(clipY, (int)viewport.Y))
+                                                (Math.Min(clipRight, viewportRight) - clipX) + (clipX - Math.Max(clipX, (int)viewport.X)),
+                                                (Math.Min(clipBottom, viewportBottom) - clipY) + (clipY - Math.Max(clipY, (int)viewport.Y))
                                             );
             //scissorRegion.Width += clipX - scissorRegion.X;
             //scissorRegion.Height += clipY - scissorRegion.Y;
@@ -164,7 +164,6 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         //the 2 DrawCustomTexture! 
         public void DrawCustomTexture(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0, ByteColor? color = null)
         {
-
             var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
             var destinationRegion = calculateDestinationRectangle(
               ref bounds, ref offset
@@ -177,6 +176,32 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
 
             Rectangle srcRegion = new Rectangle(0, 0, customTex.Width, customTex.Height);
             spriteRenderer.Draw(customTex, ref destinationRegion, ref srcRegion, ref drawColor, textureArrayIndex, true, groupId);
+        }
+
+        public void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, float rotation, SamplerState sampler, int groupId = 0, ByteColor? color = null)
+        {
+            var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
+            var destinationRegion = calculateDestinationRectangle(
+              ref bounds, ref offset
+            );
+
+            ByteColor col;
+            if (!color.HasValue)
+                col = _defaultColor;
+            else col = (ByteColor)color;
+
+            spriteRenderer.Draw(customTex, ref destinationRegion, ref textureSourceRect, ref col, rotation, sampler, drawGroupId: groupId);
+        }
+
+
+        public void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, int groupId = 0)
+        {
+            var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
+            var destinationRegion = calculateDestinationRectangle(
+              ref bounds, ref offset
+            );
+
+            spriteRenderer.Draw(customTex, ref destinationRegion, ref textureSourceRect, ref _defaultColor, groupId);
         }
 
         public void DrawCustomTextureTiled(SpriteTexture customTex, ref RectangleF bounds, int textureArrayIndex = 0, int groupId = 0)
@@ -192,22 +217,20 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
             spriteRenderer.DrawWithWrapping(customTex, ref position, ref size, ref _defaultColor, textureArrayIndex, groupId);
         }
 
-        public void DrawCustomTexture(SpriteTexture customTex, ref Rectangle textureSourceRect, ref RectangleF bounds, int groupId = 0)
-        {
-
-            var offset = new UniRectangle(0, 0, bounds.Width, bounds.Height);
-            var destinationRegion = calculateDestinationRectangle(
-              ref bounds, ref offset
-            );
-
-            spriteRenderer.Draw(customTex, ref destinationRegion, ref textureSourceRect, ref _defaultColor, groupId);
-        }
 
         /// <summary>Draws text into the drawing buffer for the specified element</summary>
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        public void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1, int groupId = 0)
+        public void DrawString(
+            string frameName, 
+            int frameFontId, 
+            ref RectangleF bounds, 
+            string text, 
+            ref ByteColor color, 
+            bool withMaxWidth, 
+            int carretPosition = -1,  
+            int groupId = 0)
         {
             if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
                 return;
@@ -221,7 +244,14 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         /// <param name="frameName">Class of the element for which to draw text</param>
         /// <param name="bounds">Region that will be covered by the drawn element</param>
         /// <param name="text">Text that will be drawn</param>
-        public void DrawString(string frameName, int frameFontId, ref RectangleF bounds, string text, bool withMaxWidth, int carretPosition = -1, int groupId = 0)
+        public void DrawString(
+            string frameName, 
+            int frameFontId, 
+            ref RectangleF bounds, 
+            string text, 
+            bool withMaxWidth, 
+            int carretPosition = -1, 
+            int groupId = 0)
         {
             if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
                 return;
@@ -233,14 +263,21 @@ namespace S33M3CoreComponents.GUI.Nuclex.Visuals.Flat
         }
 
 
-        public void DrawString(SpriteFont font, ref RectangleF bounds, string text, ref ByteColor color, bool withMaxWidth, int carretPosition = -1,
-                                     FlatGuiGraphics.Frame.HorizontalTextAlignment HorizontalPlacement = Frame.HorizontalTextAlignment.Left,
-                                     FlatGuiGraphics.Frame.VerticalTextAlignment VerticalPlacement = Frame.VerticalTextAlignment.Top, int groupId = 0)
+        public void DrawString(
+            SpriteFont font, 
+            ref RectangleF bounds, 
+            string text, 
+            ref ByteColor color, 
+            bool withMaxWidth, 
+            int carretPosition = -1,
+            Frame.HorizontalTextAlignment horizontalPlacement = Frame.HorizontalTextAlignment.Left,
+            Frame.VerticalTextAlignment verticalPlacement = Frame.VerticalTextAlignment.Top, 
+            int groupId = 0)
         {
             if (string.IsNullOrWhiteSpace(text) && carretPosition == -1)
                 return;
 
-            var position = positionText(ref bounds, text, font, HorizontalPlacement, VerticalPlacement);
+            var position = positionText(ref bounds, text, font, horizontalPlacement, verticalPlacement);
             spriteRenderer.DrawText(font, text, ref position, ref color, withMaxWidth ? (int)bounds.Width : -1, carretPosition, SpriteRenderer.TextFontPosition.RelativeToFontUp, groupId);
         }
 

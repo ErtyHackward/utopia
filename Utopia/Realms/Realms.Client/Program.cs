@@ -1,10 +1,14 @@
-﻿using System.Threading;
+﻿using System.Diagnostics;
+using System.Threading;
 using System;
 using S33M3CoreComponents.Config;
 using System.IO;
+using Utopia.Shared.Helpers;
+using Utopia.Shared.Net.Web;
 
 namespace Realms.Client
 {
+    
     static class Program
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -20,7 +24,7 @@ namespace Realms.Client
         /// </summary>
         [STAThread]
         static void Main(string[] args)
-        {            
+        {
             foreach (var arg in args)
             {
                 if (arg.ToLower() == "-nolandscapebuffer") Utopia.Shared.World.LandscapeBufferManager.WithoutLandscapeBuffer = true;
@@ -37,12 +41,41 @@ namespace Realms.Client
             ShowDebug = true;     
 #endif
 
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            DllLoadHelper.LoadUmnanagedLibrary("sqlite3.dll");
+
             using (var main = new GameClient())
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 main.Run();
             }
+        }
 
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exception = (Exception)e.ExceptionObject;
+
+            logger.Fatal("Unhandled excpetion: {0}\n{1}", exception.Message, exception.StackTrace);
+
+            if (exception.InnerException != null)
+            {
+                logger.Fatal("Inner exception: {0}\n{1}", exception.InnerException.Message, exception.InnerException.StackTrace);
+
+                if (exception.InnerException.InnerException != null)
+                {
+                    logger.Fatal("Inner exception 2: {0}\n{1}", exception.InnerException.InnerException.Message, exception.InnerException.InnerException.StackTrace);
+                }
+            }
+
+            ClientWebApi.SendBugReport(exception);
+
+            var logPath = Path.Combine(Path.GetTempPath(), string.Format("utopia-client-{0}.log", DateTime.Now.ToShortDateString()));
+
+            if (File.Exists(logPath))
+            {
+                Process.Start(logPath);
+            }
         }
 
         private static void DeleteAllSavedGame()

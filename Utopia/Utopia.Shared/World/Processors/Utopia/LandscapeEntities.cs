@@ -80,10 +80,9 @@ namespace Utopia.Shared.World.Processors.Utopia
 
             //Generate Tree mesh !
             //Get tree type following distribution chances inside the biome
-            
             TreeBluePrint treeType = biome.BiomeTrees.GetTreeTemplate(rnd, _worldParameters.Configuration.TreeBluePrintsDico);
-
-            return LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(rnd, worldPosition, treeType), worldPosition, treeType.Id);
+            int generationSeed = rnd.Next();
+            return LandscapeEntityParser.GlobalMesh2ChunkMesh(_treeGenerator.Generate(generationSeed, worldPosition, treeType), worldPosition, treeType.Id, generationSeed);
         }
         #endregion
     }

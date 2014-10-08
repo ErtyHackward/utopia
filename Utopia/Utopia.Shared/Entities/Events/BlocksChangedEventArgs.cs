@@ -30,5 +30,10 @@ namespace Utopia.Shared.Entities.Events
         /// Associated tags
         /// </summary>
         public BlockTag[] Tags { get; set; }
+
+        /// <summary>
+        /// Id of the entity responsible for the change
+        /// </summary>
+        public uint SourceEntityId { get; set; }
     }
 }

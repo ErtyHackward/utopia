@@ -1,4 +1,5 @@
-﻿using S33M3CoreComponents.Sprites2D.Interfaces;
+﻿using S33M3CoreComponents.Maths;
+using S33M3CoreComponents.Sprites2D.Interfaces;
 using S33M3DXEngine;
 using S33M3DXEngine.Buffers;
 using S33M3DXEngine.Main;
@@ -106,6 +107,10 @@ namespace S33M3CoreComponents.Sprites2D
 
         public void EndWithCustomProjection(DeviceContext context, ref Matrix Projection2D)
         {
+            //The projection stay the same !
+            _effect.CBPerDraw.Values.OrthoProjection = Matrix.Transpose(Projection2D);
+            _effect.CBPerDraw.IsDirty = true;
+
             foreach (var spriteGroup in _spriteBuffer.GetAllSpriteGroups())
             {
                 _vb.SetData(context, spriteGroup.Vertices.ToArray());
@@ -113,8 +118,8 @@ namespace S33M3CoreComponents.Sprites2D
 
                 _effect.Begin(context);
                 _effect.SpriteTexture.Value = spriteGroup.Texture.Texture;
-                _effect.CBPerDraw.Values.OrthoProjection = Matrix.Transpose(Projection2D);
-                _effect.CBPerDraw.IsDirty = true;
+                _effect.CBTextureTransform.Values.TexMatrix = Matrix.Transpose(spriteGroup.TextureMatrix);
+                _effect.CBTextureTransform.IsDirty = true;
                 _effect.Apply(context);
 
                 _vb.SetToDevice(context, 0);
@@ -128,6 +133,10 @@ namespace S33M3CoreComponents.Sprites2D
 
         public void End(DeviceContext context, bool unbindResource = false)
         {
+            //The OrthoProjection stay the same all the time
+            _effect.CBPerDraw.Values.OrthoProjection = Matrix.Transpose(_d3DEngine.Projection2D);
+            _effect.CBPerDraw.IsDirty = true;
+
             //ForEach sprite group
             foreach (SpriteDrawInfo spriteGroup in _spriteBuffer.GetAllSpriteGroups())
             {
@@ -136,8 +145,9 @@ namespace S33M3CoreComponents.Sprites2D
                 
                 _effect.Begin(context);
                 _effect.SpriteTexture.Value = spriteGroup.Texture.Texture;
-                _effect.CBPerDraw.Values.OrthoProjection = Matrix.Transpose(_d3DEngine.Projection2D);
-                _effect.CBPerDraw.IsDirty = true;
+
+                _effect.CBTextureTransform.Values.TexMatrix = Matrix.Transpose(spriteGroup.TextureMatrix);
+                _effect.CBTextureTransform.IsDirty = true;
 
                 _effect.SpriteSampler.Value = spriteGroup.TextureSampler;
 
@@ -197,19 +207,24 @@ namespace S33M3CoreComponents.Sprites2D
             Vector2 position = new Vector2(destRect.Left, destRect.Top);
             Vector2 size = new Vector2(destRect.Width, destRect.Height);
 
-            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Left + srcRect.Width, srcRect.Top + srcRect.Height);
+            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
 
             _spriteBuffer.AddWrappingSprite(spriteTexture, _spriteSamplerWrap, ref position, ref size, ref src, textureArrayIndex, ref color, drawGroupId);
         }
 
         public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref Rectangle srcRect, ref ByteColor color, int textureArrayIndex = 0, bool sourceRectInTextCoord = true, int drawGroupId = 0)
         {
+            Draw(spriteTexture, ref destRect, ref srcRect, ref color, 0.0f, _spriteSamplerClamp, textureArrayIndex, sourceRectInTextCoord, drawGroupId);
+        }
+
+        public void Draw(SpriteTexture spriteTexture, ref Rectangle destRect, ref Rectangle srcRect, ref ByteColor color, float textureRotation, SamplerState sampler, int textureArrayIndex = 0, bool sourceRectInTextCoord = true, int drawGroupId = 0)
+        {
             Vector2 position = new Vector2(destRect.Left, destRect.Top);
             Vector2 size = new Vector2(destRect.Width, destRect.Height);
 
-            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Left + srcRect.Width, srcRect.Top + srcRect.Height);
-            
-            _spriteBuffer.AddSprite(spriteTexture, _spriteSamplerClamp, ref position, ref size, ref src, sourceRectInTextCoord, textureArrayIndex, ref color, drawGroupId);
+            var src = new RectangleF(srcRect.Left, srcRect.Top, srcRect.Width, srcRect.Height);
+
+            _spriteBuffer.AddSprite(spriteTexture, sampler, ref position, ref size, ref src, sourceRectInTextCoord, textureArrayIndex, ref color, drawGroupId, textureRotation, float.NaN);
         }
 
         public void DrawText(SpriteFont spriteFont, string text, ref Vector2 position, ref ByteColor color, float maxWidth = -1, int withCarret = -1, TextFontPosition textFontPosition = TextFontPosition.RelativeToFontUp, int drawGroupId = 0)
@@ -354,7 +369,6 @@ namespace S33M3CoreComponents.Sprites2D
                                 AddressU = TextureAddressMode.Clamp,
                                 AddressV = TextureAddressMode.Clamp,
                                 AddressW = TextureAddressMode.Clamp,
-                                //Filter = Filter.MinLinearMagMipPoint,
                                 Filter = Filter.MinMagMipPoint,
                                 MaximumLod = float.MaxValue,
                                 MinimumLod = 0

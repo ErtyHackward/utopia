@@ -4,6 +4,7 @@ using Utopia.Shared.Interfaces;
 using Utopia.Shared.Structs;
 using Ninject;
 using S33M3Resources.Structs;
+using System.Collections.Generic;
 
 namespace Utopia.Shared.World
 {
@@ -14,19 +15,16 @@ namespace Utopia.Shared.World
     public class WorldGenerator : IDisposable
     {
         private delegate GeneratedChunk[,,] GenerateDelegate(Range3I range);
+        private delegate void BufferFlushDelegate(Vector3I[] chunksPosition);
+        private readonly List<IWorldProcessor> _processors = new List<IWorldProcessor>();
+        private readonly List<IWorldProcessorBuffered> _bufferedProcessors = new List<IWorldProcessorBuffered>();
 
         /// <summary>
         /// Gets or sets current world designer
         /// </summary>
         public WorldParameters WorldParameters { get; set; }
 
-        /// <summary>
-        /// Gets a generation stages manager
-        /// </summary>
-        public WorldGenerationStagesManager Stages { get; private set; }
-
-
-        public LandscapeManager<GeneratedChunk> LandscapeManager { get; private set; }
+        public IEntitySpawningControler EntitySpawningControler { get; set; }
 
         /// <summary>
         /// Initializes instance of world generator
@@ -38,8 +36,11 @@ namespace Utopia.Shared.World
             if (worldParameters == null) throw new ArgumentNullException("worldParameters");
             WorldParameters = worldParameters;
 
-            Stages = new WorldGenerationStagesManager();
-            Stages.AddStages(processors);
+            foreach (var processor in processors)
+            {
+                _processors.Add(processor);
+                if (processor is IWorldProcessorBuffered) _bufferedProcessors.Add(processor as IWorldProcessorBuffered);
+            }
         }
 
         /// <summary>
@@ -52,6 +53,16 @@ namespace Utopia.Shared.World
             : this(worldParameters, processorsConfig.WorldProcessors)
         {
 
+        }
+
+        public void FlushBuffers(params Vector3I[] chunksPosition)
+        {
+            foreach (var bufferedProcessor in _bufferedProcessors)
+            {
+                var del = new BufferFlushDelegate(bufferedProcessor.FlushBufferedChunks);
+                del.BeginInvoke(chunksPosition, null, null);
+                bufferedProcessor.FlushBufferedChunks(chunksPosition);
+            }
         }
 
         /// <summary>
@@ -68,7 +79,7 @@ namespace Utopia.Shared.World
 
         private GeneratedChunk[,,] Generate(Range3I range)
         {
-            if (Stages.Count == 0)
+            if (_processors.Count == 0)
                 throw new InvalidOperationException("Add at least one genereation process (stage) before starting");
 
             var chunks = new GeneratedChunk[range.Size.X, range.Size.Y, range.Size.Z];
@@ -84,16 +95,16 @@ namespace Utopia.Shared.World
                 }
             }
 
-            foreach (var stage in Stages)
+            foreach (var processor in _processors)
             {
-                stage.Generate(range, chunks);
+                processor.Generate(range, chunks);
             }
 
             return chunks;
         }
 
         /// <summary>
-        /// Gets a generated chunk. Generates 9 chunks (target + 8 surrounding). Consider using GenerateAsync method
+        /// Gets a generated chunk.
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
@@ -109,9 +120,9 @@ namespace Utopia.Shared.World
         /// </summary>
         public void Dispose()
         {
-            foreach (var stage in Stages)
+            foreach (var processor in _processors)
             {
-                stage.Dispose();
+                processor.Dispose();
             }
         }
     }

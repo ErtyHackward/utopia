@@ -1,9 +1,7 @@
-using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Settings;
-using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Entities.Interfaces
 {
@@ -35,6 +33,16 @@ namespace Utopia.Shared.Entities.Interfaces
         StaticEntitySoundSource EmittedSound { get; set; }
 
         /// <summary>
+        /// Gets maximum pick range, 0 means default
+        /// </summary>
+        float PickRange { get; set; }
+
+        /// <summary>
+        /// Gets maximum allowed number of items in one stack (set one if item is not stackable)
+        /// </summary>
+        List<ItemTransformation> Transformations { get; set; }
+        
+        /// <summary>
         /// Returns new entity position correspoding to the player
         /// </summary>
         /// <param name="owner">An entity wich trying to put the entity</param>
@@ -62,6 +70,6 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         /// <param name="owner">entity that runs the operation</param>
         /// <returns></returns>
-        IToolImpact Put(IDynamicEntity owner);
+        IToolImpact Put(IDynamicEntity owner, Item worldDroppedItem = null);
     }
 }

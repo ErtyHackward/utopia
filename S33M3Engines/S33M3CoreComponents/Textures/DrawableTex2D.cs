@@ -94,7 +94,7 @@ namespace S33M3DXEngine.Textures
             }
 
             //Set the viewport associated to the Texture renderer
-            _d3dEngine.ImmediateContext.Rasterizer.SetViewports(_viewport);
+            _d3dEngine.ImmediateContext.Rasterizer.SetViewport(_viewport);
 
             if (_colorMapRTV != null) _d3dEngine.ImmediateContext.ClearRenderTargetView(_colorMapRTV, _whiteColor);
             _d3dEngine.ImmediateContext.ClearDepthStencilView(_depthMapDSV, DepthStencilClearFlags.Depth, 1.0f, 0);
@@ -113,9 +113,13 @@ namespace S33M3DXEngine.Textures
             {
                 _depthStencilSprite = new SpriteTexture(_width, _height, _depthMapSRV, new Vector2I(0, 0));
             }
-            _depthBufferRender.Begin(false, context);
-            _depthBufferRender.Draw(_depthStencilSprite, ref _posi, ref size, ref _color);
-            _depthBufferRender.End(context);
+
+            // uncomment to draw the depth buffer on the screen
+            //
+            //_depthBufferRender.Begin(false, context);
+            //_depthBufferRender.Draw(_depthStencilSprite, ref _posi, ref size, ref _color);
+            //_depthBufferRender.End(context);
+
         }
 
         #endregion
