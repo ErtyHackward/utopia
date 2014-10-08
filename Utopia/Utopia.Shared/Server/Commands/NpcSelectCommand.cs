@@ -5,7 +5,7 @@ using Utopia.Shared.Services;
 
 namespace Utopia.Shared.Server.Commands
 {
-    public class NpcSelect : AdministratorCommand, IServerChatCommand
+    public class NpcSelectCommand : AdministratorCommand, IServerChatCommand
     {
         public override string Id
         {

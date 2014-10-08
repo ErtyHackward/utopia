@@ -36,6 +36,8 @@ namespace Utopia.Shared.Server.Managers
         private UtopiaTimeSpan _chunkUpdateCycle = UtopiaTimeSpan.FromDays(1); // A minimum of one day must be passed before a chunk can be do a spawn refresh again !
         private int _maxChunkRefreshPerCycle = 50; //Maximum of 50 chunk update per cycle
 
+        public bool DisableNPCSpawn { get; set; }
+
         public EntitySpawningManager(ServerCore server, IEntitySpawningControler entitySpawningControler)
         {
             _server = server;
@@ -372,6 +374,9 @@ namespace Utopia.Shared.Server.Managers
                     var charEntity = entity as CharacterEntity;
                     if (charEntity != null)
                     {
+                        if (DisableNPCSpawn)
+                            continue;
+
                         var radius = Math.Max(8, spawnableEntity.DynamicEntitySpawnRadius);
                         if (
                             _server.AreaManager.EnumerateAround(entityLocation, radius)
