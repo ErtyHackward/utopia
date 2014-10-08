@@ -106,6 +106,11 @@ namespace Utopia.Shared.Server.Managers
             _entityUpdateTimer = new Timer(UpdateDynamic, null, 0, 100);
         }
 
+        public IEnumerable<MapArea> Areas()
+        {
+            return _areas.Values;
+        }
+
         void EntityManagerEntityLockChanged(object sender, Shared.Net.Connections.ProtocolMessageEventArgs<Shared.Net.Messages.EntityLockMessage> e)
         {
             if (e.Message.EntityLink.IsStatic)

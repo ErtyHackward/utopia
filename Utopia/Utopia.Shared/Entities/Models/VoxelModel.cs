@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -228,6 +229,30 @@ namespace Utopia.Shared.Entities.Models
                         continue;
                     if (ps.ActiveFrame > index)
                         ps.ActiveFrame--;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Performs integrity checks
+        /// </summary>
+        public void Validate()
+        {
+            foreach (var voxelModelState in States)
+            {
+                if (voxelModelState.PartsStates.Count != Parts.Count)
+                {
+                    if (Debugger.IsAttached)
+                    {
+                        // we have different partsStates count than Parts count
+                        // remember what you were doing to have this issue
+                        // tell erty about that, he will fix the bug
+
+                        Debugger.Break();
+                    }
+
+                    if (voxelModelState.PartsStates.Count > Parts.Count)
+                        voxelModelState.PartsStates.RemoveRange(Parts.Count, voxelModelState.PartsStates.Count - Parts.Count);
                 }
             }
         }

@@ -1,15 +1,12 @@
 using System;
 using System.Linq;
 using S33M3Resources.Structs;
-using SharpDX;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Server.Interfaces;
 using Utopia.Shared.Services;
-using Utopia.Shared.Settings;
 
 namespace Utopia.Shared.Server.Commands
 {

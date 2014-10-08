@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 
@@ -18,5 +19,9 @@ namespace Utopia.Shared.Server.Interfaces
         void SaveState(GlobalState state);
 
         GlobalState LoadState();
+
+        IEnumerable<IDynamicEntity> AllEntities();
+
+        void RemoveEntity(uint id);
     }
 }

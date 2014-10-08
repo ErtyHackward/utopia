@@ -117,6 +117,8 @@ namespace Realms.Client.Components
             _serverFactory.ScheduleManager = Server.Scheduler;
             _serverFactory.ServerSide = true;
 
+            _server.Initialize();
+
             Server.ConnectionManager.LocalMode = true;
             Server.ConnectionManager.Listen();
             Server.LoginManager.PlayerEntityNeeded += LoginManagerPlayerEntityNeeded;

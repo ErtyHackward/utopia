@@ -244,13 +244,13 @@ namespace Realms.Client
             //Entities related stuff ====================================================
             _iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InScope(x => GameScope.CurrentGameScope);         // Use to display the picking cursor on block
             _iocContainer.Bind<SelectedBlocksRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InScope(x => GameScope.CurrentGameScope);   //Entites picking and collision handling vs player
+            _iocContainer.Bind<IEntityCollisionManager>().To<EntityCollissonManager>().InScope(x => GameScope.CurrentGameScope);   //Entites picking and collision handling vs player
             _iocContainer.Bind<IVisualDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
             _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
             _iocContainer.Bind<IGlobalStateManager>().To<GlobalStateManager>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<IPlayerManager,PlayerEntityManager>().To<PlayerEntityManager>().InScope(x => GameScope.CurrentGameScope);                             //The player manager
-            //_iocContainer.Bind<IPlayerManager>().To<GodEntityManager>().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<PickingManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<IPickingManager, PickingManager>().To<PickingManager>().InScope(x => GameScope.CurrentGameScope);
+
             //Register the Player Against IDynamicEntity and PlayerCharacter
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);  //Voxel Factory
             _iocContainer.Bind<FirstPersonToolRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draw active tool in first person mode

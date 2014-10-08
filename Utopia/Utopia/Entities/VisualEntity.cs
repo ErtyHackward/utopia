@@ -24,8 +24,7 @@ namespace Utopia.Entities
         public VisualEntity(Vector3 entitySize, IEntity entity)
         {
             Entity = entity;
-            Matrix rotation = Matrix.Identity;         
-
+            
             //If a default size has been given, then use it to compute the Entity bounding Box around it
             if (entitySize != Vector3.Zero)
             {
@@ -52,7 +51,7 @@ namespace Utopia.Entities
             return scale;
         }
 
-        public void SetEntityVoxelBB(BoundingBox bb)
+        public virtual void SetEntityVoxelBB(BoundingBox bb)
         {
             var scale = GetModelScale(Entity);
             LocalBBox = new BoundingBox(bb.Minimum * scale, bb.Maximum * scale);
@@ -62,7 +61,7 @@ namespace Utopia.Entities
         protected void CreateLocalBoundingBox(Vector3 entitySize)
         {
             //Will be used to update the bounding box with world coordinate when the entity is moving
-            LocalBBox.Minimum = new Vector3(-(entitySize.X / 2.0f), 0, -(entitySize.Z / 2.0f));
+            LocalBBox.Minimum = new Vector3(-(entitySize.X / 2.0f), 0,            -(entitySize.Z / 2.0f));
             LocalBBox.Maximum = new Vector3(+(entitySize.X / 2.0f), entitySize.Y, +(entitySize.Z / 2.0f));
         }
 
@@ -70,7 +69,6 @@ namespace Utopia.Entities
         /// Compute player bounding box in World coordinate
         /// </summary>
         /// <param name="worldPosition"></param>
-        /// <param name="boundingBox"></param>
         public void RefreshWorldBoundingBox(ref Vector3D worldPosition)
         {
             WorldBBox.Minimum = LocalBBox.Minimum + worldPosition.AsVector3();
@@ -81,7 +79,6 @@ namespace Utopia.Entities
         /// Compute player bounding box in World coordinate
         /// </summary>
         /// <param name="worldPosition"></param>
-        /// <param name="boundingBox"></param>
         public void RefreshWorldBoundingBox(Vector3D worldPosition)
         {
             WorldBBox.Minimum = LocalBBox.Minimum + worldPosition.AsVector3();
@@ -92,7 +89,6 @@ namespace Utopia.Entities
         /// Compute player bounding box in World coordinate
         /// </summary>
         /// <param name="worldPosition"></param>
-        /// <param name="boundingBox"></param>
         public void RefreshWorldBoundingBox(Vector3 worldPosition)
         {
             WorldBBox.Minimum = LocalBBox.Minimum + worldPosition;
@@ -103,7 +99,6 @@ namespace Utopia.Entities
         /// Compute player bounding box in World coordinate
         /// </summary>
         /// <param name="worldPosition"></param>
-        /// <param name="boundingBox"></param>
         public BoundingBox ComputeWorldBoundingBox(ref Vector3D worldPosition)
         {
             return new BoundingBox(LocalBBox.Minimum + worldPosition.AsVector3(),

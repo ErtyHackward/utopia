@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Connections;
@@ -13,10 +15,13 @@ namespace Utopia.Shared.Server.Managers
 {
     public class EntityManager
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly ServerCore _server;
         private readonly Dictionary<uint, uint> _lockedDynamicEntities = new Dictionary<uint, uint>();
         private readonly Dictionary<EntityLink, uint> _lockedStaticEntities = new Dictionary<EntityLink, uint>();
         private readonly Dictionary<uint, ServerNpc> _npcs = new Dictionary<uint, ServerNpc>();
+        private readonly Queue<ServerNpc> _npcToSave = new Queue<ServerNpc>();
 
         /// <summary>
         /// Occurs on success lock/unlock of an entity
@@ -39,6 +44,20 @@ namespace Utopia.Shared.Server.Managers
             _server = server;
             _server.ConnectionManager.ConnectionAdded += ConnectionManagerConnectionAdded;
             _server.ConnectionManager.ConnectionRemoved += ConnectionManagerConnectionRemoved;
+
+            _server.Scheduler.AddPeriodic(TimeSpan.FromSeconds(10), SaveEntities);
+        }
+
+        private void SaveEntities()
+        {
+            lock (_npcToSave)
+            {
+                using (new PerfLimit("NPC Save", 200))
+                while (_npcToSave.Count > 0)
+                {
+                    _npcToSave.Dequeue().Save();
+                }
+            }
         }
 
         void ConnectionManagerConnectionRemoved(object sender, ConnectionEventArgs e)
@@ -358,6 +377,8 @@ namespace Utopia.Shared.Server.Managers
 
         public ServerNpc AddNpc(CharacterEntity charEntity)
         {
+            charEntity.EntityFactory = _server.EntityFactory;
+
             var npc = new ServerNpc(_server, charEntity);
             var id = DynamicIdHelper.GetNextUniqueId();
             npc.DynamicEntity.DynamicId = id;
@@ -365,8 +386,33 @@ namespace Utopia.Shared.Server.Managers
             _npcs.Add(id, npc);
 
             charEntity.HealthStateChanged += charEntity_HealthStateChanged;
+            charEntity.NeedSave += charEntity_NeedSave;
 
             return npc;
+        }
+
+        public void RemoveNpc(CharacterEntity charEntity)
+        {
+            charEntity.HealthStateChanged -= charEntity_HealthStateChanged;
+            charEntity.NeedSave -= charEntity_NeedSave;
+            _npcs.Remove(charEntity.DynamicId);
+            _server.AreaManager.RemoveNpc(charEntity.DynamicId);
+            _server.EntityStorage.RemoveEntity(charEntity.DynamicId);
+        }
+
+        void charEntity_NeedSave(object sender, EventArgs e)
+        {
+            var npc = (CharacterEntity)sender;
+            
+            ServerDynamicEntity entity;
+            if (_server.AreaManager.TryFind(npc.DynamicId, out entity))
+            {
+                lock (_npcToSave)
+                {
+                    _npcToSave.Enqueue((ServerNpc)entity);
+                }
+            }
+            
         }
 
         void charEntity_HealthStateChanged(object sender, Entities.Events.EntityHealthStateChangeEventArgs e)
@@ -375,10 +421,35 @@ namespace Utopia.Shared.Server.Managers
             {
                 var charEntity = (CharacterEntity)sender;
 
-                charEntity.HealthStateChanged -= charEntity_HealthStateChanged;
-                _npcs.Remove(charEntity.DynamicId);
-                _server.AreaManager.RemoveNpc(charEntity.DynamicId);
+                RemoveNpc(charEntity);
             }
+        }
+
+        public void SaveAll()
+        {
+            logger.Info("Saving all npcs...");
+            lock (_npcToSave)
+            {
+                foreach (var serverNpc in _npcs.Values)
+                {
+                    serverNpc.Save();
+                }
+            }
+        }
+
+        public void LoadNpcs()
+        {
+            logger.Info("Loading npcs...");
+
+            foreach (var npc in _server.EntityStorage.AllEntities().OfType<Npc>())
+            {
+                AddNpc(npc);
+            }
+        }
+
+        public void Dispose()
+        {
+            SaveAll();
         }
     }
 }

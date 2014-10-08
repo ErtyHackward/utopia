@@ -71,23 +71,19 @@ namespace Utopia.Shared.World.Processors.Utopia
             //Y base = Original world generated ground height (Before any player modification)
             y = chunk.BlockData.ColumnsInfo[columnInfoIndex].MaxGroundHeight;
             cursor.SetInternalPosition(x, y, z);
-            //Move up until Air Block
-            while (cursor.Read() != WorldConfiguration.CubeId.Air)
-            {
-                //Move up, if top chunk height exit
-                if (cursor.Move(CursorRelativeMovement.Up) == false) return false;
-            }
-            //I stopped on an Air, go down until not air block
-            while (cursor.Read() == WorldConfiguration.CubeId.Air)
-            {
-                //Move down, until block other than Air
-                if (cursor.Move(CursorRelativeMovement.Down) == false) return false;
-            }
 
-            //Move back to the Air block
-            if (cursor.Move(CursorRelativeMovement.Up) == false) return false;
+            // verify that we can spawn here
+            var canSpawn = cursor.Read() != WorldConfiguration.CubeId.Air && cursor.Move(CursorRelativeMovement.Up) &&
+                           cursor.Read() == WorldConfiguration.CubeId.Air && cursor.Move(CursorRelativeMovement.Up) &&
+                           cursor.Read() == WorldConfiguration.CubeId.Air;
 
-            //Check that the block is well "Solid to entity"
+            // return cursor to the spawn point
+            cursor.Move(CursorRelativeMovement.Down);
+
+            if (!canSpawn)
+                return false;
+            
+            // Check that the block is well "Solid to entity"
             BlockProfile blockSpawnProfile = _config.BlockProfiles[cursor.Peek(CursorRelativeMovement.Down)];
             if (!blockSpawnProfile.IsSolidToEntity) return false;
             if (entity.IsWildChunkNeeded)

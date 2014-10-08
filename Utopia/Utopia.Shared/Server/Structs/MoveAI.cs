@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using S33M3CoreComponents.Physics;
 using S33M3CoreComponents.Physics.Verlet;
 using S33M3Resources.Structs;
@@ -28,6 +29,8 @@ namespace Utopia.Shared.Server.Structs
         private bool _jump;
         private Vector3D _moveDirection;
         private IDynamicEntity _leader;
+        private Vector3I _runAwayPoint;
+        private  bool _runAway;
 
         public ServerNpc Npc { get { return _parentNpc; } }
 
@@ -99,23 +102,42 @@ namespace Utopia.Shared.Server.Structs
             FollowStayDistance = 5;
         }
 
-        /// <summary>
-        /// Forces the entity to find a path to the location or alternative locations
-        /// And move there
-        /// </summary>
-        /// <param name="location"></param>
-        /// <param name="isGoal"></param>
-        public void Goto(Vector3I location, Predicate<AStarNode3D> isGoal)
-        {
-            _leader = null;
-            Npc.Server.LandscapeManager.CalculatePathAsync(Npc.DynamicEntity.Position.ToCubePosition(), location, FollowPath, isGoal);
-            WaitingForPath = true;
-        }
-
         public void Goto(Vector3I location)
         {
             _leader = null;
             MoveTo(location);
+        }
+
+        /// <summary>
+        /// Npc will run away from the Dangerous entities
+        /// </summary>
+        public void RunAway()
+        {
+            if (Npc.DangerousEntities.Count == 0)
+            {
+                
+                return;
+            }
+
+            // find the point maximally far from dangerous objects (run direction)
+            _runAwayPoint = Npc.DangerousEntities.Select(e => 
+            {
+                var escape = Npc.Character.Position - e.Position; 
+                escape.Normalize();
+
+                var value = 16 - Vector3D.Distance(e.Position, Npc.Character.Position);
+
+                if (value <= 0)
+                    return Vector3D.Zero;
+
+                return escape * value * 10; 
+
+            }).Aggregate((s, v) => s + v).ToCubePosition() + Npc.Character.Position.ToCubePosition();
+
+            _leader = null;
+            Npc.Server.LandscapeManager.CalculateCustomPathAsync(Npc.DynamicEntity.Position.ToCubePosition(), n => Npc.DangerousEntities.All(e => Vector3I.Distance(n.Cursor.GlobalPosition, e.Position.ToCubePosition()) > 16), AStarNodeFunc3D.GetSuccessors, n => Vector3I.Distance(_runAwayPoint, n.Cursor.GlobalPosition), FollowPath);
+            WaitingForPath = true;
+            _runAway = true;
         }
 
         private void MoveTo(Vector3I location)
@@ -154,6 +176,7 @@ namespace Utopia.Shared.Server.Structs
             if (++_targetPathNodeIndex >= _path.Points.Count)
             {
                 IsMoving = false;
+                _runAway = false;
                 return;
             }
 
@@ -213,7 +236,7 @@ namespace Utopia.Shared.Server.Structs
 
                 _moveDirection.Normalize();
 
-                VerletSimulator.Impulses.Add(new Impulse(elapsedS) { ForceApplied = _moveDirection.AsVector3() * Npc.DynamicEntity.MoveSpeed });
+                VerletSimulator.Impulses.Add(new Impulse(elapsedS) { ForceApplied = _moveDirection.AsVector3() * Npc.DynamicEntity.MoveSpeed * (_runAway ? 2f : 1f) });
 
                 if (_jump && VerletSimulator.OnGround)
                     VerletSimulator.Impulses.Add(new Impulse(elapsedS) { ForceApplied = Vector3.UnitY * 22 });
@@ -227,5 +250,6 @@ namespace Utopia.Shared.Server.Structs
                 MoveTo(_leader.Position.ToCubePosition());
             }
         }
+
     }
 }

@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
-namespace Utopia.Editor
+namespace Utopia.Shared.Helpers
 {
     public static class AssemblyHelper
     {

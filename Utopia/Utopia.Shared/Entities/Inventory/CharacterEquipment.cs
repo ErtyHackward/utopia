@@ -128,8 +128,7 @@ namespace Utopia.Shared.Entities.Inventory
                 case EquipmentSlotType.Arms: return item is IArmsArmor;
                 case EquipmentSlotType.Ring: return item is IRing;
                 case EquipmentSlotType.Neck: return item is INecklace;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                default: return false;
             }
         }
     }
