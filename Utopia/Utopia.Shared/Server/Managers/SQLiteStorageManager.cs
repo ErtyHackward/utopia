@@ -356,6 +356,31 @@ namespace Utopia.Shared.Server.Managers
             }
         }
 
+        public IEnumerable<IDynamicEntity> AllEntities()
+        {
+            using (var reader = Query("SELECT data FROM entities"))
+            {
+                if (reader == null)
+                    yield break;
+
+                while (reader.Read())
+                {
+                    if (reader.IsDBNull(0))
+                        continue;
+
+                    var bytes = (byte[])reader.GetValue(0);
+
+                    yield return (IDynamicEntity)bytes.Deserialize<IEntity>();
+                }
+                
+            }
+        }
+
+        public void RemoveEntity(uint id)
+        {
+            Execute("DELETE FROM entities WHERE id = {0}", id);
+        }
+
         public uint GetMaximumId()
         {
             using (var reader = Query("SELECT MAX(id) FROM entities"))

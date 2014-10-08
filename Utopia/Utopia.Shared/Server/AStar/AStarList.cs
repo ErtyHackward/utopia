@@ -5,6 +5,7 @@ namespace Utopia.Shared.Server.AStar
     public class AStarList<T>
     {
         private readonly List<T> _list = new List<T>();
+        private Dictionary<T,T>  _dictionary = new Dictionary<T, T>();
 
         public IComparer<T> Comparer { get; set; }
 
@@ -21,6 +22,8 @@ namespace Utopia.Shared.Server.AStar
 
         public void Add(T item)
         {
+            _dictionary.Add(item, item);
+
             var index = _list.BinarySearch(item, Comparer);
 
             if (index < 0)
@@ -37,6 +40,9 @@ namespace Utopia.Shared.Server.AStar
         {
             var value = _list[_list.Count - 1];
             _list.RemoveAt(_list.Count - 1);
+
+            _dictionary.Remove(value);
+
             return value;
         }
 
@@ -50,9 +56,23 @@ namespace Utopia.Shared.Server.AStar
             return _list.GetEnumerator();
         }
 
+
+        public bool TryGetValue(T key, out T value)
+        {
+            return _dictionary.TryGetValue(key, out value);
+        }
+
+
         public void Clear()
         {
             _list.Clear();
+            _dictionary.Clear();
+        }
+
+        public T this[T node]
+        {
+            get { return _dictionary[node]; }
+            set { _dictionary[node] = value; }
         }
     }
 }

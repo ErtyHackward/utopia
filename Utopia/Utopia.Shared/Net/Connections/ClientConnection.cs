@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.Server.Structs;
@@ -57,6 +58,8 @@ namespace Utopia.Shared.Net.Connections
         public UserRole UserRole { get; set; }
 
         public static EntityFactory EntityFactory { get; set; }
+        
+        public CharacterEntity SelectedNpc { get; set; }
 
         #endregion
 

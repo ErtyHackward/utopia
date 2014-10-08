@@ -1,4 +1,5 @@
-﻿using Utopia.Entities.Managers;
+﻿using Ninject;
+using Utopia.Entities.Managers;
 using SharpDX;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Resources.ModelComp;
@@ -29,7 +30,7 @@ namespace Utopia.Entities.Renderer
         private ByteColor _selectedColor = new ByteColor(20, 140, 20, 255);
         private D3DEngine _engine;
         private WorldFocusManager _focusManager;
-        private readonly PlayerEntityManager _playerEntityManager;
+        private PlayerEntityManager _playerEntityManager;
         private CameraManager<ICameraFocused> _camManager;
 
         private Vector3 _cubeScaling = new Vector3(1.005f, 1.005f, 1.005f);
@@ -37,15 +38,21 @@ namespace Utopia.Entities.Renderer
         private double _cubeYOffset;
         #endregion
 
+        [Inject]
+        public PlayerEntityManager PlayerEntityManager
+        {
+            get { return _playerEntityManager; }
+            set { _playerEntityManager = value; }
+        }
+
+
         public PickingRenderer(D3DEngine engine,
                                WorldFocusManager focusManager,
-                               PlayerEntityManager playerEntityManager,
                                CameraManager<ICameraFocused> camManager)
         {
 
             _engine = engine;
             _focusManager = focusManager;
-            _playerEntityManager = playerEntityManager;
             _camManager = camManager;
 
 
@@ -55,7 +62,7 @@ namespace Utopia.Entities.Renderer
 
             this.IsDefferedLoadContent = true;
         }
-
+        
         public override void BeforeDispose()
         {
             if (_blockpickedUPEffect != null) _blockpickedUPEffect.Dispose();
@@ -90,7 +97,7 @@ namespace Utopia.Entities.Renderer
             RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Disabled, DXStates.DepthStencils.DepthReadWriteEnabled);
             
             // draw hover selection
-            if (_playerEntityManager.PlayerCharacter.EntityState.IsBlockPicked || _playerEntityManager.PlayerCharacter.EntityState.IsEntityPicked)
+            if (PlayerEntityManager.PlayerCharacter.EntityState.IsBlockPicked || PlayerEntityManager.PlayerCharacter.EntityState.IsEntityPicked)
             {
                 _pickedCube.Draw(context, _camManager.ActiveCamera);
             }

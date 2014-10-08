@@ -33,10 +33,9 @@ namespace Utopia.Entities.Voxel
         /// <summary>
         /// Creates a VisualVoxelEntity ready to render
         /// </summary>
-        /// <param name="model"></param>
         /// <param name="manager"></param>
         /// <param name="wrapped">wrapped VoxelEntity from server</param>
-        public VisualVoxelEntity(IVoxelEntity wrapped, VisualVoxelModel model, VoxelModelManager manager)
+        public VisualVoxelEntity(IVoxelEntity wrapped, VoxelModelManager manager)
             : base(wrapped.DefaultSize, wrapped)
         {
             _voxelEntity = wrapped;
@@ -47,8 +46,7 @@ namespace Utopia.Entities.Voxel
             if (wrapped.ModelInstance == null)
                 return;
 
-            if (model == null)
-                model = manager.GetModel(wrapped.ModelName);
+            var model = manager.GetModel(wrapped.ModelName);
 
             // set the model or wait for it
             if (model == null)

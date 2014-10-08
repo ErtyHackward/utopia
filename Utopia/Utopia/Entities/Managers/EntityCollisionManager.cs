@@ -5,14 +5,10 @@ using Utopia.Entities.Managers.Interfaces;
 using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Network;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
-using Utopia.Shared.Interfaces;
 using Utopia.Shared.Net.Messages;
 using Utopia.Worlds.Chunks;
-using S33M3CoreComponents.Timers;
 using S33M3Resources.Structs;
 using S33M3CoreComponents.Physics.Verlet;
 using S33M3CoreComponents.Maths;
@@ -26,44 +22,47 @@ using Utopia.Shared.Entities.Concrete.Interface;
 namespace Utopia.Entities.Managers
 {
     /// <summary>
-    /// The Aim of this class is to help the player entity picking
+    /// The Aim of this class is to check the player entity collissions
     /// It will need a collection of entities that are "Near" the player, in order to test the collision against as less entities as possible !
     /// </summary>
-    public class EntityPickAndCollisManager : IEntityPickingManager, IDisposable
+    public class EntityCollissonManager : IEntityCollisionManager, IDisposable
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        #region private variables
+        #region Private members
         private IVisualDynamicEntityManager _dynamicEntityManager;
         //private TimerManager.GameTimer _timer;
-        private List<VisualEntity> _entitiesNearPlayer = new List<VisualEntity>(1000);
+        private readonly List<VisualEntity> _entitiesNearPlayer = new List<VisualEntity>(1000);
         private PlayerEntityManager _player;
-        private int _entityDistance = AbstractChunk.ChunkSize.X * 2;
-        private ServerComponent _server;
-        private InputsManager _input;
+        private readonly int _entityDistance = AbstractChunk.ChunkSize.X * 2;
+        private readonly ServerComponent _server;
+        private readonly InputsManager _input;
         private IWorldChunks _worldChunks;
-        private bool? _onEntityTop = null;
+        private bool? _onEntityTop;
         #endregion
 
-        #region public variables
+        #region Public properties
+
+        public bool IsDirty { get; set; }
+
+        #endregion
+
+        #region DI
+
+        [Inject]
         public PlayerEntityManager Player
         {
             get { return _player; }
             set { _player = value; }
         }
 
-        #endregion
-
-        #region DI
         [Inject]
         public IWorldChunks WorldChunks
         {
             get { return _worldChunks; }
             set { _worldChunks = value; }
         }
-
-        public bool isDirty { get; set; }
-
+        
         [Inject]
         public IVisualDynamicEntityManager DynamicEntityManager
         {
@@ -72,9 +71,9 @@ namespace Utopia.Entities.Managers
         }
 
         #endregion
-        public EntityPickAndCollisManager(TimerManager timerManager,
-                                          ServerComponent server,
-                                          InputsManager input)                                     
+
+        public EntityCollissonManager(ServerComponent server,
+                                      InputsManager input)                                     
         {
             _input = input;
             _server = server;            
@@ -90,7 +89,7 @@ namespace Utopia.Entities.Managers
         {
             CollectsurroundingDynamicPlayerEntities(); //They have their own collection
             CollectsurroundingStaticEntities();  //They are stored inside chunks !
-            isDirty = false;
+            IsDirty = false;
         }
 
         private void CollectsurroundingDynamicPlayerEntities()
@@ -105,9 +104,9 @@ namespace Utopia.Entities.Managers
 
                 if (entity != null)
                 {
-                    if (Vector3D.Distance(entity.VisualVoxelEntity.VoxelEntity.Position, _player.Player.Position) <= _entityDistance)
+                    if (Vector3D.Distance(entity.VoxelEntity.Position, _player.Player.Position) <= _entityDistance)
                     {
-                        _entitiesNearPlayer.Add(entity.VisualVoxelEntity);
+                        _entitiesNearPlayer.Add(entity);
                     }
                 }
                 else
@@ -141,109 +140,29 @@ namespace Utopia.Entities.Managers
 
         #region public methods
         
-        public EntityPickResult CheckEntityPicking(Ray pickingRay)
-        {
-            if (isDirty) 
-                _timer_OnTimerRaised();
-
-            var result = new EntityPickResult();
-            result.Distance = float.MaxValue;
-
-            var tool = Player.PlayerCharacter.Equipment.RightTool;
-
-            if (tool == null)
-                tool = Player.PlayerCharacter.HandTool;
-
-            var pickedEntityDistance = float.MaxValue;
-            foreach (var entity in _entitiesNearPlayer)
-            {
-                if (tool.CanPickEntity(entity.Entity) == PickType.Pick)
-                {
-                    //Refresh entity bounding box world
-                    if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model) // ==> Find better interface, for all state swtiching static entities
-                    {
-                        var localStaticEntityBb = ((VisualVoxelEntity)entity).VoxelEntity.ModelInstance.State.BoundingBox;
-
-                        var staticEntity = entity.Entity as IStaticEntity;
-                        var dynamicEntity = entity.Entity as IDynamicEntity;
-
-                        var rotation = Quaternion.Identity;
-
-                        if (staticEntity != null)
-                        {
-                            rotation = staticEntity.Rotation;
-                        }
-                        if (dynamicEntity != null)
-                        {
-                            rotation = dynamicEntity.BodyRotation;
-                        }
-
-                        localStaticEntityBb = localStaticEntityBb.Transform(Matrix.RotationQuaternion(rotation));          //Rotate the BoundingBox
-                        //Recompute the World bounding box of the entity based on a new Entity BoundingBox
-                        entity.SetEntityVoxelBB(localStaticEntityBb); //Will automaticaly apply a 1/16 scaling on the boundingbox
-                    }
-
-                    float currentDistance;
-                    if (Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out currentDistance))
-                    {
-                        if (currentDistance < pickedEntityDistance)
-                        {
-                            if (entity.Entity.CollisionType == Entity.EntityCollisionType.Model)
-                            {
-                                Vector3 tmpPickPoint;
-                                Vector3I tmpPickNormal;
-
-                                if (!PickingManager.ModelRayIntersection(entity, pickingRay, out tmpPickPoint, out tmpPickNormal, out currentDistance))
-                                    continue;
-
-                                result.PickPoint = tmpPickPoint;
-                                result.PickNormal = tmpPickNormal;
-
-                            }
-                            else
-                            {
-                                Collision.RayIntersectsBox(ref pickingRay, ref entity.WorldBBox, out result.PickPoint);
-                                result.PickNormal = entity.WorldBBox.GetPointNormal(result.PickPoint);
-                            }
-
-
-                            pickedEntityDistance = currentDistance;
-                            result.PickedEntity = entity;
-                            result.Found = true;
-                        }
-                    }
-                }
-            }
-
-            result.Distance = pickedEntityDistance;
-
-            return result;
-        }
-
         public void Update()
         {
             _timer_OnTimerRaised();
         }
 
         //Entity vs Player Collision detection
-        //Use by physic engine
-        public void isCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox playerBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition)
+        //Used by physics engine
+        public void IsCollidingWithEntity(VerletSimulator physicSimu, ref BoundingBox playerBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition)
         {
-            if (isDirty) _timer_OnTimerRaised();
+            if (IsDirty) 
+                _timer_OnTimerRaised();
 
-            VisualEntity entityTesting;
-            BoundingBox _playerBoundingBox2Evaluate;
             bool isSliding = false;
             for (int i = 0; i < _entitiesNearPlayer.Count; i++)
             {
-                entityTesting = _entitiesNearPlayer[i];
+                var entityTesting = _entitiesNearPlayer[i];
 
                 if (entityTesting.Entity.IsPlayerCollidable)
                 {
                     //Compute the New world located player bounding box, that will be use for collision detection
-                    _playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), playerBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
+                    var playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), playerBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
                     bool isEntityOnSliding;
-                    CollisionCheck(physicSimu, entityTesting, ref playerBoundingBox, ref _playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, out isEntityOnSliding);
+                    CollisionCheck(physicSimu, entityTesting, ref playerBoundingBox, ref playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, out isEntityOnSliding);
                     isSliding |= isEntityOnSliding;
                 }
             }

@@ -182,8 +182,16 @@ namespace Utopia.Shared.Server
             EntitySpawningManager = new EntitySpawningManager(this, worldGenerator.EntitySpawningControler);
 
             EntityGrowingManager = new Managers.EntityGrowingManager(this);
+            
+        }
 
+        /// <summary>
+        /// Performs initialization logic when every dependency on their place
+        /// </summary>
+        public void Initialize()
+        {
             Services.Initialize();
+            EntityManager.LoadNpcs();
         }
 
         /// <summary>
@@ -198,6 +206,7 @@ namespace Utopia.Shared.Server
             Services.Dispose();
             GlobalStateManager.Dispose();
             Scheduler.Dispose();
+            EntityManager.Dispose();
         }
     }
 }

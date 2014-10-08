@@ -286,7 +286,7 @@ namespace Realms.Client.States
             var playerEntityManager = (PlayerEntityManager)_ioc.Get<IPlayerManager>();
             var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var chunkEntityImpactManager = _ioc.Get<IChunkEntityImpactManager>();
-            var entityPickingManager = _ioc.Get<IEntityPickingManager>();
+            var entityPickingManager = _ioc.Get<IEntityCollisionManager>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
             var voxelMeshFactory = _ioc.Get<VoxelMeshFactory>();
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
