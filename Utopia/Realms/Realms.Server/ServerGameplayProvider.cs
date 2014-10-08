@@ -1,12 +1,7 @@
 ﻿using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Entities.Inventory;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
-using Utopia.Shared.Settings;
-using System.Linq;
 
 namespace Realms.Server
 {
@@ -15,10 +10,10 @@ namespace Realms.Server
     /// </summary>
     public class ServerGameplayProvider
     {
-        private readonly Utopia.Server.Server _server;
+        private readonly Utopia.Shared.Server.ServerCore _server;
         private readonly WorldConfiguration _config;
 
-        public ServerGameplayProvider(Utopia.Server.Server server, WorldConfiguration config)
+        public ServerGameplayProvider(Utopia.Shared.Server.ServerCore server, WorldConfiguration config)
         {
             _server = server;
             _config = config;
@@ -34,40 +29,29 @@ namespace Realms.Server
 
         public PlayerCharacter CreateNewPlayerCharacter(string name, uint entityId)
         {
-            var dEntity = new PlayerCharacter();
-            dEntity.DynamicId = entityId;
-            dEntity.DisplacementMode = EntityDisplacementModes.Walking;
-            dEntity.Position = _server.LandscapeManager.GetHighestPoint(new Vector3D(10, 0, 10));
-            dEntity.CharacterName = name;
-            ContainedSlot outItem;
-            //dEntity.Equipment.Equip(EquipmentSlotType.LeftHand, new EquipmentSlot<ITool> { Item = (ITool)EntityFactory.Instance.CreateEntity(SandboxEntityClassId.Annihilator) }, out outItem);
+            var def = new Vector3D(10, 0, 10);
 
-            byte equipedCubeId = _config.BlockProfiles.Where(x => x.IsSolidToEntity).First().Id;
-            var adder = _server.EntityFactory.CreateEntity<CubeResource>();
-            adder.SetCube(equipedCubeId, _config.BlockProfiles[equipedCubeId].Name);
-
-            dEntity.Equipment.Equip(EquipmentSlotType.Hand, new EquipmentSlot<ITool> { Item = adder }, out outItem);
-
-            //Add Items in inventory, every cubes
-            foreach (BlockProfile profile in _config.GetAllCubesProfiles())
+            var pos = _server.CustomStorage.GetVariable("SpawnPosition", def);
+            
+            var dEntity = new PlayerCharacter
             {
-                if (profile.Id == WorldConfiguration.CubeId.Air)
-                    continue;
+                DynamicId = entityId,
+                HealthState = DynamicEntityHealthState.Normal,
+                DisplacementMode = EntityDisplacementModes.Walking,
+                Position = pos == def ? _server.LandscapeManager.GetHighestPoint(pos) : pos,
+                CharacterName = name,
+                Health = new Energy() { MaxValue = 100, CurrentValue = 100 },
+                Stamina = new Energy() { MaxValue = 100, CurrentValue = 100 },
+                Oxygen = new Energy() { MaxValue = 100, CurrentValue = 100 }
+            };
 
-                var item3 = _server.EntityFactory.CreateEntity<CubeResource>();
-                item3.SetCube(profile.Id, profile.Name);
-                dEntity.Inventory.PutItem(item3);
+            // give start items to the player
+            var startSetName = _server.WorldParameters.Configuration.StartSet;
+            if (!string.IsNullOrEmpty(startSetName))
+            {
+                _server.EntityFactory.FillContainer(startSetName, dEntity.Inventory);
             }
-
-            //Add coins + Torch
-            var torch = _server.EntityFactory.CreateEntity<LightSource>();
-            dEntity.Inventory.PutItem(torch);
-
-            //var item = (IItem)EntityFactory.Instance.CreateEntity((SandboxEntityClassId.Shovel));
-            //dEntity.Inventory.PutItem(item);
-
-            //dEntity.Inventory.PutItem(new GoldCoin(), 45821);
-
+            
             return dEntity;
         }
 

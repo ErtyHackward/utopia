@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Utopia.Shared.Structs;
 using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Concrete.Interface;
@@ -16,5 +17,10 @@ namespace Utopia.Shared.Entities.Interfaces
         /// </summary>
         BlockFace MountPoint { get; }
 
+        /// <summary>
+        /// Indicates if this item has block link or not
+        /// </summary>
+        [Browsable(false)]
+        bool Linked { get; set; }
     }
 }

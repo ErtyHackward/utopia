@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -11,12 +10,16 @@ namespace Utopia.Shared.Net.Connections
 {
     public abstract class TcpConnection : IDisposable
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         protected TcpClient Client;
         private TcpConnectionStatus _status;
         private readonly Queue<IBinaryMessage> _messages = new Queue<IBinaryMessage>();
         private bool _sendThreadActive;
 
         private EndPoint _endPoint;
+
+        public Exception LastException { get; set; }
 
         public TcpConnectionStatus Status
         {
@@ -70,14 +73,16 @@ namespace Utopia.Shared.Net.Connections
         {
             try
             {
+                LastException = null;
                 Status = TcpConnectionStatus.Connecting;
                 Client.Connect(address, port);
                 Status = TcpConnectionStatus.Connected;
                 _endPoint = Client.Client.RemoteEndPoint;
                 Listen();
             }
-            catch (Exception)
+            catch (Exception x)
             {
+                LastException = x;
                 Status = TcpConnectionStatus.Disconnected;
             }
         }
@@ -89,7 +94,6 @@ namespace Utopia.Shared.Net.Connections
 
         protected abstract void OnMessage(IBinaryMessage msg);
 
-        [DebuggerStepThrough]
         protected void ReadThread()
         {
             try
@@ -108,8 +112,10 @@ namespace Utopia.Shared.Net.Connections
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception x)
             {
+                LastException = x;
+                logger.Error("Connection exception: {0}\n{1}", x.Message, x.StackTrace);
                 Status = TcpConnectionStatus.Disconnected;
             }
         }
@@ -144,7 +150,6 @@ namespace Utopia.Shared.Net.Connections
             }
         }
 
-        [DebuggerStepThrough]
         private void SendThread()
         {
             try
@@ -169,20 +174,27 @@ namespace Utopia.Shared.Net.Connections
                 }
                 stream.Flush();
             }
-            catch (Exception)
+            catch (Exception x)
             {
+                LastException = x;
                 Status = TcpConnectionStatus.Disconnected;
             }
         }
 
         public void Disconnect()
         {
+            while ((_sendThreadActive || _messages.Count > 0) && Status != TcpConnectionStatus.Disconnected)
+            {
+                Thread.Sleep(10);
+            }
+
             Dispose();
         }
 
         public void Dispose()
         {
             Client.Close();
+            LastException = null;
             Status = TcpConnectionStatus.Disconnected;
         }
     }

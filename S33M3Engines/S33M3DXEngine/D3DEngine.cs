@@ -28,7 +28,7 @@ namespace S33M3DXEngine
         //Trick to avoid VertexBuffer PrimitiveTopology change when not needed
         //CANNOT be use in a multithreaded buffer approch !
         public static bool SingleThreadRenderingOptimization = true;
-        
+
         //public static bool FULLDEBUGMODE = true;
         public static bool FULLDEBUGMODE = false;
         #endregion
@@ -54,8 +54,8 @@ namespace S33M3DXEngine
         #region Public properties
         public Device Device;
 
-        public delegate void ViewPortUpdated(ViewportF viewport, Texture2DDescription newBackBuffer);
-        public event ViewPortUpdated ViewPort_Updated;
+        public delegate void ScreenSizeUpdated(ViewportF viewport, Texture2DDescription newBackBuffer);
+        public event ScreenSizeUpdated ScreenSize_Updated;
 
         public ViewportF ViewPort { get { return _viewPort; } set { _viewPort = value; } }
         public RenderForm GameWindow { get { return _renderForm; } }
@@ -68,10 +68,11 @@ namespace S33M3DXEngine
         public List<string> RunningThreadedWork = new List<string>();
 
         public RenderTargetView RenderTarget { get { return _renderTarget; } }
-
         public DepthStencilView DepthStencilTarget { get { return _depthStencil; } }
+
         public Vector2 BackBufferSize;
         public Texture2D BackBufferTex;
+        public bool isInitialized;
 
         public Matrix Projection2D;
         /// <summary>
@@ -126,10 +127,15 @@ namespace S33M3DXEngine
             this.CurrentMSAASampling = samplingMode;
 
             string errorInit;
+            isInitialized = false;
             if (Initialize(out errorInit) == false)
             {
-                throw new Exception(errorInit);
+                errorInit = "DirectX initialization error, cannot start the game : " + errorInit;
+                System.Windows.Forms.MessageBox.Show(errorInit);
+                logger.Error(errorInit);
+                return;
             }
+            isInitialized = true;
 
             //Init State repo
             RenderStatesRepo.Initialize(this);
@@ -204,6 +210,8 @@ namespace S33M3DXEngine
         #region Public Methods
         public bool Initialize(out string errorMsg)
         {
+            try
+            {
             errorMsg = null;
 
             List<ModeDescription> adapterModes = new List<ModeDescription>();
@@ -225,7 +233,7 @@ namespace S33M3DXEngine
                     //GetResource Level            
                     FeatureLevel maxSupportLevel = Device.GetSupportedFeatureLevel(adapter);
                     logger.Info("Maximum supported DirectX11 level = {0}", maxSupportLevel.ToString());
-
+                    
                     if (maxSupportLevel == FeatureLevel.Level_9_1 || 
                         maxSupportLevel == FeatureLevel.Level_9_2 || 
                         maxSupportLevel == FeatureLevel.Level_9_3)
@@ -273,6 +281,13 @@ namespace S33M3DXEngine
             _renderForm.TopMost = false;
 
             return true;
+
+            }
+            catch (Exception e)
+            {
+                errorMsg = e.Message;
+                return false;
+            }
         }
 
         public void SetRenderTargets(DeviceContext context)
@@ -283,18 +298,17 @@ namespace S33M3DXEngine
         public void SetRenderTargetsAndViewPort(DeviceContext context)
         {
             SetRenderTargets(context);
-            context.OutputMerger.SetTargets(_depthStencil, _renderTarget);
-            context.Rasterizer.SetViewports(_viewPort);
+            context.Rasterizer.SetViewport(_viewPort);
         }
 
         public void SetCustomViewPort(ViewportF customViewPort)
         {
-            ImmediateContext.Rasterizer.SetViewports(customViewPort);
+            ImmediateContext.Rasterizer.SetViewport(customViewPort);
         }
 
         public void SetScreenViewPort()
         {
-            ImmediateContext.Rasterizer.SetViewports(_viewPort);
+            ImmediateContext.Rasterizer.SetViewport(_viewPort);
         }
 
         public SharpDX.Rectangle[] ScissorRectangles
@@ -477,7 +491,7 @@ namespace S33M3DXEngine
                 Format = Format.R32_Typeless,
                 SampleDescription = CurrentMSAASampling,
                 Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource,
+                BindFlags = BindFlags.DepthStencil,
                 CpuAccessFlags = CpuAccessFlags.None,
                 OptionFlags = ResourceOptionFlags.None,
             };
@@ -510,8 +524,8 @@ namespace S33M3DXEngine
             //Refresh the Projection2D Matrix (Doesn't a camera to set it up !)
             Matrix.OrthoOffCenterLH(0, _viewPort.Width, _viewPort.Height, 0, 0, 1, out Projection2D); // Make the 0,0 bottom/left, 1,1 Up/right
 
-            if (ViewPort_Updated != null) ViewPort_Updated(_viewPort, BackBufferTex.Description);
-            ImmediateContext.Rasterizer.SetViewports(_viewPort);
+            if (ScreenSize_Updated != null) ScreenSize_Updated(_viewPort, BackBufferTex.Description);
+            ImmediateContext.Rasterizer.SetViewport(_viewPort);
 
             logger.Debug("ViewPort Updated new size Width : {0}px Height : {1}px", BackBufferTex.Description.Width, BackBufferTex.Description.Height);
         }
@@ -562,12 +576,12 @@ namespace S33M3DXEngine
             try
             {
                 //Clean Up event Delegates
-                if (ViewPort_Updated != null)
+                if (ScreenSize_Updated != null)
                 {
                     //Remove all Events associated to this control (That haven't been unsubscribed !)
-                    foreach (Delegate d in ViewPort_Updated.GetInvocationList())
+                    foreach (Delegate d in ScreenSize_Updated.GetInvocationList())
                     {
-                        ViewPort_Updated -= (ViewPortUpdated)d;
+                        ScreenSize_Updated -= (ScreenSizeUpdated)d;
                     }
                 }
 

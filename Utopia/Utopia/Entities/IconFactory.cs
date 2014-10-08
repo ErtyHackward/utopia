@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using S33M3Resources.Effects.Sprites;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -10,6 +11,7 @@ using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using System.Collections.Generic;
 using SharpDX.DXGI;
+using Utopia.Shared.Entities.Models;
 using Utopia.Shared.Settings;
 using S33M3DXEngine.Main;
 using S33M3DXEngine;
@@ -61,6 +63,12 @@ namespace Utopia.Entities
 
         #endregion
 
+        public VisualWorldParameters VisualWorldParameters
+        {
+            get { return _visualWorldParameters; }
+            set { _visualWorldParameters = value; }
+        }
+
         public WorldConfiguration Configuration
         {
             get { return _visualWorldParameters.WorldParameters.Configuration; }
@@ -108,11 +116,15 @@ namespace Utopia.Entities
             if (_visualWorldParameters.WorldParameters != null && _visualWorldParameters.WorldParameters.Configuration != null)
             {
                 List<Texture2D> icons = new List<Texture2D>();
-                ShaderResourceView cubeTextureView;
-                ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context,
-                                                      Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
-                                                      FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
-                                                      out cubeTextureView);
+
+                ShaderResourceView cubeTextureView = _visualWorldParameters.CubeTextureManager.CubeArrayTexture;
+
+                //ShaderResourceView cubeTextureView;
+                //ArrayTexture.CreateTexture2DFromFiles(_d3DEngine.Device, context,
+                //                                      Path.Combine(ClientSettings.TexturePack, @"Terran\"), @"ct*.png",
+                //                                      FilterFlags.Point, "ArrayTexture_DefaultEntityRenderer",
+                //                                      out cubeTextureView);
+
                 icons = Create3DBlockIcons(context, cubeTextureView, IconSize);
 
                 _nbrCubeIcon = icons.Count;
@@ -130,7 +142,7 @@ namespace Utopia.Entities
                 {
                     icon.Dispose();
                 }
-                cubeTextureView.Dispose();
+                //cubeTextureView.Dispose();
                 //foreach (var tex in spriteTextures) tex.Dispose();
 
 
@@ -148,19 +160,6 @@ namespace Utopia.Entities
             if (_iconTextureArray != null) _iconTextureArray.Dispose();
         }
 
-        //Too costy to recreate, better keep it
-        public override void UnloadContent()
-        {
-            //this.DisableComponent(); //Disable to component
-
-            //if (_iconsTextureArray != null) _iconsTextureArray.Dispose();
-            //if (_iconTextureArray != null) _iconTextureArray.Dispose();
-
-            //_nbrCubeIcon = 0;
-
-            //this.IsInitialized = false;
-        }
-
         #region Public methods
         public void Lookup(IItem item, out SpriteTexture texture, out int textureArrayIndex)
         {
@@ -174,18 +173,22 @@ namespace Utopia.Entities
                 textureArrayIndex = _cubeIconIndexes[cubeId];
                 return;
             }
-            else if (item is Item)
+            if (item is Item)
             {
                 var voxelItem = item as Item;
 
-                _voxelIcons.TryGetValue(voxelItem.ModelName, out texture);
+                var id = voxelItem.ModelName;
 
-                //2 options : 
-                // option 1 :  draw voxelModel in a render target texture (reuse/pool while unchanged)
-                // option 2 :  cpu projection of voxels into a dynamic Texture (making a for loop on blocks, creating a sort of heigtmap in a bitmap)
+                if (id == null)
+                    return;
+
+                if (!string.IsNullOrEmpty(voxelItem.ModelState))
+                {
+                    id += ":" + voxelItem.ModelState;
+                }
+
+                _voxelIcons.TryGetValue(id, out texture);
             }
-          
-            return;
         }
         #endregion
 
@@ -200,7 +203,7 @@ namespace Utopia.Entities
             _iconTextureArray = new SpriteTexture(IconSize, IconSize, _iconsTextureArray, new Vector2());
         }
 
-        public Texture2D CreateVoxelIcon(VisualVoxelModel visualVoxelModel, DrawingSize iconSize, DeviceContext context = null)
+        public Texture2D CreateVoxelIcon(VisualVoxelModel visualVoxelModel, Size2 iconSize, VoxelModelState state = null, DeviceContext context = null, Matrix transform = default(Matrix))
         {
             if (context == null)
                 context = _d3DEngine.ImmediateContext;
@@ -229,7 +232,11 @@ namespace Utopia.Entities
 
             var instance = visualVoxelModel.VoxelModel.CreateInstance();
 
-            var state = visualVoxelModel.VoxelModel.GetMainState();
+            if (state == null)
+            {
+                var iconState = visualVoxelModel.VoxelModel.States.FirstOrDefault(s => string.Equals(s.Name, "Icon", StringComparison.CurrentCultureIgnoreCase));
+                state = iconState ?? visualVoxelModel.VoxelModel.GetMainState();
+            }
 
             instance.SetState(state);
 
@@ -243,7 +250,12 @@ namespace Utopia.Entities
 
             var scale = (float)rMax / sphere.Radius; // Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
 
-            instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
+            if (transform == default(Matrix))
+                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
+            else
+            {
+                instance.World = transform;
+            }
 
             visualVoxelModel.Draw(context, _voxelEffect, instance);
 
@@ -257,8 +269,6 @@ namespace Utopia.Entities
             _d3DEngine.SetRenderTargetsAndViewPort(context);
 
             return tex2D;
-            
-            
         }
 
         private void CreateVoxelIcons(DeviceContext context)
@@ -278,45 +288,56 @@ namespace Utopia.Entities
 
             foreach (var visualVoxelModel in _modelManager.Enumerate())
             {
-                System.Threading.Thread.Sleep(0);
-                texture.Begin(context);
+                foreach (var voxelModelState in visualVoxelModel.VoxelModel.States)
+                {
+                    System.Threading.Thread.Sleep(0);
+                    texture.Begin(context);
 
-                RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
+                    RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
 
-                _voxelEffect.Begin(context);
+                    _voxelEffect.Begin(context);
 
-                _voxelEffect.CBPerFrame.Values.LightDirection = Vector3.Zero;
-                _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(view * projection);
-                _voxelEffect.CBPerFrame.IsDirty = true;
+                    _voxelEffect.CBPerFrame.Values.LightDirection = Vector3.Zero;
+                    _voxelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(view * projection);
+                    _voxelEffect.CBPerFrame.IsDirty = true;
 
-                var instance = visualVoxelModel.VoxelModel.CreateInstance();
-
-                var state = visualVoxelModel.VoxelModel.GetMainState();
-
-                instance.SetState(state);
-                var size = state.BoundingBox.GetSize();
-
-                var offset = -size / 2 - state.BoundingBox.Minimum;
-
-                const float scaleFactor = 1.6f; // the bigger factor the bigger items
-
-                var scale = Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
-
-                instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
-
-                visualVoxelModel.Draw(context, _voxelEffect, instance);
-
-                texture.End(context, false);
+                    var instance = visualVoxelModel.VoxelModel.CreateInstance();
 
 
-                var tex2D = texture.CloneTexture(context, ResourceUsage.Default); //Create a copy of the currently painted icon (Need to do it since next FOR will paint on it again
+                    instance.SetState(voxelModelState);
+                    var size = voxelModelState.BoundingBox.GetSize();
+                    var offset = -size / 2 - voxelModelState.BoundingBox.Minimum;
 
-                //Create shadow around icon
-                //tex2D = DrawOuterShadow(context, texture, tex2D);
-                
-                //Resource.ToFile(context, tex2D, ImageFileFormat.Png, visualVoxelModel.VoxelModel.Name + ".png");
+                    const float scaleFactor = 1.6f; // the bigger factor the bigger items
 
-                _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, ToDispose(new SpriteTexture(tex2D)));
+                    var scale = Math.Min(scaleFactor / size.X, Math.Min(scaleFactor / size.Y, scaleFactor / size.Z));
+
+                    instance.World = Matrix.Translation(offset) * Matrix.Scaling(scale) * Matrix.RotationY(MathHelper.Pi + MathHelper.PiOver4) * Matrix.RotationX(-MathHelper.Pi / 5);
+
+                    visualVoxelModel.Draw(context, _voxelEffect, instance);
+
+                    texture.End(context, false);
+
+
+                    var tex2D = texture.CloneTexture(context, ResourceUsage.Default); //Create a copy of the currently painted icon (Need to do it since next FOR will paint on it again
+
+                    try
+                    {
+                        if (voxelModelState.IsIconState)
+                        {
+                            _voxelIcons.Add(visualVoxelModel.VoxelModel.Name, ToDispose(new SpriteTexture(tex2D)));
+                            _voxelIcons.Add(visualVoxelModel.VoxelModel.Name + ":" + voxelModelState.Name, ToDispose(new SpriteTexture(tex2D)));
+                        }
+                        else
+                        {
+                            _voxelIcons.Add(visualVoxelModel.VoxelModel.Name + ":" + voxelModelState.Name, ToDispose(new SpriteTexture(tex2D)));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error("Error when generating icons: {0}", e.Message);
+                    }
+                }
             }
 
             //Reset device Default render target
@@ -409,7 +430,7 @@ namespace Utopia.Entities
             return texture.CloneTexture(context, ResourceUsage.Default);
         }
 
-        public List<Texture2D> Get3DBlockIcons(DeviceContext context, DrawingSize iconSize, ShaderResourceView cubeTextureView)
+        public List<Texture2D> Get3DBlockIcons(DeviceContext context, Size2 iconSize, ShaderResourceView cubeTextureView)
         {
             return Create3DBlockIcons(context, cubeTextureView, iconSize.Width);
         }
@@ -462,7 +483,7 @@ namespace Utopia.Entities
             dataStream.Dispose();
 
             SpriteTexture spriteTexture = new SpriteTexture(sTexture);
-            spriteTexture.ScreenPosition = new Rectangle(spriteTexture.ScreenPosition.X, spriteTexture.ScreenPosition.Y, spriteTexture.ScreenPosition.X + textureSize, spriteTexture.ScreenPosition.Y + textureSize) ;
+            spriteTexture.ScreenPosition = new Rectangle(spriteTexture.ScreenPosition.X, spriteTexture.ScreenPosition.Y, textureSize, textureSize) ;
             sTexture.Dispose();
 
             //Create the Shadder used to render on the texture.
@@ -503,12 +524,12 @@ namespace Utopia.Entities
                 // 4 = Left
                 // 5 = Right
                 //The value attached to it is simply the TextureID from the texture array to use.
-                MaterialChangeMapping[0] = profile.Tex_Back; //Change the Back Texture Id
-                MaterialChangeMapping[1] = profile.Tex_Front; //Change the Front Texture Id
-                MaterialChangeMapping[2] = profile.Tex_Bottom; //Change the Bottom Texture Id
-                MaterialChangeMapping[3] = profile.Tex_Top; //Change the Top Texture Id
-                MaterialChangeMapping[4] = profile.Tex_Left; //Change the Left Texture Id
-                MaterialChangeMapping[5] = profile.Tex_Right; //Change the Right Texture Id
+                MaterialChangeMapping[0] = profile.Textures == null ? 0 : profile.Tex_Back.TextureArrayId; //Change the Back Texture Id
+                MaterialChangeMapping[1] = profile.Textures == null ? 0 : profile.Tex_Front.TextureArrayId; //Change the Front Texture Id
+                MaterialChangeMapping[2] = profile.Textures == null ? 0 : profile.Tex_Bottom.TextureArrayId; //Change the Bottom Texture Id
+                MaterialChangeMapping[3] = profile.Textures == null ? 0 : profile.Tex_Top.TextureArrayId; //Change the Top Texture Id
+                MaterialChangeMapping[4] = profile.Textures == null ? 0 : profile.Tex_Left.TextureArrayId; //Change the Left Texture Id
+                MaterialChangeMapping[5] = profile.Textures == null ? 0 : profile.Tex_Right.TextureArrayId; //Change the Right Texture Id
 
                 Mesh mesh = meshBluePrint.Clone(MaterialChangeMapping);
                 //Stored the mesh data inside the buffers
@@ -587,11 +608,6 @@ namespace Utopia.Entities
             spriteRenderer.Dispose();
 
             return createdIconsTexture;            
-        }
-
-        private List<Texture2D> CreateSpritesIcons(ShaderResourceView spriteTextureView)
-        {
-            return new List<Texture2D>();
         }
         #endregion
         

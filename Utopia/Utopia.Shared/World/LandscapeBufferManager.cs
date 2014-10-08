@@ -27,7 +27,7 @@ namespace Utopia.Shared.World
 
         #region Private Variables
         private object _syncLock = new object();
-        private Dictionary<Vector3I, LandscapeChunkBuffer> _buffer;
+        private Dictionary<Vector3I, LandscapeChunkBuffer> _buffers;
         private Vector3I _chunkRangeLookUp = new Vector3I(3, 0, 3);
         private string _bufferPath;
 
@@ -38,8 +38,8 @@ namespace Utopia.Shared.World
         [ProtoMember(1, OverwriteList = true)]
         public Dictionary<Vector3I, LandscapeChunkBuffer> Buffer
         {
-            get { return _buffer; }
-            set { _buffer = value; }
+            get { return _buffers; }
+            set { _buffers = value; }
         }
 
         public UtopiaProcessor Processor { get; set; }
@@ -47,7 +47,7 @@ namespace Utopia.Shared.World
 
         public LandscapeBufferManager()
         {
-            _buffer = new Dictionary<Vector3I, LandscapeChunkBuffer>();
+            _buffers = new Dictionary<Vector3I, LandscapeChunkBuffer>();
         }
 
         public void Dispose()
@@ -64,6 +64,16 @@ namespace Utopia.Shared.World
             S33M3DXEngine.Threading.ThreadsManager.RunAsync(() => CleanUpTreadedWork(vwp, _lastSinglePlayerChunkPosition));
         }
 
+        public void FlushBufferedChunk(Vector3I chunkPosition)
+        {
+            //Clean Up LandscapeChunkBuffer that are too far from current player position for single player mode
+            lock (_syncLock)
+            {
+                //Remove the buffered data
+                _buffers.Remove(chunkPosition);
+            }
+        }
+
         private void CleanUpTreadedWork(VisualWorldParameters vwp, Vector3I lastSinglePlayerChunkPosition)
         {
             //Single Player Mode = Remove buffer data based on current player chunk position
@@ -71,7 +81,7 @@ namespace Utopia.Shared.World
             {
                 //Get the list of Buffer
                 var buffer2Remove = new List<LandscapeChunkBuffer>();
-                foreach (var buffer in _buffer.Values)
+                foreach (var buffer in _buffers.Values)
                 {
                     if (Math.Abs((lastSinglePlayerChunkPosition.X - buffer.ChunkLocation.X)) > ((vwp.VisibleChunkInWorld.X / 2.0) + _chunkRangeLookUp.X * 2) ||
                         Math.Abs((lastSinglePlayerChunkPosition.Z - buffer.ChunkLocation.Z)) > ((vwp.VisibleChunkInWorld.Y / 2.0) + _chunkRangeLookUp.Z * 2))
@@ -81,10 +91,10 @@ namespace Utopia.Shared.World
                 }
                 if (buffer2Remove.Count > 0)
                 {
-                    logger.Debug("Landscape buffer cleanup, {0} buffers removed", buffer2Remove.Count);
+                    logger.Trace("Landscape buffer cleanup, {0} buffers removed", buffer2Remove.Count);
 
                     //remove the buffer that won't be used anymore
-                    foreach (var b in buffer2Remove) _buffer.Remove(b.ChunkLocation);
+                    foreach (var b in buffer2Remove) _buffers.Remove(b.ChunkLocation);
                 }
 
                 Monitor.Exit(_syncLock);
@@ -94,26 +104,6 @@ namespace Utopia.Shared.World
         public void SetBufferPath(string Path)
         {
             _bufferPath = Path;
-        }
-
-        public bool TryGet(Vector3I chunkLocation, out LandscapeChunkBuffer buffer)
-        {
-            lock (_syncLock)
-            {
-                if (_buffer.TryGetValue(chunkLocation, out buffer) == false)
-                {
-                    buffer = new LandscapeChunkBuffer() { ChunkLocation = chunkLocation };
-                    _buffer.Add(chunkLocation, buffer);
-                }
-
-                if (buffer.isReady) return true;
-                if (buffer.isLocked) return false;
-                buffer.isLocked = true;
-            }
-
-            GenerateLandscapeBuffer(buffer);
-            buffer.isLocked = false;
-            return true;
         }
 
         public LandscapeChunkBuffer Get(Vector3I chunkLocation)
@@ -127,15 +117,35 @@ namespace Utopia.Shared.World
             return buffer;
         }
 
+        public bool TryGet(Vector3I chunkLocation, out LandscapeChunkBuffer buffer)
+        {
+            lock (_syncLock)
+            {
+                if (_buffers.TryGetValue(chunkLocation, out buffer) == false)
+                {
+                    buffer = new LandscapeChunkBuffer() { ChunkLocation = chunkLocation };
+                    _buffers.Add(chunkLocation, buffer);
+                }
+
+                if (buffer.isReady) return true;
+                if (buffer.isLocked) return false;
+                buffer.isLocked = true;
+            }
+
+            GenerateLandscapeBuffer(buffer);
+            buffer.isLocked = false;
+            return true;
+        }
+
         public void Insert(Vector3I chunkLocation, LandscapeEntity entity)
         {
             LandscapeChunkBuffer buffer;
             lock (_syncLock)
             {
-                if (_buffer.TryGetValue(chunkLocation, out buffer) == false)
+                if (_buffers.TryGetValue(chunkLocation, out buffer) == false)
                 {
                     buffer = new LandscapeChunkBuffer() { ChunkLocation = chunkLocation };
-                    _buffer.Add(chunkLocation, buffer);
+                    _buffers.Add(chunkLocation, buffer);
                 }
             }
 
@@ -154,7 +164,7 @@ namespace Utopia.Shared.World
                 using (var ms = new FileStream(fi.FullName, FileMode.Open))
                 using (var zip = new GZipStream(ms, CompressionMode.Decompress))
                 {
-                    _buffer = Serializer.Deserialize<Dictionary<Vector3I, LandscapeChunkBuffer>>(zip);
+                    _buffers = Serializer.Deserialize<Dictionary<Vector3I, LandscapeChunkBuffer>>(zip);
                 }
             }
         }
@@ -170,7 +180,7 @@ namespace Utopia.Shared.World
                 {
                     using (var ms = new MemoryStream())
                     {
-                        Serializer.Serialize(ms, _buffer);
+                        Serializer.Serialize(ms, _buffers);
                         //Serializer.SerializeWithLengthPrefix(ms, _buffer, PrefixStyle.Fixed32);
                         var array = ms.ToArray();
                         zip.Write(array, 0, array.Length);
@@ -191,13 +201,13 @@ namespace Utopia.Shared.World
                 bool need2Process = false;
                 lock (_syncLock)
                 {
-                    if (_buffer.TryGetValue(chunkPosition, out surrendingChunkBuffer) == false)
+                    if (_buffers.TryGetValue(chunkPosition, out surrendingChunkBuffer) == false)
                     {
                         surrendingChunkBuffer = new LandscapeChunkBuffer { 
                             ChunkLocation = chunkPosition, 
                             ProcessingState = LandscapeChunkBuffer.LandscapeChunkBufferState.NotProcessed 
                         };
-                        _buffer.Add(chunkPosition, surrendingChunkBuffer);
+                        _buffers.Add(chunkPosition, surrendingChunkBuffer);
                     }
 
                     if (surrendingChunkBuffer.ProcessingState == LandscapeChunkBuffer.LandscapeChunkBufferState.NotProcessed)

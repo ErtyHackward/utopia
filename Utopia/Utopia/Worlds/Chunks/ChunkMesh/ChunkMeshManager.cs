@@ -78,7 +78,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             TerraCube currentCube, neightborCube, topCube;
             BlockProfile blockProfile, neightborCubeProfile;
 
-            Vector4B cubePosiInChunk;
+            Vector4B cubePosiInChunk = new Vector4B(0, 0, 0, 1);
             Vector3I cubePosiInWorld;
             int XWorld, YWorld, ZWorld;
             int neightborCubeIndex;
@@ -93,12 +93,12 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             var worldRangeMaxZ = _visualWorldParameters.WorldRange.Max.Z;
             int xNeight, yNeight, zNeight;
 
-            int yMin = chunk.Graphics.SliceValue == -1 ? 0 : Math.Max(0, chunk.Graphics.SliceValue - 5);
-            int yMax = chunk.Graphics.SliceValue == -1 ? chunk.CubeRange.Size.Y : chunk.Graphics.SliceValue;
+            byte yMin = (byte)(chunk.Graphics.SliceValue == -1 ? 0 : Math.Max(0, chunk.Graphics.SliceValue - 5));
+            byte yMax = (byte)(chunk.Graphics.SliceValue == -1 ? chunk.CubeRange.Size.Y : chunk.Graphics.SliceValue);
 
             Dictionary<long, int> verticeDico = new Dictionary<long, int>();
 
-            for (int x = 0; x < AbstractChunk.ChunkSize.X; x++)
+            for (byte x = 0; x < AbstractChunk.ChunkSize.X; x++)
             {
                 XWorld = (x + chunk.CubeRange.Position.X);
                 if (x != 0)
@@ -108,7 +108,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                     cubeIndex = cubeIndexX;
                 }
 
-                for (int z = 0; z < AbstractChunk.ChunkSize.Z; z++)
+                for (byte z = 0; z < AbstractChunk.ChunkSize.Z; z++)
                 {
                     ZWorld = (z + chunk.CubeRange.Position.Z);
 
@@ -118,7 +118,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         cubeIndex = cubeIndexZ;
                     }
 
-                    for (int y = yMin; y < yMax; y++)
+                    for (byte y = yMin; y < yMax; y++)
                     {
 
                         //_cubeRange in fact identify the chunk, the chunk position in the world being _cubeRange.Min
@@ -147,8 +147,9 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         blockProfile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[currentCube.Id];
 
                         cubePosiInWorld = new Vector3I(XWorld, YWorld, ZWorld);
-                        cubePosiInChunk = new Vector4B(x, y, z);
-
+                        cubePosiInChunk.X = x; //cubePosiInChunk = new Vector4B(x, y, z);
+                        cubePosiInChunk.Y = y;
+                        cubePosiInChunk.Z = z;
                         //Check to see if the face needs to be generated or not !
                         //Border Chunk test ! ==> Don't generate faces that are "border" chunks
                         //BorderChunk value is true if the chunk is at the border of the visible world.
@@ -222,7 +223,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         {
                             //Find the chunk where this neightboor is located !! (Could be a chunk next to this one !)
                             Vector3I NeightCubeWorldPosition = new Vector3I(xNeight + chunk.CubeRange.Position.X, yNeight, zNeight + chunk.CubeRange.Position.Z);
-                            VisualChunk neighbChunk = WorldChunks.GetChunk(ref NeightCubeWorldPosition);
+                            VisualChunk neighbChunk = WorldChunks.GetChunk(NeightCubeWorldPosition);
 
                             BlockTag tag = neighbChunk.BlockData.GetTag(new Vector3I(NeightCubeWorldPosition.X - neighbChunk.CubeRange.Position.X, yNeight, NeightCubeWorldPosition.Z - neighbChunk.CubeRange.Position.Z));
                             ICubeYOffsetModifier tagOffset = tag as ICubeYOffsetModifier;

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Utopia.Editor.Forms;
 using Utopia.Editor.Properties;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Helpers;
 using Utopia.Shared.Tools;
 
 namespace Utopia.Editor
@@ -45,6 +46,7 @@ namespace Utopia.Editor
                 Settings.Default.Save();
             }
 
+            DllLoadHelper.LoadUmnanagedLibrary("sqlite3.dll");
             IconManager.Initialize(Settings.Default.UtopiaFolder);
 
             // collect all sound files
@@ -53,8 +55,6 @@ namespace Utopia.Editor
             files.Add(null);
             files.AddRange(GetFiles(Path.Combine(Settings.Default.UtopiaFolder), "*.wav").Select(f => f.Remove(0, baseSoundPath.Length + 1)));
             files.AddRange(GetFiles(Path.Combine(Settings.Default.UtopiaFolder), "*.wma").Select(f => f.Remove(0, baseSoundPath.Length + 1)));
-
-
 
             ShortSoundSelector.PossibleSound = files.OrderBy(x => x).ToArray();
             SoundList.PossibleSound = ShortSoundSelector.PossibleSound;

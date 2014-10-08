@@ -31,27 +31,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <NuGetPackageImportStamp>4763cea7</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -66,6 +46,25 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ninject, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -79,32 +78,28 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\protobuf-net.2.0.0.621\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.2.4.2\lib\net40\SharpDX.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.D3DCompiler, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.D3DCompiler, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.D3DCompiler.2.4.2\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D11, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.Direct3D11, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.Direct3D11.2.4.2\lib\net40\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.DXGI, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.DXGI, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.DXGI.2.4.2\lib\net40\SharpDX.DXGI.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+    <Reference Include="System.Data.SQLite, Version=1.0.92.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+      <HintPath>..\..\Library\System.Data.SQLite\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -121,6 +116,22 @@
     <Compile Include="Components\EditorMode.cs" />
     <Compile Include="Components\FadeComponent.cs" />
     <Compile Include="Components\FadeSwitchComponent.cs" />
+    <Compile Include="Entities\Managers\IPickingManager.cs" />
+    <Compile Include="Entities\Managers\PlayerEntityManager.Energy.cs" />
+    <Compile Include="Entities\Renderer\CubeRenderer.cs" />
+    <Compile Include="GUI\EnergyBar\EnergyBar.cs" />
+    <Compile Include="GUI\EnergyBar\EnergyBarsContainer.cs" />
+    <Compile Include="GUI\EnergyBar\EnergyBarsContainerRenderer.cs" />
+    <Compile Include="GUI\Weather\WeatherContainer.cs" />
+    <Compile Include="GUI\Weather\WeatherContainerRenderer.cs" />
+    <Compile Include="GUI\WindRose\CompassControlRenderer.cs" />
+    <Compile Include="GUI\WindRose\WindRoseComponent.cs" />
+    <Compile Include="GUI\WindRose\CompassControl.cs" />
+    <Compile Include="Network\BlocksChangedMessageBuffer.cs" />
+    <Compile Include="Particules\EditorParticuleEngine.cs" />
+    <Compile Include="Particules\SpriteDynamicEmitter.cs" />
+    <Compile Include="PostEffects\IPostEffect.cs" />
+    <Compile Include="PostEffects\PostEffectComponent.cs" />
     <Compile Include="Components\VersionWatermark.cs" />
     <Compile Include="Entities\Managers\EntityPickResult.cs" />
     <Compile Include="Entities\Managers\GlobalStateManager.cs" />
@@ -129,13 +140,19 @@
     <Compile Include="Entities\Managers\PickingManager.cs" />
     <Compile Include="Entities\Renderer\CracksRenderer.cs" />
     <Compile Include="Entities\Renderer\SelectedBlocksRenderer.cs" />
+    <Compile Include="GUI\CharacterSelection\CharacterSelectionComponent.cs" />
+    <Compile Include="GUI\CharacterSelection\CharacterSelectionWindow.cs" />
     <Compile Include="GUI\Crafting\CraftingComponent.cs" />
     <Compile Include="GUI\Crafting\CraftingWindow.cs" />
-    <Compile Include="GUI\Crafting\ModelControl.cs" />
-    <Compile Include="GUI\Crafting\ModelControlRenderer.cs" />
     <Compile Include="GUI\Inventory\AlphaImageButton.cs" />
     <Compile Include="GUI\Inventory\AlphaImageButtonRenderer.cs" />
+    <Compile Include="GUI\Inventory\ContainerWindow.cs" />
     <Compile Include="GUI\Inventory\InventoryEventComponent.cs" />
+    <Compile Include="GUI\ModelControl.cs" />
+    <Compile Include="GUI\ModelControlRenderer.cs" />
+    <Compile Include="GUI\TooltipControl.cs" />
+    <Compile Include="Network\SyncManager.cs" />
+    <Compile Include="PostEffects\PostEffectGhost.cs" />
     <Compile Include="Sounds\GeneralSoundManager.cs" />
     <Compile Include="Components\ModelEditorComponent.cs" />
     <Compile Include="Components\BepuPhysicsComponent.cs" />
@@ -156,12 +173,11 @@
     <Compile Include="Entities\EntityMovement\EntityRotations.cs" />
     <Compile Include="Entities\FileModelStorage.cs" />
     <Compile Include="Entities\IconFactory.cs" />
-    <Compile Include="Entities\Managers\EntityPickAndCollisManager.cs" />
-    <Compile Include="Entities\Managers\Interfaces\IEntityPickingManager.cs" />
+    <Compile Include="Entities\Managers\EntityCollisionManager.cs" />
+    <Compile Include="Entities\Managers\Interfaces\IEntityCollisionManager.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Input.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Move.cs" />
     <Compile Include="Entities\Managers\PlayerEntityManager.Move.Physic.cs" />
-    <Compile Include="Entities\Managers\PlayerEntityManager.Picking.cs" />
     <Compile Include="Entities\Renderer\FirstPersonToolRenderer.cs" />
     <Compile Include="Entities\Renderer\GhostedEntityRenderer.cs" />
     <Compile Include="Entities\TerraCubes.cs" />
@@ -177,7 +193,6 @@
     <Compile Include="Entities\Managers\PlayerEntityManager.cs" />
     <Compile Include="Entities\VisualEntity.cs" />
     <Compile Include="Entities\Voxel\ColorLookup.cs" />
-    <Compile Include="Entities\Voxel\IVisualVoxelEntityContainer.cs" />
     <Compile Include="Entities\Voxel\VisualVoxelEntity.cs" />
     <Compile Include="Entities\Voxel\VoxelMeshFactory.cs" />
     <Compile Include="Editor\PaletteButtonControl.cs" />
@@ -202,7 +217,7 @@
     <Compile Include="Network\ItemMessageTranslator.cs" />
     <Compile Include="Network\ServerComponent.cs" />
     <Compile Include="Particules\CubeEmitter.cs" />
-    <Compile Include="Particules\SpriteEmitter.cs" />
+    <Compile Include="Particules\SpriteStaticEmitter.cs" />
     <Compile Include="Particules\UtopiaParticuleEngine.cs" />
     <Compile Include="Sounds\MoodsSound.cs" />
     <Compile Include="UtopiaRender.cs" />
@@ -220,6 +235,7 @@
     <Compile Include="Worlds\Chunks\VisualChunk3D.cs" />
     <Compile Include="Worlds\Chunks\VisualChunkBase.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks3D.cs" />
+    <Compile Include="Worlds\GameClocks\VisualClockTime.cs" />
     <Compile Include="Worlds\Shadows\WorldShadowMap.cs" />
     <Compile Include="Worlds\SkyDomes\SharedComp\Clouds.cs" />
     <Compile Include="Worlds\Storage\SQLiteWorldStorageManager.cs" />
@@ -234,10 +250,8 @@
     <Compile Include="Worlds\Cubes\LiquidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\SolidCubeMeshFactory.cs" />
     <Compile Include="Worlds\Cubes\ICubeMeshFactory.cs" />
-    <Compile Include="Worlds\GameClocks\Clock.cs" />
+    <Compile Include="Worlds\GameClocks\ClientClock.cs" />
     <Compile Include="Worlds\GameClocks\IClock.cs" />
-    <Compile Include="Worlds\GameClocks\RealTimeClock.cs" />
-    <Compile Include="Worlds\GameClocks\WorldClock.cs" />
     <Compile Include="Worlds\Chunks\IWorldChunks.cs" />
     <Compile Include="Worlds\Liquid\enuFloodDirection.cs" />
     <Compile Include="Worlds\SkyDomes\ISkyDome.cs" />
@@ -261,9 +275,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
-    <None Include="Content\Layouts\MainMenu.layout">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -319,14 +330,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
@@ -337,4 +340,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\SharpDX.2.6.2\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.2\build\SharpDX.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpDX.2.6.2\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpDX.2.6.2\build\SharpDX.targets'))" />
+  </Target>
 </Project>

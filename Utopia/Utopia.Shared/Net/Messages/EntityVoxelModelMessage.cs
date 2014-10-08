@@ -17,10 +17,10 @@ namespace Utopia.Shared.Net.Messages
         public EntityLink EntityLink { get; set; }
 
         /// <summary>
-        /// New voxel model hash
+        /// New character class name
         /// </summary>
         [ProtoMember(2)]
-        public Md5Hash Hash { get; set; }
+        public string ClassName { get; set; }
 
         public byte MessageId
         {

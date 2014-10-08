@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using ProtoBuf;
 using Utopia.Shared.Tools;
 
@@ -20,8 +21,9 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Gets or sets recipe result item
         /// </summary>
+        [Editor(typeof(BlueprintTypeEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(2)]
-        [TypeConverter(typeof(BlueprintSelector))]
         public ushort ResultBlueprintId { get; set; }
 
         /// <summary>
@@ -36,6 +38,17 @@ namespace Utopia.Shared.Entities
         [ProtoMember(4)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Conatiner where this recipe is belong to
+        /// </summary>
+        [Browsable(false)]
+        [ProtoMember(5)]
+        public ushort ContainerBlueprintId { get; set; }
+
+        [Description("How many seconds needs to create the item, 0 - instantly")]
+        [ProtoMember(6)]
+        public int Time { get; set; }
+
         public Recipe()
         {
             Ingredients = new List<InitSlot>();
@@ -45,7 +58,7 @@ namespace Utopia.Shared.Entities
 
         public override string ToString()
         {
-            return Name;
+            return Name + (ResultCount == 1 ? "" : " x" + ResultCount);
         }
     }
 
@@ -58,8 +71,9 @@ namespace Utopia.Shared.Entities
         /// <summary>
         /// Item blueprint id
         /// </summary>
+        [Editor(typeof(BlueprintTypeEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         [ProtoMember(1)]
-        [TypeConverter(typeof(BlueprintSelector))]
         public ushort BlueprintId { get; set; }
 
         /// <summary>
@@ -69,10 +83,11 @@ namespace Utopia.Shared.Entities
         public int Count { get; set; }
 
         /// <summary>
-        /// Optional initialization set for containers
+        /// Optional initialization set for containers. In case if the blueprint is the container allows to fill it with the set provided
         /// </summary>
-        [ProtoMember(3)]
         [TypeConverter(typeof(ContainerSetSelector))]
+        [Description("Optional initialization set for containers. In case if the blueprint is the container allows to fill it with the set provided")]
+        [ProtoMember(3)]
         public string SetName { get; set; }
         
         public override string ToString()

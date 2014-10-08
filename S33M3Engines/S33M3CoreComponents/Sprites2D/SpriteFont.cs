@@ -231,14 +231,17 @@ namespace S33M3CoreComponents.Sprites2D
                 // Draw the character
                 drawGraphics.Clear(System.Drawing.Color.FromArgb(0, 255, 255, 255));
                 drawGraphics.DrawString(new string(charString[0], 1), _font, brush, new PointF(0, 0));
-                
+
+                var fastBitmap = new LockBitmap(drawBitmap);
+                fastBitmap.LockBits(readOnly: true);
+
                 // Figure out the amount of blank space before the character
                 int minX = 0;
                 for (int x = 0; x < tempSize; ++x)
                 {
                     for (int y = 0; y < tempSize; ++y)
                     {
-                        if (drawBitmap.GetPixel(x, y).A > 0)
+                        if (fastBitmap.GetPixel(x, y).A > 0)
                         {
                             minX = Math.Max(0, x - 1);
                             x = tempSize;
@@ -253,7 +256,7 @@ namespace S33M3CoreComponents.Sprites2D
                 {
                     for (int y = 0; y < tempSize; ++y)
                     {
-                        if (drawBitmap.GetPixel(x, y).A > 0)
+                        if (fastBitmap.GetPixel(x, y).A > 0)
                         {
                             maxX = Math.Min(tempSize - 1, x + 1);
                             x = -1;
@@ -261,6 +264,8 @@ namespace S33M3CoreComponents.Sprites2D
                         }
                     }
                 }
+
+                fastBitmap.UnlockBits();
 
                 int charWidth = maxX - minX;
 
@@ -271,7 +276,7 @@ namespace S33M3CoreComponents.Sprites2D
                     currentY += (int)(_charHeight) + 1;
                 }
 
-                CharDescriptors[allCharsString[i]] = new RectangleF(currentX, currentY, currentX + charWidth, currentY + _charHeight);
+                CharDescriptors[allCharsString[i]] = new RectangleF(currentX, currentY, charWidth, _charHeight);
 
                 // Copy the character over 
                 int height = (int)(_charHeight + 1);
@@ -377,11 +382,7 @@ namespace S33M3CoreComponents.Sprites2D
                     textWidth += desc.Width;
                 }
             }
-
-            textWidth += length; // spacing between characters
-
-            //var test = MeasureString3(text);
-
+            
             return new Vector2(textWidth, textHeight);
         }
 

@@ -10,8 +10,8 @@ using Realms.Client.Components.GUI.SinglePlayer;
 using Realms.Client.States;
 using Utopia.Components;
 using Utopia.Entities.Voxel;
+using Utopia.GUI.CharacterSelection;
 using Utopia.GUI.Crafting;
-using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Net.Web;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.Weather;
@@ -62,6 +62,9 @@ using Utopia.Sounds;
 using Utopia.Shared.LandscapeEntities;
 using Utopia.Shared;
 using Utopia.Worlds.Shadows;
+using Utopia.PostEffects;
+using Utopia.GUI.WindRose;
+using Utopia.Shared.GraphicManagers;
 
 namespace Realms.Client
 {
@@ -85,6 +88,9 @@ namespace Realms.Client
             {
                 _d3dEngine.GameWindow.StartPosition = FormStartPosition.Manual;
                 _d3dEngine.GameWindow.Location = ClientSettings.Current.Settings.GraphicalParameters.WindowPos;
+                var rect = Screen.GetWorkingArea(_d3dEngine.GameWindow.Location);
+                if (!rect.Contains(_d3dEngine.GameWindow.Location))
+                    _d3dEngine.GameWindow.Location = new Point();
             }
 
             _iocContainer.Bind<D3DEngine>().ToConstant(_d3dEngine).InSingletonScope();
@@ -130,6 +136,7 @@ namespace Realms.Client
             _iocContainer.Bind<SinglePlayerMenuState>().ToSelf().InSingletonScope();
 
             _iocContainer.Bind<FadeSwitchComponent>().ToSelf().InSingletonScope();
+            _iocContainer.Bind<CubeTexturesManager>().ToSelf().InSingletonScope();
 
             //Network Related =============================================
             _iocContainer.Bind<ClientWebApi>().ToSelf().InSingletonScope();
@@ -184,6 +191,7 @@ namespace Realms.Client
             _iocContainer.Bind<ICameraManager>().ToMethod(x => x.Kernel.Get<CameraManager<ICameraFocused>>()).InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<TimerManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);      //Ingame based Timer class
             _iocContainer.Bind<StaggingBackBuffer>().ToSelf().InScope(x => GameScope.CurrentGameScope).Named("SkyBuffer").WithConstructorArgument("Name", "SkyBuffer");
+            _iocContainer.Bind<PostEffectComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<SharedFrameCB>().ToSelf().InScope(x => GameScope.CurrentGameScope);     //Ingame based Timer class
 
             //Network Related =============================================
@@ -194,16 +202,20 @@ namespace Realms.Client
 
             _iocContainer.Bind<EntityMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ItemMessageTranslator>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<SyncManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             //=============================================================
 
             //Game Componenents =========================================
             _iocContainer.Bind<ServerComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<IClock>().To<WorldClock>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<IClock>().To<ClientClock>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<PlayerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<InventoryComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<WindRoseComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ContainerInventory>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<CraftingComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<CraftingWindow>().To<CraftingInventory>().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<CharacterSelectionComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<CharacterSelectionWindow>().To<SelectionInventory>().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<InventoryEventComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<ChatComponent>().ToSelf().InScope(x => GameScope.CurrentGameScope);
             _iocContainer.Bind<Hud>().To<RealmsHud>().InScope(x => GameScope.CurrentGameScope);
@@ -232,13 +244,13 @@ namespace Realms.Client
             //Entities related stuff ====================================================
             _iocContainer.Bind<IPickingRenderer>().To<PickingRenderer>().InScope(x => GameScope.CurrentGameScope);         // Use to display the picking cursor on block
             _iocContainer.Bind<SelectedBlocksRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope);
-            //_iocContainer.Bind<IEntityPickingManager>().To<EntityPickAndCollisManager>().InScope(x => GameScope.CurrentGameScope);   //Entites picking and collision handling vs player
+            _iocContainer.Bind<IEntityCollisionManager>().To<EntityCollissonManager>().InScope(x => GameScope.CurrentGameScope);   //Entites picking and collision handling vs player
             _iocContainer.Bind<IVisualDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
             _iocContainer.Bind<IDynamicEntityManager>().To<DynamicEntityManager>().InScope(x => GameScope.CurrentGameScope);         //Dynamic Entity manager
             _iocContainer.Bind<IGlobalStateManager>().To<GlobalStateManager>().InScope(x => GameScope.CurrentGameScope);
-            //_iocContainer.Bind<PlayerEntityManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);                             //The player manager
-            _iocContainer.Bind<IPlayerManager>().To<GodEntityManager>().InScope(x => GameScope.CurrentGameScope);
-            _iocContainer.Bind<PickingManager>().ToSelf().InScope(x => GameScope.CurrentGameScope);
+            _iocContainer.Bind<IPlayerManager,PlayerEntityManager>().To<PlayerEntityManager>().InScope(x => GameScope.CurrentGameScope);                             //The player manager
+            _iocContainer.Bind<IPickingManager, PickingManager>().To<PickingManager>().InScope(x => GameScope.CurrentGameScope);
+
             //Register the Player Against IDynamicEntity and PlayerCharacter
             _iocContainer.Bind<VoxelMeshFactory>().ToSelf().InScope(x => GameScope.CurrentGameScope);  //Voxel Factory
             _iocContainer.Bind<FirstPersonToolRenderer>().ToSelf().InScope(x => GameScope.CurrentGameScope); // draw active tool in first person mode

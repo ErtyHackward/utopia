@@ -87,6 +87,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
                 new UniScalar(1.0f, -20.0f), new UniScalar(0.0f, 0.0f),
                 new UniScalar(0.0f, 20.0f), new UniScalar(1.0f, 0.0f)
                 );
+            _slider.ThumbSmoothMovement = true;
             Children.Add(_slider);
         }
 
@@ -144,15 +145,25 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
             get { return SelectedItems.Count == 1 ? Items[SelectedItems[0]] : null; }
         }
 
-        public int SelectItem
+        /// <summary>
+        /// Returns first selected item index. Returns -1 if no items are selected
+        /// </summary>
+        public int SelectedItemIndex 
         {
-            set
+            get { return SelectedItems.Count == 0 ? -1 : SelectedItems[0]; }
+            set { SelectItem(value); }
+        }
+
+        /// <summary>
+        /// Selects specified index
+        /// </summary>
+        /// <param name="index"></param>
+        public void SelectItem(int index)
+        {
+            SelectedItems.Clear();
+            if (index > -1)
             {
-                SelectedItems.Clear();
-                if (value > -1)
-                {
-                    SelectedItems.Add(value);
-                }
+                SelectedItems.Add(index);
             }
         }
 
@@ -335,7 +346,7 @@ namespace S33M3CoreComponents.GUI.Nuclex.Controls.Desktop
         }
 
         /// <summary>Updates the size and position of the list's slider</summary>
-        private void updateSlider()
+        public void updateSlider()
         {
             if ((Screen != null) && (_listRowLocator != null))
             {

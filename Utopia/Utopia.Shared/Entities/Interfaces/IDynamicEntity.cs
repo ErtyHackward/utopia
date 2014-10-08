@@ -26,6 +26,11 @@ namespace Utopia.Shared.Entities.Interfaces
         event EventHandler<EntityUseEventArgs> Use;
 
         /// <summary>
+        /// Occurs when entity change its displacement mode
+        /// </summary>
+        event EventHandler<EntityDisplacementModeEventArgs> DisplacementModeChanged;
+
+        /// <summary>
         /// The speed at wich the dynamic entity can walk
         /// </summary>
         float MoveSpeed { get; set; }
@@ -63,6 +68,16 @@ namespace Utopia.Shared.Entities.Interfaces
         /// <summary>
         /// Fires use event from current entity state
         /// </summary>
-        void ToolUse(ITool tool);
+        IToolImpact ToolUse(ITool tool);
+
+        /// <summary>
+        /// Indicates if user can do any changes in the world or not
+        /// </summary>
+        bool IsReadOnly { get; set; }
+
+        /// <summary>
+        /// Indicates if the player can change its mode to fly
+        /// </summary>
+        bool CanFly { get; set; }
     }
 }

@@ -1,32 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using S33M3CoreComponents.GUI.Nuclex;
 using S33M3CoreComponents.GUI.Nuclex.Controls;
-using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
-using S33M3CoreComponents.GUI.Nuclex.Visuals.Flat.Interfaces;
 using S33M3CoreComponents.Inputs;
 using S33M3CoreComponents.Sprites2D;
 using S33M3DXEngine;
+using S33M3Resources.Structs;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
-using Utopia.Entities.Voxel;
-using Utopia.GUI.Crafting;
 using Utopia.GUI.Inventory;
-using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Entities;
-using Utopia.Shared.Entities.Dynamic;
-using Utopia.Shared.Entities.Interfaces;
 
 namespace Realms.Client.Components.GUI
 {
     public class SandboxToolBar : ToolBarUi
     {
-        private readonly PlayerCharacter _player;
-        private readonly GodEntity _godEntity;
-        private readonly EntityFactory _factory;
-        private readonly DynamicEntityManager _dynamicEntityManager;
-
         public override int DrawGroupId
         {
             get
@@ -40,7 +28,6 @@ namespace Realms.Client.Components.GUI
         readonly SpriteTexture _stToolbatSlotHover;
 
         private readonly List<LabelControl> _numbersLabels = new List<LabelControl>();
-        private ModelControl _modelControl;
 
         /// <summary>
         /// Occurs when user picks an entity
@@ -52,115 +39,56 @@ namespace Realms.Client.Components.GUI
             var handler = EntitySelected;
             if (handler != null) handler(this, e);
         }
-
-        public HLSLVoxelModel VoxelEffect
-        {
-            get { return _modelControl.VoxelEffect; }
-            set { _modelControl.VoxelEffect = value; }
-        }
-
+        
         public List<LabelControl> NumbersLabels
         {
             get { return _numbersLabels; }
         }
 
         public SandboxToolBar(D3DEngine engine,
-                              PlayerCharacter player, 
-                              GodEntity godEntity, 
+                              PlayerEntityManager player, 
                               IconFactory iconFactory, 
                               InputsManager inputManager, 
-                              EntityFactory factory, 
-                              VoxelModelManager voxelModelManager,
-                              DynamicEntityManager dynamicEntityManager
+                              EntityFactory factory
             ) : base(player, iconFactory, inputManager, factory)
         {
-            _player = player;
-            _godEntity = godEntity;
-            _factory = factory;
-            _dynamicEntityManager = dynamicEntityManager;
-            _stBackground       = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_bg.png");
-            _stToolbarSlot      = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot.png");
+            _stBackground = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_bg.png");
+            _stToolbarSlot = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot.png");
             _stToolbatSlotHover = new SpriteTexture(engine.Device, @"Images\Inventory\toolbar_slot_active.png");
 
             Background = _stBackground;
-            DisplayBackground = true;
 
-            Bounds = new UniRectangle(0, new UniScalar(0.8f, 0), new UniScalar(1, 0), new UniScalar(0.21f, 0));
+            Bounds = new UniRectangle(0, 0, 656, 116);
 
+            var offset = new Vector2I(50, 48);
+            var size = new Vector2I(57, 57);
 
-            _modelControl = new ModelControl(voxelModelManager)
-                                {
-                                    Bounds = new UniRectangle(0, new UniScalar(-0.1f, 0), new UniScalar(0.2f, 0), new UniScalar(1.1f, 0)) 
-                                };
-
-            Children.Add(_modelControl);
-
-            var stuffButton = new ButtonControl {
-                Text = "Stuff",
-                Bounds = new UniRectangle(new UniScalar(0.2f, 0), new UniScalar(0.05f, 0), new UniScalar(0, 32), new UniScalar(0, 32)) 
-            };
-            
-            Children.Add(stuffButton);
-            
-            var panel = new Control();
-
-            panel.Bounds = new UniRectangle(new UniScalar(0.2f, 0), new UniScalar(0.3f, 0), new UniScalar(0.8f, 0), new UniScalar(0.7f, 0));
-
-            Children.Add(panel);
-
-            int buttonIndex = 0;
-
-            var allButtons = factory.Config.BluePrints.Values.Where(e => e.ShowInToolbar).ToList();
-
-            var sideOffset = 0.00f;
-
-            var buttonWidth = (1f - sideOffset * 2) / 10;
-
-            foreach (var entity in allButtons)
+            for (int i = 0; i < _toolbarSlots.Count; i++)
             {
-                var button = new ButtonControl { 
-                    Bounds = new UniRectangle(
-                        new UniScalar(sideOffset + buttonIndex * buttonWidth, 0),
-                        new UniScalar(sideOffset, 0),
-                        new UniScalar(buttonWidth, 0),
-                        new UniScalar(1f - sideOffset * 2, 0))
+                var inventoryCell = _toolbarSlots[i];
+                inventoryCell.Bounds = new UniRectangle(offset.X + (size.X) * i, offset.Y, 42, 42);
+                inventoryCell.CustomBackground = _stToolbarSlot;
+                inventoryCell.CustomBackgroundHover = _stToolbatSlotHover;
+                inventoryCell.DrawIconsGroupId = 3;
+                inventoryCell.DrawIconsActiveCellId = 4;
+                inventoryCell.Color = new ByteColor(255, 255, 255, 120);
+
+                var label = new LabelControl
+                {
+                    Text = (i + 1).ToString(),
+                    IsClickTransparent = true,
+                    Color = new ByteColor(255, 255, 255, 80),
+                    Bounds = new UniRectangle(offset.X + (size.X) * i + 18, offset.Y + 42, 10, 10),
+                    IsVisible = inventoryCell.Slot != null
                 };
 
-                button.Tag = entity;
-                button.Pressed += button_Pressed;
-
-                int arrayIndex;
-                SpriteTexture texture;
-
-                iconFactory.Lookup((IItem)entity, out texture, out arrayIndex);
-
-                button.CusomImageLabel = texture;
-
-                panel.Children.Add(button);
-                buttonIndex++;
+                _numbersLabels.Add(label);
+                Children.Add(label);
             }
 
             SlotChanged += SandboxToolBar_SlotChanged;
-        }
 
-        void button_Pressed(object sender, EventArgs e)
-        {
-            var button = (ButtonControl)sender;
-            OnEntitySelected(new ToolBarEventArgs { Entity = (Entity)button.Tag });
-        }
 
-        public void Update()
-        {
-            if (_godEntity.SelectedEntities.Count > 0)
-            {
-                var firstEntity = _godEntity.SelectedEntities.First();
-                var entity = firstEntity.Resolve<IVoxelEntity>(_factory);
-                _modelControl.SetModel(entity.ModelName);
-            }
-            else
-            {
-                _modelControl.SetModel(null);
-            }
         }
 
         void SandboxToolBar_SlotChanged(object sender, InventoryWindowCellMouseEventArgs e)
@@ -176,17 +104,5 @@ namespace Realms.Client.Components.GUI
     public class ToolBarEventArgs : EventArgs
     {
         public Entity Entity { get; set; }
-    }
-
-    public class SandboxToolBarRenderer : IFlatControlRenderer<SandboxToolBar>
-    {
-        public void Render(SandboxToolBar control, IFlatGuiGraphics graphics)
-        {
-            if (control.DisplayBackground)
-            {
-                var absoluteBounds = control.GetAbsoluteBounds();
-                graphics.DrawElement("toolbar", ref absoluteBounds);
-            }
-        }
     }
 }

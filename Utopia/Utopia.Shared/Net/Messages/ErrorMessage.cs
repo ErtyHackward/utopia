@@ -40,8 +40,17 @@ namespace Utopia.Shared.Net.Messages
     {
         LoginPasswordIncorrect,
         LoginAlreadyRegistered,
-        VersionMissmatch,
+        VersionMismatch,
         ChunkTooFar,
-        AnotherInstanceLogged
+        /// <summary>
+        /// Indicates that someone else is logged in with the same account. 
+        /// </summary>
+        AnotherInstanceLogged,
+        /// <summary>
+        /// Occurs when server is unable to execute player item transfer operation
+        /// </summary>
+        DesyncDetected,
+        Kicked,
+        Banned
     }
 }

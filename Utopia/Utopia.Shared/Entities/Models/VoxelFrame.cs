@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using ProtoBuf;
 using Utopia.Shared.Chunks;
@@ -10,7 +11,7 @@ namespace Utopia.Shared.Entities.Models
     /// Represents a voxel frame, static array of cubes
     /// </summary>
     [ProtoContract]
-    public class VoxelFrame : IBinaryStorable
+    public class VoxelFrame 
     {
         private InsideDataProvider _blockData;
 
@@ -35,6 +36,12 @@ namespace Utopia.Shared.Entities.Models
             get { return _blockData; }
             set { _blockData = value; }
         }
+
+        /// <summary>
+        /// Allows to control model face generation on edges
+        /// </summary>
+        [ProtoMember(4)]
+        public FrameMirror FrameMirror { get; set; }
         
         public VoxelFrame()
         {
@@ -47,38 +54,27 @@ namespace Utopia.Shared.Entities.Models
             _blockData.UpdateChunkSize(size);
         }
 
-        public void Save(BinaryWriter writer)
-        {
-            writer.Write(_blockData.ChunkSize);
-            writer.Write(_blockData.GetBlocksBytes());
-            writer.Write(Name ?? "Noname");
-            ColorMapping.Write(writer, ColorMapping);
-        }
-
-        public void Load(BinaryReader reader)
-        {
-            var size = reader.ReadVector3I();
-
-            var length = size.X * size.Y * size.Z;
-
-            var bytes = reader.ReadBytes(length);
-
-            if (bytes != null && bytes.Length != length)
-            {
-                throw new EndOfStreamException();
-            }
-
-            _blockData.UpdateChunkSize(size);
-            _blockData.SetBlockBytes(bytes);
-
-            Name = reader.ReadString();
-
-            ColorMapping = ColorMapping.Read(reader);
-        }
-
         public override string ToString()
         {
             return Name + " " + _blockData.ChunkSize;
         }
+    }
+
+    [Flags]
+    public enum FrameMirror
+    {
+        None            = 0,
+        MirrorTop       = 1 << 0,
+        MirrorBottom    = 1 << 1,
+        MirrorLeft      = 1 << 2,
+        MirrorRight     = 1 << 3,
+        MirrorFront     = 1 << 4,
+        MirrorBack      = 1 << 5,
+        TileTop         = 1 << 6,
+        TileBottom      = 1 << 7,
+        TileLeft        = 1 << 8,
+        TileRight       = 1 << 9,
+        TileFront       = 1 << 10,
+        TileBack        = 1 << 11,
     }
 }

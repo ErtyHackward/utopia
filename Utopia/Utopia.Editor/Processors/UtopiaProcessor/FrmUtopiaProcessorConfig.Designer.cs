@@ -32,6 +32,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabUtopiaProcessor = new System.Windows.Forms.TabControl();
             this.WorldParam = new System.Windows.Forms.TabPage();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label28 = new System.Windows.Forms.Label();
+            this.udFreqZone = new System.Windows.Forms.NumericUpDown();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.label30 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.label17 = new System.Windows.Forms.Label();
             this.maxHeight = new System.Windows.Forms.TrackBar();
@@ -65,6 +70,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.worldType = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.rangeBarWorld = new Utopia.Editor.RangeBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.udGroundOct = new System.Windows.Forms.NumericUpDown();
             this.label12 = new System.Windows.Forms.Label();
@@ -72,12 +78,18 @@
             this.udGroundFeq = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.rangeBarOcean = new Utopia.Editor.RangeBar();
+            this.rangeBarGround = new Utopia.Editor.RangeBar();
             this.BasicLandscapes = new System.Windows.Forms.GroupBox();
             this.udPlainOct = new System.Windows.Forms.NumericUpDown();
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.udPlainFreq = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
+            this.rangeBarBasicOcean = new Utopia.Editor.RangeBar();
+            this.rangeBarBasicPlain = new Utopia.Editor.RangeBar();
+            this.rangeBarBasicMontain = new Utopia.Editor.RangeBar();
+            this.rangeBarBasicMidLand = new Utopia.Editor.RangeBar();
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -88,15 +100,11 @@
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pgBiomes = new System.Windows.Forms.PropertyGrid();
-            this.rangeBarWorld = new Utopia.Editor.RangeBar();
-            this.rangeBarOcean = new Utopia.Editor.RangeBar();
-            this.rangeBarGround = new Utopia.Editor.RangeBar();
-            this.rangeBarBasicOcean = new Utopia.Editor.RangeBar();
-            this.rangeBarBasicPlain = new Utopia.Editor.RangeBar();
-            this.rangeBarBasicMontain = new Utopia.Editor.RangeBar();
-            this.rangeBarBasicMidLand = new Utopia.Editor.RangeBar();
             this.tabUtopiaProcessor.SuspendLayout();
             this.WorldParam.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udFreqZone)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.maxHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
@@ -152,6 +160,7 @@
             // 
             // WorldParam
             // 
+            this.WorldParam.Controls.Add(this.groupBox5);
             this.WorldParam.Controls.Add(this.groupBox4);
             this.WorldParam.Controls.Add(this.groupBox3);
             this.WorldParam.Location = new System.Drawing.Point(4, 22);
@@ -161,6 +170,77 @@
             this.WorldParam.TabIndex = 2;
             this.WorldParam.Text = "Global World Parameters";
             this.WorldParam.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox5.Controls.Add(this.label28);
+            this.groupBox5.Controls.Add(this.udFreqZone);
+            this.groupBox5.Controls.Add(this.pictureBox4);
+            this.groupBox5.Controls.Add(this.label30);
+            this.groupBox5.Location = new System.Drawing.Point(6, 251);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(652, 61);
+            this.groupBox5.TabIndex = 8;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Other parameters :";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(133, 28);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(34, 13);
+            this.label28.TabIndex = 15;
+            this.label28.Text = "Freq :";
+            // 
+            // udFreqZone
+            // 
+            this.udFreqZone.DecimalPlaces = 2;
+            this.udFreqZone.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.udFreqZone.Location = new System.Drawing.Point(173, 26);
+            this.udFreqZone.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            65536});
+            this.udFreqZone.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udFreqZone.Name = "udFreqZone";
+            this.udFreqZone.Size = new System.Drawing.Size(61, 20);
+            this.udFreqZone.TabIndex = 14;
+            this.udFreqZone.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udFreqZone.ValueChanged += new System.EventHandler(this.udFreqZone_ValueChanged);
+            // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Image = global::Utopia.Editor.Properties.Resources.voronoi;
+            this.pictureBox4.Location = new System.Drawing.Point(6, 19);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(33, 34);
+            this.pictureBox4.TabIndex = 2;
+            this.pictureBox4.TabStop = false;
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(45, 29);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(73, 13);
+            this.label30.TabIndex = 0;
+            this.label30.Text = "Biome zones :";
             // 
             // groupBox4
             // 
@@ -325,7 +405,7 @@
             1,
             0,
             0,
-            65536});
+            131072});
             this.udFreqMoist.Name = "udFreqMoist";
             this.udFreqMoist.Size = new System.Drawing.Size(61, 20);
             this.udFreqMoist.TabIndex = 18;
@@ -395,7 +475,7 @@
             1,
             0,
             0,
-            65536});
+            131072});
             this.udFreqTemp.Name = "udFreqTemp";
             this.udFreqTemp.Size = new System.Drawing.Size(61, 20);
             this.udFreqTemp.TabIndex = 14;
@@ -516,10 +596,10 @@
             0,
             0});
             this.udContinentFreq.Minimum = new decimal(new int[] {
-            5,
+            1,
             0,
             0,
-            65536});
+            131072});
             this.udContinentFreq.Name = "udContinentFreq";
             this.udContinentFreq.Size = new System.Drawing.Size(61, 20);
             this.udContinentFreq.TabIndex = 18;
@@ -616,6 +696,15 @@
             this.label8.TabIndex = 9;
             this.label8.Text = "World :";
             // 
+            // rangeBarWorld
+            // 
+            this.rangeBarWorld.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rangeBarWorld.Location = new System.Drawing.Point(113, 51);
+            this.rangeBarWorld.Name = "rangeBarWorld";
+            this.rangeBarWorld.Size = new System.Drawing.Size(504, 70);
+            this.rangeBarWorld.TabIndex = 0;
+            // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -686,10 +775,10 @@
             0,
             0});
             this.udGroundFeq.Minimum = new decimal(new int[] {
-            5,
+            1,
             0,
             0,
-            65536});
+            131072});
             this.udGroundFeq.Name = "udGroundFeq";
             this.udGroundFeq.Size = new System.Drawing.Size(61, 20);
             this.udGroundFeq.TabIndex = 14;
@@ -717,6 +806,24 @@
             this.label6.Size = new System.Drawing.Size(48, 13);
             this.label6.TabIndex = 8;
             this.label6.Text = "Ground :";
+            // 
+            // rangeBarOcean
+            // 
+            this.rangeBarOcean.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rangeBarOcean.Location = new System.Drawing.Point(115, 89);
+            this.rangeBarOcean.Name = "rangeBarOcean";
+            this.rangeBarOcean.Size = new System.Drawing.Size(504, 70);
+            this.rangeBarOcean.TabIndex = 1;
+            // 
+            // rangeBarGround
+            // 
+            this.rangeBarGround.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rangeBarGround.Location = new System.Drawing.Point(115, 19);
+            this.rangeBarGround.Name = "rangeBarGround";
+            this.rangeBarGround.Size = new System.Drawing.Size(504, 70);
+            this.rangeBarGround.TabIndex = 0;
             // 
             // BasicLandscapes
             // 
@@ -797,10 +904,10 @@
             0,
             65536});
             this.udPlainFreq.Minimum = new decimal(new int[] {
-            5,
+            1,
             0,
             0,
-            65536});
+            131072});
             this.udPlainFreq.Name = "udPlainFreq";
             this.udPlainFreq.Size = new System.Drawing.Size(61, 20);
             this.udPlainFreq.TabIndex = 10;
@@ -819,6 +926,42 @@
             this.label2.Size = new System.Drawing.Size(93, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "Plains landscape :";
+            // 
+            // rangeBarBasicOcean
+            // 
+            this.rangeBarBasicOcean.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rangeBarBasicOcean.Location = new System.Drawing.Point(115, 198);
+            this.rangeBarBasicOcean.Name = "rangeBarBasicOcean";
+            this.rangeBarBasicOcean.Size = new System.Drawing.Size(504, 70);
+            this.rangeBarBasicOcean.TabIndex = 9;
+            // 
+            // rangeBarBasicPlain
+            // 
+            this.rangeBarBasicPlain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rangeBarBasicPlain.Location = new System.Drawing.Point(115, 16);
+            this.rangeBarBasicPlain.Name = "rangeBarBasicPlain";
+            this.rangeBarBasicPlain.Size = new System.Drawing.Size(504, 65);
+            this.rangeBarBasicPlain.TabIndex = 3;
+            // 
+            // rangeBarBasicMontain
+            // 
+            this.rangeBarBasicMontain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rangeBarBasicMontain.Location = new System.Drawing.Point(115, 141);
+            this.rangeBarBasicMontain.Name = "rangeBarBasicMontain";
+            this.rangeBarBasicMontain.Size = new System.Drawing.Size(504, 70);
+            this.rangeBarBasicMontain.TabIndex = 8;
+            // 
+            // rangeBarBasicMidLand
+            // 
+            this.rangeBarBasicMidLand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rangeBarBasicMidLand.Location = new System.Drawing.Point(115, 87);
+            this.rangeBarBasicMidLand.Name = "rangeBarBasicMidLand";
+            this.rangeBarBasicMidLand.Size = new System.Drawing.Size(504, 70);
+            this.rangeBarBasicMidLand.TabIndex = 4;
             // 
             // label5
             // 
@@ -916,69 +1059,6 @@
             this.pgBiomes.TabIndex = 0;
             this.pgBiomes.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgBiomes_PropertyValueChanged);
             // 
-            // rangeBarWorld
-            // 
-            this.rangeBarWorld.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rangeBarWorld.Location = new System.Drawing.Point(113, 51);
-            this.rangeBarWorld.Name = "rangeBarWorld";
-            this.rangeBarWorld.Size = new System.Drawing.Size(504, 70);
-            this.rangeBarWorld.TabIndex = 0;
-            // 
-            // rangeBarOcean
-            // 
-            this.rangeBarOcean.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rangeBarOcean.Location = new System.Drawing.Point(115, 89);
-            this.rangeBarOcean.Name = "rangeBarOcean";
-            this.rangeBarOcean.Size = new System.Drawing.Size(504, 70);
-            this.rangeBarOcean.TabIndex = 1;
-            // 
-            // rangeBarGround
-            // 
-            this.rangeBarGround.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rangeBarGround.Location = new System.Drawing.Point(115, 19);
-            this.rangeBarGround.Name = "rangeBarGround";
-            this.rangeBarGround.Size = new System.Drawing.Size(504, 70);
-            this.rangeBarGround.TabIndex = 0;
-            // 
-            // rangeBarBasicOcean
-            // 
-            this.rangeBarBasicOcean.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rangeBarBasicOcean.Location = new System.Drawing.Point(115, 198);
-            this.rangeBarBasicOcean.Name = "rangeBarBasicOcean";
-            this.rangeBarBasicOcean.Size = new System.Drawing.Size(504, 70);
-            this.rangeBarBasicOcean.TabIndex = 9;
-            // 
-            // rangeBarBasicPlain
-            // 
-            this.rangeBarBasicPlain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rangeBarBasicPlain.Location = new System.Drawing.Point(115, 16);
-            this.rangeBarBasicPlain.Name = "rangeBarBasicPlain";
-            this.rangeBarBasicPlain.Size = new System.Drawing.Size(504, 65);
-            this.rangeBarBasicPlain.TabIndex = 3;
-            // 
-            // rangeBarBasicMontain
-            // 
-            this.rangeBarBasicMontain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rangeBarBasicMontain.Location = new System.Drawing.Point(115, 141);
-            this.rangeBarBasicMontain.Name = "rangeBarBasicMontain";
-            this.rangeBarBasicMontain.Size = new System.Drawing.Size(504, 70);
-            this.rangeBarBasicMontain.TabIndex = 8;
-            // 
-            // rangeBarBasicMidLand
-            // 
-            this.rangeBarBasicMidLand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rangeBarBasicMidLand.Location = new System.Drawing.Point(115, 87);
-            this.rangeBarBasicMidLand.Name = "rangeBarBasicMidLand";
-            this.rangeBarBasicMidLand.Size = new System.Drawing.Size(504, 70);
-            this.rangeBarBasicMidLand.TabIndex = 4;
-            // 
             // FrmUtopiaProcessorConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -989,6 +1069,10 @@
             this.Size = new System.Drawing.Size(672, 630);
             this.tabUtopiaProcessor.ResumeLayout(false);
             this.WorldParam.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udFreqZone)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.maxHeight)).EndInit();
@@ -1098,6 +1182,11 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.NumericUpDown udFreqTemp;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.NumericUpDown udFreqZone;
+        private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.Label label30;
 
     }
 }

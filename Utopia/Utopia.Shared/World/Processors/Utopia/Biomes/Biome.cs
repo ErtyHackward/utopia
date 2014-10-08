@@ -10,6 +10,11 @@ using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using System.ComponentModel;
 using Utopia.Shared.Configuration;
+using System.Linq;
+using Utopia.Shared.Structs.Helpers;
+using Utopia.Shared.Tools;
+using System.Drawing.Design;
+using Utopia.Shared.Entities.Concrete;
 
 namespace Utopia.Shared.World.Processors.Utopia.Biomes
 {
@@ -19,9 +24,11 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         #region Private Variables
+
         //Chunk Population elements
         private List<CubeVein> _cubeVeins = new List<CubeVein>();
         private List<BiomeEntity> _biomeEntities = new List<BiomeEntity>();
+        private List<ChunkSpawnableEntity> _spawnableEntities = new List<ChunkSpawnableEntity>();
         private List<Cavern> _caverns = new List<Cavern>();
         private BiomeTrees _biomeTrees = new BiomeTrees();
         private List<BiomeSoundSource> _ambientSound = new List<BiomeSoundSource>();
@@ -45,18 +52,20 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         [ProtoMember(1)]
         public string Name { get; set; }
 
-        [Browsable(false)]
         [ProtoMember(2)]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte SurfaceCube { get; set; }
 
-        [Browsable(false)]
         [ProtoMember(3)]
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
         public byte UnderSurfaceCube { get; set; }
 
-        [Browsable(false)]
         [ProtoMember(4)]
-        public byte GroundCube { get; set; }
-        
+        [Editor(typeof(BlueprintTypeEditor<BlockProfile>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
+        public byte GroundCube { get; set; }        
 
         [Description("Under surface layer size"), Category("Composition")]
         [ProtoMember(5)]
@@ -72,14 +81,6 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         {
             get { return _cubeVeins; }
             set { _cubeVeins = value; }
-        }
-
-        [Description("Entities spawning configuration"), Category("Population")]
-        [ProtoMember(7)]
-        public List<BiomeEntity> BiomeEntities
-        {
-            get { return _biomeEntities; }
-            set { _biomeEntities = value; }
         }
 
         [Description("Biome linked ambient music"), Category("Sound")]
@@ -119,7 +120,7 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public RangeD TemperatureFilter
         {
             get { return _temperatureFilter; }
-            set { _temperatureFilter = value; }
+            set { _temperatureFilter = value; RefreshWeatherHash(); }
         }
 
         [Description("Moisture range [0.00 to 1.00] inside this biome"), Category("Filter")]
@@ -127,7 +128,19 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
         public RangeD MoistureFilter
         {
             get { return _moistureFilter; }
-            set { _moistureFilter = value; }
+            set { _moistureFilter = value; RefreshWeatherHash(); }
+        }
+
+        [Description("Influence in case of zone"), Category("Filter")]
+        [ProtoMember(14)]
+        public int ZoneWeight { get; set; }
+
+        [Description("Entities that can spawn inside chunk"), Category("Population")]
+        [ProtoMember(15)]
+        public List<ChunkSpawnableEntity> SpawnableEntities
+        {
+            get { return _spawnableEntities; }
+            set { _spawnableEntities = value; }
         }
 
         [Browsable(false)]
@@ -137,6 +150,30 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
             set { _config = value; }
         }
 
+        [Browsable(false)]
+        public byte Id { get; set; }
+        [Browsable(false)]
+        public bool isWeatherBiomes { get; set; }
+        [Browsable(false)]
+        public int WeatherHash { get; set; }
+
+
+        private void RefreshWeatherHash()
+        {
+            if (MoistureFilter.Min == 0 && MoistureFilter.Max == 1 && TemperatureFilter.Min == 0 && TemperatureFilter.Max == 1)
+            {
+                isWeatherBiomes = false;
+                WeatherHash = 0;
+                return;
+            }
+
+            string resultStr = TemperatureFilter.Min.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) +
+                                   TemperatureFilter.Max.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) +
+                                   MoistureFilter.Min.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture) +
+                                   MoistureFilter.Max.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture);
+            isWeatherBiomes = true;
+            WeatherHash = resultStr.GetHashCode();
+        }
         #endregion
 
         public Biome(WorldConfiguration config)
@@ -154,26 +191,26 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                 //Generate the vein X time
                 for (int i = 0; i < vein.VeinPerChunk; i++)
                 {
-                    if (vein.CubeId != UtopiaProcessorParams.CubeId.DynamicLava &&
-                        vein.CubeId != UtopiaProcessorParams.CubeId.DynamicWater)
+                    if (vein.Cube != UtopiaProcessorParams.CubeId.LavaFlow &&
+                        vein.Cube != UtopiaProcessorParams.CubeId.WaterFlow)
                     {
                         //Get Rnd chunk Location.
                         int x = rnd.Next(0, 16);
                         int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
                         int z = rnd.Next(0, 16);
 
-                        PopulateChunkWithResource(vein.CubeId, cursor, x, y, z, vein.VeinSize, rnd);
+                        PopulateChunkWithResource(vein.Cube, cursor, x, y, z, vein.VeinSize, rnd);
                     }
                     else
                     {
-                        if (vein.CubeId == UtopiaProcessorParams.CubeId.DynamicLava)
+                        if (vein.Cube == UtopiaProcessorParams.CubeId.LavaFlow)
                         {
                             //Get Rnd chunk Location.
                             int x = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
                             int y = rnd.Next(vein.SpawningHeight.Min, vein.SpawningHeight.Max);
                             int z = rnd.Next(vein.VeinSize, 16 - vein.VeinSize);
 
-                            PopulateChunkWithLiquidSources(vein.CubeId, cursor, x, y, z, vein.VeinSize);
+                            PopulateChunkWithLiquidSources(vein.Cube, cursor, x, y, z, vein.VeinSize);
                         }
                     }
                 }
@@ -195,36 +232,52 @@ namespace Utopia.Shared.World.Processors.Utopia.Biomes
                         int y = rnd.Next(cavern.SpawningHeight.Min, cavern.SpawningHeight.Max);
                         int z = rnd.Next(7, 9);
                         int layer = rnd.Next(cavern.CavernHeightSize.Min, cavern.CavernHeightSize.Max + 1);
-                        PopulateChunkWithCave(cursor, x, y, z, layer, cavern.CubeId, rnd);
+                        PopulateChunkWithCave(cursor, x, y, z, layer, cavern.Cube, rnd);
                     }
                 }
             }
         }
 
-        public void GenerateChunkItems(ByteChunkCursor cursor, GeneratedChunk chunk, ref Vector3D chunkWorldPosition, ChunkColumnInfo[] columndInfo, Biome biome, FastRandom rnd, EntityFactory entityFactory)
+        //Will send back a dictionnary with the entity amount that have been generated
+        public Dictionary<ushort, int> GenerateChunkStaticItems(ByteChunkCursor cursor, GeneratedChunk chunk, Biome biome, FastRandom rnd, EntityFactory entityFactory, UtopiaEntitySpawningControler spawnControler)
         {
+            Dictionary<ushort, int> entityAmount = new Dictionary<ushort, int>();
 
-            //int nbr = 0;
-            foreach (BiomeEntity entity in BiomeEntities)
+            foreach (ChunkSpawnableEntity entity in SpawnableEntities.Where(x => x.IsChunkGenerationSpawning))
             {
-                //Entity population
-                for (int i = 0; i < entity.EntityPerChunk; i++)
+                for (int i = 0; i < entity.MaxEntityAmount; i++)
                 {
-                    if (rnd.NextDouble() <= entity.ChanceOfSpawning)
+                    Vector3D entityPosition;
+                    if (spawnControler.TryGetSpawnLocation(entity, chunk, cursor, rnd, out entityPosition))
                     {
-                        //Get Rnd chunk Location.
-                        int x = rnd.Next(0, 16);
-                        int z = rnd.Next(0, 16);
-                        int y = columndInfo[x * AbstractChunk.ChunkSize.Z + z].MaxGroundHeight;
+                        //Create the entity
+                        var createdEntity = entityFactory.CreateFromBluePrint(entity.BluePrintId);
+                        var chunkWorldPosition = chunk.BlockPosition;
 
-                        PopulateChunkWithItems(cursor, chunk, ref chunkWorldPosition, entity.BluePrintId, x, y, z, rnd, entityFactory, false);
-                        //nbr++;
+                        //Should take into account the SpawnLocation ! (Ceiling or not !)
+                        if (createdEntity is IBlockLinkedEntity)
+                        {
+                            Vector3I linkedCubePosition = BlockHelper.EntityToBlock(entityPosition);
+                            linkedCubePosition.Y--;
+                            ((IBlockLinkedEntity)createdEntity).LinkedCube = linkedCubePosition;
+                        }
+
+                        if (createdEntity is BlockLinkedItem)
+                        {
+                            Vector3I LocationCube = BlockHelper.EntityToBlock(entityPosition);
+                            ((BlockLinkedItem)createdEntity).BlockLocationRoot = LocationCube;
+                        }
+
+                        createdEntity.Position = entityPosition;
+
+                        chunk.Entities.Add((StaticEntity)createdEntity);
+                        if (!entityAmount.ContainsKey(createdEntity.BluePrintId)) entityAmount[createdEntity.BluePrintId] = 0;
+                        entityAmount[createdEntity.BluePrintId]++;
                     }
                 }
             }
 
-            //logger.Warn("{0} | {1}", chunk.Position, nbr);
-
+            return entityAmount;
         }
 
         #endregion

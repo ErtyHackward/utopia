@@ -6,6 +6,7 @@ using S33M3CoreComponents.GUI.Nuclex.Controls.Desktop;
 using S33M3CoreComponents.Inputs;
 using S33M3Resources.Structs;
 using Utopia.Entities;
+using Utopia.Entities.Managers;
 using Utopia.GUI.Inventory;
 using Utopia.Resources.Effects.Entities;
 using Utopia.Shared.Configuration;
@@ -19,7 +20,7 @@ namespace Utopia.GUI.Crafting
     public class CraftingWindow : WindowControl
     {
         private readonly WorldConfiguration _conf;
-        private readonly PlayerCharacter _player;
+        private readonly PlayerEntityManager _player;
         private readonly IconFactory _iconFactory;
         private readonly InputsManager _inputsManager;
 
@@ -52,7 +53,7 @@ namespace Utopia.GUI.Crafting
 
         public PlayerCharacter Player
         {
-            get { return _player; }
+            get { return _player.PlayerCharacter; }
         }
 
         public HLSLVoxelModel VoxelEffect 
@@ -61,7 +62,7 @@ namespace Utopia.GUI.Crafting
             set { _resultModel.VoxelEffect = value; }
         }
 
-        public CraftingWindow(WorldConfiguration conf, PlayerCharacter player, IconFactory iconFactory, InputsManager inputsManager )
+        public CraftingWindow(WorldConfiguration conf, PlayerEntityManager player, IconFactory iconFactory, InputsManager inputsManager)
         {
             _conf = conf;
             _player = player;
@@ -79,7 +80,7 @@ namespace Utopia.GUI.Crafting
             _recipesList.Bounds = new UniRectangle(20, 50, 200, 300);
             _recipesList.SelectionChanged += RecipesListOnSelectionChanged;
 
-            foreach (var recipe in _conf.Recipes)
+            foreach (var recipe in _conf.Recipes.Where(r => r.ContainerBlueprintId == 0))
             {
                 _recipesList.Items.Add(recipe);
             }
@@ -159,14 +160,14 @@ namespace Utopia.GUI.Crafting
                     var bpId = recipe.Ingredients[i].BlueprintId;
 
                     var needItems = recipe.Ingredients[i].Count;
-                    var haveItems = _player.Slots().Where(s => s.Item.BluePrintId == bpId).Sum(s => s.ItemsCount);
+                    var haveItems = _player.PlayerCharacter.Slots().Where(s => s.Item.BluePrintId == bpId).Sum(s => s.ItemsCount);
 
                     if (haveItems < needItems)
                         _canCraft = false;
 
                     cell.Slot = new ContainedSlot
                         {
-                            Item = (Item)_conf.BluePrints[bpId]
+                            Item = (IItem)_player.PlayerCharacter.EntityFactory.CreateFromBluePrint(bpId)
                         };
 
                     cell.CountString = string.Format("{0} / {1}", needItems, haveItems);

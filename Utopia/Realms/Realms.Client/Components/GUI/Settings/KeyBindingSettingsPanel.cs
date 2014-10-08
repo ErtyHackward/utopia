@@ -20,7 +20,7 @@ namespace Realms.Client.Components.GUI.Settings
         public KeyBindingSettingsPanel(SettingsComponent parent, D3DEngine engine, UniRectangle bound)
         {
             _engine = engine;
-            _engine.ViewPort_Updated += engine_ViewPort_Updated;
+            _engine.ScreenSize_Updated += engine_ScreenSize_Updated;
             _panelName = "Key Bindings";
             _parent = parent;
             this.Bounds = bound;
@@ -29,7 +29,7 @@ namespace Realms.Client.Components.GUI.Settings
             InitializeComponent();
         }
 
-        void engine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBuffer)
+        void engine_ScreenSize_Updated(ViewportF viewport, Texture2DDescription newBackBuffer)
         {
             Resize();
         }

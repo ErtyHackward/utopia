@@ -1,6 +1,7 @@
 using System;
 using S33M3Resources.Structs;
 using Utopia.Shared.Chunks;
+using S33M3CoreComponents.Maths;
 
 namespace Utopia.Shared.Structs.Helpers
 {
@@ -24,34 +25,26 @@ namespace Utopia.Shared.Structs.Helpers
             return vec3;
         }
 
+        public static Vector3I GlobalToInternalChunkPosition(Vector3D globalPosition)
+        {
+            var vec3 = GlobalToInternalChunkPosition(EntityToBlock(globalPosition));
+
+            return vec3;
+        }
+
         public static Vector3I GlobalToInternalChunkPosition(Vector3I globalPosition)
         {
-            var vec3 = new Vector3I(globalPosition.X % AbstractChunk.ChunkSize.X, globalPosition.Y % AbstractChunk.ChunkSize.Y, globalPosition.Z % AbstractChunk.ChunkSize.Z);
-
-            if (vec3.X < 0)
-                vec3.X = AbstractChunk.ChunkSize.X + vec3.X;
-            if (vec3.Y < 0)
-                vec3.Y = AbstractChunk.ChunkSize.Y + vec3.Y;
-            if (vec3.Z < 0)
-                vec3.Z = AbstractChunk.ChunkSize.Z + vec3.Z;
+            var vec3 = new Vector3I(MathHelper.Mod(globalPosition.X, AbstractChunk.ChunkSize.X),
+                                    MathHelper.Mod(globalPosition.Y, AbstractChunk.ChunkSize.Y),
+                                    MathHelper.Mod(globalPosition.Z, AbstractChunk.ChunkSize.Z));
 
             return vec3;
         }
 
         public static void GlobalToLocalAndChunkPos(Vector3I globalPos, out Vector3I internalPos, out Vector3I chunkPos)
         {
-            internalPos = new Vector3I(globalPos.X % AbstractChunk.ChunkSize.X, globalPos.Y % AbstractChunk.ChunkSize.Y, globalPos.Z % AbstractChunk.ChunkSize.Z);
-
-            if (internalPos.X < 0)
-                internalPos.X = AbstractChunk.ChunkSize.X + internalPos.X;
-            if (internalPos.Y < 0)
-                internalPos.Y = AbstractChunk.ChunkSize.Y + internalPos.Y;
-            if (internalPos.Z < 0)
-                internalPos.Z = AbstractChunk.ChunkSize.Z + internalPos.Z;
-
-            chunkPos = new Vector3I((int)Math.Floor((double)globalPos.X / AbstractChunk.ChunkSize.X), 
-                                    (int)Math.Floor((double)globalPos.Y / AbstractChunk.ChunkSize.Y), 
-                                    (int)Math.Floor((double)globalPos.Z / AbstractChunk.ChunkSize.Z));
+            internalPos = GlobalToInternalChunkPosition(globalPos);
+            chunkPos = BlockToChunkPosition(globalPos);
         }
 
         /// <summary>
@@ -83,6 +76,11 @@ namespace Utopia.Shared.Structs.Helpers
             internalPosition.Z += dz;
 
             return internalPosition;
+        }
+
+        public static Vector3I EntityToBlock(Vector3D position)
+        {
+            return (Vector3I)position;
         }
     }
 }

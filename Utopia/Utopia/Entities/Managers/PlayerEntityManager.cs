@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Security.Cryptography;
 using SharpDX;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Renderer;
 using Utopia.Entities.Voxel;
+using Utopia.GUI;
 using Utopia.GUI.Inventory;
 using Utopia.Network;
 using Utopia.Shared.Chunks;
@@ -28,6 +30,11 @@ using SharpDX.Direct3D11;
 using S33M3DXEngine.Debug.Interfaces;
 using Utopia.Entities.EntityMovement;
 using Utopia.Shared.World;
+using Utopia.PostEffects;
+using S33M3CoreComponents.GUI;
+using S33M3CoreComponents.Sound;
+using Utopia.Particules;
+using S33M3CoreComponents.Timers;
 
 namespace Utopia.Entities.Managers
 {
@@ -38,7 +45,7 @@ namespace Utopia.Entities.Managers
     /// 2) player movement input handling
     /// 3) picking of the block
     /// </summary>
-    public partial class PlayerEntityManager : GameComponent, IPlayerManager, IVisualVoxelEntityContainer, IDebugInfo
+    public partial class PlayerEntityManager : GameComponent, IPlayerManager, IDebugInfo
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -53,6 +60,11 @@ namespace Utopia.Entities.Managers
         private SingleArrayChunkContainer _cubesHolder;
         private LandscapeBufferManager _bufferManager;
         private readonly ILandscapeManager _landscapeManager;
+        private readonly ChatComponent _chatComponent;
+        private readonly PostEffectComponent _postEffectComponent;
+        private ISoundEngine _soundEngine;
+        private TimerManager.GameTimer _energyUpdateTimer;
+        private Random random;
 
         // Block Picking variables
         public TerraCubeWithPosition PickedCube;
@@ -74,8 +86,7 @@ namespace Utopia.Entities.Managers
         private VerletSimulator _physicSimu;
         private float _gravityInfluence;
         private float _moveDelta;
-        private IPickingRenderer _pickingRenderer;
-        private IEntityPickingManager _entityPickingManager;
+        private IPickingManager _entityPickingManager;
         private bool _stopMovedAction = false;
 
         private VisualWorldParameters _visualWorldParameters;
@@ -93,23 +104,68 @@ namespace Utopia.Entities.Managers
         private InventoryComponent _inventoryComponent;
 
         private Faction _faction;
+        private PlayerCharacter _playerCharacter;
+        private GuiManager _guiManager;
+        private IEntityCollisionManager _entityCollisionManager;
+
         #endregion
 
         #region Public variables/properties
 
+        public EntityRotations EntityRotations
+        {
+            get { return _entityRotations; }
+            set { _entityRotations = value; }
+        }
+
         /// <summary>
         /// The Player
         /// </summary>
-        public readonly PlayerCharacter PlayerCharacter;
-        
-        public IDynamicEntity Player { get { return PlayerCharacter; } }
+        public PlayerCharacter PlayerCharacter
+        {
+            get { return _playerCharacter; }
+            set {
+                if (_playerCharacter != value)
+                {
+                    var ea = new PlayerEntityChangedEventArgs();
+
+                    if (_playerCharacter != null)
+                    {
+                        ea.PreviousCharacter = _playerCharacter;
+                        _playerCharacter.Equipment.ItemEquipped -= Equipment_ItemEquipped;
+                        _playerCharacter.HealthStateChanged -= playerCharacter_HealthStateChanged;
+                        _playerCharacter.HealthChanged -= _playerCharacter_HealthChanged;
+                        _playerCharacter.DisplacementModeChanged -= _playerCharacter_DisplacementModeChanged;
+
+                    }
+                    _playerCharacter = value;
+
+                    if (_playerCharacter != null)
+                    {
+                        ea.PlayerCharacter = _playerCharacter;
+                        _playerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
+                        _playerCharacter.HealthStateChanged += playerCharacter_HealthStateChanged;
+                        _playerCharacter.HealthChanged += _playerCharacter_HealthChanged;
+                        _playerCharacter.DisplacementModeChanged += _playerCharacter_DisplacementModeChanged;
+
+
+                        var rightTool = _playerCharacter.Equipment.RightTool;
+                        PutMode = !(rightTool is ITool);
+                    }
+
+                    OnPlayerEntityChanged(ea);
+                }
+            }
+        }
+
+        public ICharacterEntity Player { get { return PlayerCharacter; } }
 
         public Faction Faction { get { return _faction; } }
 
         /// <summary>
         /// Gets active player tool or null
         /// </summary>
-        public IItem ActiveTool { get { return PlayerCharacter.Equipment.RightTool; } }
+        public IItem ActiveTool { get { return PlayerCharacter.Equipment.RightTool ?? PlayerCharacter.HandTool; } }
 
         /// <summary>
         /// The Player Voxel body, its a class that will wrap the player character object with a Voxel Body
@@ -127,37 +183,7 @@ namespace Utopia.Entities.Managers
 
         public bool IsHeadInsideWater { get; set; }
 
-        public bool CatchExclusiveAction { get; set; }
-
-        public EntityDisplacementModes DisplacementMode
-        {
-            get { return Player.DisplacementMode; }
-            set
-            {
-                Player.DisplacementMode = value;
-                _entityRotations.SetDisplacementMode(Player.DisplacementMode, _worldPosition + _entityEyeOffset);
-#if DEBUG
-                logger.Info("{0} is now {1}", PlayerCharacter.CharacterName, value.ToString());
-#endif
-                if (value == EntityDisplacementModes.Walking || value == EntityDisplacementModes.Swiming)
-                {
-                    _physicSimu.StartSimulation(_worldPosition);
-                    _physicSimu.ConstraintOnlyMode = false;
-                }
-                //Collision detection not activated oustide debug mode when flying !
-//#if !DEBUG
-//                else if (value == EntityDisplacementModes.Flying)
-//                {
-//                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
-//                    _physicSimu.ConstraintOnlyMode = true;
-//                }
-//#endif
-                else
-                {
-                    _physicSimu.StopSimulation();
-                }
-            }
-        }
+        public bool CatchExclusiveAction { get; set; }        
 
         public bool HasMouseFocus { get; set; }
         
@@ -179,25 +205,41 @@ namespace Utopia.Entities.Managers
             set
             {
                 _putMode = value;
-
-                GhostedEntityRenderer.Display = _putMode;
+                if (GhostedEntityRenderer != null)
+                    GhostedEntityRenderer.Display = _putMode;
             }
         }
+
+        /// <summary>
+        /// Contains current locked container or null
+        /// </summary>
+        public Container LockedContainer { get; set; }
+
+        public UtopiaParticuleEngine UtopiaParticuleEngine { get; set; }
 
         #endregion
 
         #region Dependenices
         [Inject]
-        public IEntityPickingManager EntityPickingManager
+        public IPickingManager EntityPickingManager
         {
             get { return _entityPickingManager; }
             set
             {
                 _entityPickingManager = value;
-                _entityPickingManager.Player = this;
             }
         }
-        
+
+        [Inject]
+        public IEntityCollisionManager CollisionManager
+        {
+            get { return _entityCollisionManager; }
+            set { 
+                _entityCollisionManager = value; 
+            }
+        } 
+
+
         [Inject]
         public ItemMessageTranslator EntityMessageTranslator
         {
@@ -234,6 +276,9 @@ namespace Utopia.Entities.Managers
         [Inject]
         public IWorldChunks2D WorldChunks { get; set; }
 
+        [Inject]
+        public IPickingRenderer PickingRenderer { get; set; }
+
         #endregion
 
         #region Events
@@ -241,42 +286,77 @@ namespace Utopia.Entities.Managers
         public delegate void LandingGround(double fallHeight, TerraCubeWithPosition landedCube);
         public event LandingGround OnLanding;
 
+        /// <summary>
+        /// Occurs when the inventory screen should be shown
+        /// Indicates that we have the lock and can perform transfer operations with container
+        /// </summary>
+        public event EventHandler<InventoryEventArgs> NeedToShowInventory;
+
+        protected virtual void OnNeedToShowInventory(InventoryEventArgs e)
+        {
+            var handler = NeedToShowInventory;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<PlayerEntityChangedEventArgs> PlayerEntityChanged;
+
+        protected virtual void OnPlayerEntityChanged(PlayerEntityChangedEventArgs e)
+        {
+            var handler = PlayerEntityChanged;
+            if (handler != null) handler(this, e);
+        }
+
         #endregion
 
         public PlayerEntityManager(CameraManager<ICameraFocused> cameraManager,
                                    InputsManager inputsManager,
                                    SingleArrayChunkContainer cubesHolder,
-                                   PlayerCharacter player,
-                                   IPickingRenderer pickingRenderer,
+                                   ServerComponent server,
                                    VoxelModelManager voxelModelManager,
                                    VisualWorldParameters visualWorldParameters,
                                    EntityFactory factory,
                                    LandscapeBufferManager bufferManager,
-                                   ILandscapeManager landscapeManager
+                                   ILandscapeManager landscapeManager,
+                                   ChatComponent chatComponent,
+                                   PostEffectComponent postEffectComponent,
+                                   GuiManager guiManager,
+                                   ISoundEngine soundEngine,
+                                   TimerManager timerManager
             )
         {
+
             _cameraManager = cameraManager;
             _inputsManager = inputsManager;
+            _soundEngine = soundEngine;
             _cubesHolder = cubesHolder;
-            _pickingRenderer = pickingRenderer;
             _visualWorldParameters = visualWorldParameters;
             _factory = factory;
             _bufferManager = bufferManager;
             _landscapeManager = landscapeManager;
+            _chatComponent = chatComponent;
+            _postEffectComponent = postEffectComponent;
+            OnLanding += PlayerEntityManager_OnLanding;
+            _guiManager = guiManager;
 
-            PlayerCharacter = player;
-            PlayerCharacter.Equipment.ItemEquipped += Equipment_ItemEquipped;
-
-            _faction = _factory.GlobalStateManager.GlobalState.Factions[player.FactionId];
+            PlayerCharacter = (PlayerCharacter)server.Player;
             
             ShowDebugInfo = true;
 
             // Create a visualVoxelEntity (== Assign a voxel body to the PlayerCharacter)
-            VisualVoxelEntity = new VisualVoxelEntity(player, voxelModelManager);
+            VisualVoxelEntity = new VisualVoxelEntity(PlayerCharacter, voxelModelManager);
 
+            //Add a new Timer trigger
+            _energyUpdateTimer = timerManager.AddTimer(1000); //A timer that will be raised every second
+            _energyUpdateTimer.OnTimerRaised += energyUpdateTimer_OnTimerRaised;
 
             HasMouseFocus = Updatable;
             UpdateOrder = 0;
+            
+            // create "real" random
+            var entropySource = RNGCryptoServiceProvider.Create();
+            var bytes = new byte[4];
+            entropySource.GetBytes(bytes);
+            random = new Random(BitConverter.ToInt32(bytes,0));
         }
 
         void Equipment_ItemEquipped(object sender, CharacterEquipmentEventArgs e)
@@ -296,6 +376,37 @@ namespace Utopia.Entities.Managers
                 PutMode = false;
             }
         }
+
+        private void _playerCharacter_DisplacementModeChanged(object sender, Shared.Entities.Events.EntityDisplacementModeEventArgs e)
+        {
+            _entityRotations.SetDisplacementMode(e.CurrentDisplacement, _worldPosition + _entityEyeOffset);
+#if DEBUG
+            logger.Info("{0} is now {1}", PlayerCharacter.CharacterName, e.CurrentDisplacement.ToString());
+#endif
+            if (e.CurrentDisplacement == EntityDisplacementModes.Walking || e.CurrentDisplacement == EntityDisplacementModes.Swiming)
+            {
+                _fallMaxHeight = double.MinValue;
+                _physicSimu.StartSimulation(_worldPosition);
+                _physicSimu.ConstraintOnlyMode = false;
+            }
+            else if (e.CurrentDisplacement == EntityDisplacementModes.Dead)
+            {
+                _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
+                _physicSimu.ConstraintOnlyMode = true;
+            }
+            //Collision detection not activated oustide debug mode when flying !
+#if !DEBUG
+                else if (e.CurrentDisplacement == EntityDisplacementModes.Flying)
+                {
+                    _physicSimu.StartSimulation(ref _worldPosition, ref _worldPosition);
+                    _physicSimu.ConstraintOnlyMode = true;
+                }
+#endif
+            else
+            {
+                _physicSimu.StopSimulation();
+            }
+        }
         
         void InventoryComponentSwitchInventory(object sender, InventorySwitchEventArgs e)
         {
@@ -304,12 +415,13 @@ namespace Utopia.Entities.Managers
                 _itemMessageTranslator.ReleaseLock();
                 _lockedEntity = null;
                 _itemMessageTranslator.Container = null;
+                LockedContainer = null;
             }
         }
 
         void EntityMessageTranslatorEntityLockFailed(object sender, EventArgs e)
         {
-            //TODO: inform that player can't use the item he want
+            _chatComponent.AddMessage(" -- Can't use the entity, it is busy!");
             _lockedEntity = null;
         }
 
@@ -322,22 +434,23 @@ namespace Utopia.Entities.Managers
             {
                 var container = _lockedEntity as Container;
                 _itemMessageTranslator.Container = container.Content;
-                _inventoryComponent.ShowInventory(container);
+                LockedContainer = container;
+                OnNeedToShowInventory(new InventoryEventArgs { Container = container });
             }
-            else if (_lockedEntity is IUsableEntity)
+            else
             {
-                var usable = _lockedEntity as IUsableEntity;
-                // send use message to the server
-                PlayerCharacter.EntityUse();
-
-                usable.Use();
+                PlayerCharacter.EntityState.IsEntityPicked = true;
+                PlayerCharacter.EntityState.IsBlockPicked = false;
+                PlayerCharacter.EntityState.PickedEntityLink = _lockedEntity.GetLink();
+                PlayerCharacter.HandUse();
             }
-
-
         }
 
         public override void BeforeDispose()
         {
+            OnLanding -= PlayerEntityManager_OnLanding;
+            _energyUpdateTimer.OnTimerRaised -= energyUpdateTimer_OnTimerRaised;
+
             // Clean Up event Delegates
             if (OnLanding != null)
             {
@@ -365,15 +478,15 @@ namespace Utopia.Entities.Managers
 
             // Init Velret physic simulator
             _physicSimu = new VerletSimulator(ref VisualVoxelEntity.LocalBBox) { WithCollisionBouncing = false };
-            _physicSimu.ConstraintFct += EntityPickingManager.isCollidingWithEntity; //Check against entities first
-            _physicSimu.ConstraintFct += _landscapeManager.IsCollidingWithTerrain;         //Landscape cheking after
+            _physicSimu.ConstraintFct += _entityCollisionManager.IsCollidingWithEntity;       //Check against entities first
+            _physicSimu.ConstraintFct += _landscapeManager.IsCollidingWithTerrain;         //Landscape checking after
 
             _entityRotations = new EntityRotations(_inputsManager, _physicSimu);
             _entityRotations.EntityRotationSpeed = Player.RotationSpeed;
             _entityRotations.SetOrientation(Player.HeadRotation, _worldPosition + _entityEyeOffset);
-
+            
             // Set displacement mode
-            DisplacementMode = Player.DisplacementMode;
+            _playerCharacter.DisplacementMode = Player.DisplacementMode;
         }
 
         /// <summary>
@@ -392,15 +505,18 @@ namespace Utopia.Entities.Managers
 
         public override void FTSUpdate( GameTime timeSpend)
         {
+            EnergyFTSUpdate(timeSpend);
+
             // wait until landscape being loaded
             if (!WorldChunks.IsInitialLoadCompleted) 
                 return;
 
+            Player.EntityState.Entropy = random.Next();
+
             // Input handling
             inputHandler();
 
-            // Picking
-            GetSelectedEntity();
+            _entityCollisionManager.Update();
 
             // Refresh player Movement + rotation
             UpdateEntityMovementAndRotation(ref timeSpend);   
@@ -409,7 +525,17 @@ namespace Utopia.Entities.Managers
             // Refresh the player Bounding box
             VisualVoxelEntity.RefreshWorldBoundingBox(ref _worldPosition);
         }
-        
+
+        protected override void OnUpdatableChanged(object sender, EventArgs args)
+        {
+            if (Updatable)
+            {
+                GhostedEntityRenderer.Display = _putMode;
+            }
+
+            base.OnUpdatableChanged(sender, args);
+        }
+
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             CheckHeadUnderWater();      //Under water head test
@@ -422,13 +548,24 @@ namespace Utopia.Entities.Managers
         
         public string GetDebugInfo()
         {
-            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] PickedBlock: {4}; NewBlockPlace: {5}", PlayerCharacter.CharacterName,
+            var chunk = _landscapeManager.GetChunkFromBlock(new Vector3I(Player.Position.X, Player.Position.Y, Player.Position.Z));
+            return string.Format("Player {0} Pos: [{1:000}; {2:000}; {3:000}] Chunk : {4}", PlayerCharacter.CharacterName,
                                                                                   Math.Round(Player.Position.X, 1),
                                                                                   Math.Round(Player.Position.Y, 1),
                                                                                   Math.Round(Player.Position.Z, 1),
-                                                                                  Player.EntityState.IsBlockPicked ? Player.EntityState.PickedBlockPosition.ToString() : "None",
-                                                                                  Player.EntityState.IsBlockPicked ? Player.EntityState.NewBlockPosition.ToString() : "None"
+                                                                                  chunk == null ?"" : chunk.Position.ToString() 
                                                                                   );            
         }
+    }
+
+    public class PlayerEntityChangedEventArgs : EventArgs
+    {
+        public PlayerCharacter PlayerCharacter { get; set; }
+        public PlayerCharacter PreviousCharacter { get; set; }
+    }
+
+    public class InventoryEventArgs : EventArgs
+    {
+        public Container Container { get; set; }
     }
 }

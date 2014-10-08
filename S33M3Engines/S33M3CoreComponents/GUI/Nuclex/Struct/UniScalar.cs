@@ -62,9 +62,18 @@ namespace S33M3CoreComponents.GUI.Nuclex
         /// <param name="fraction">Fractional position within the parent frame</param>
         /// <param name="offset">Offset in pixels from the fractional position</param>
         public UniScalar(float fraction, float offset)
+            : this(fraction, offset, 0.0f)
+        {
+        }
+
+        /// <summary>Initializes a new dimension from an absolute and a relative part</summary>
+        /// <param name="fraction">Fractional position within the parent frame</param>
+        /// <param name="offset">Offset in pixels from the fractional position</param>
+        public UniScalar(float fraction, float offset, float parentOffset)
         {
             this.Fraction = fraction;
             this.Offset = offset;
+            this.ParentOffset = parentOffset;
         }
 
         /// <summary>Implicitely constructs a scalar using a float as the absolute part</summary>
@@ -86,7 +95,7 @@ namespace S33M3CoreComponents.GUI.Nuclex
         /// </returns>
         public float ToOffset(float containerSize)
         {
-            return this.Fraction * containerSize + this.Offset;
+            return this.Fraction * (containerSize + this.ParentOffset) + this.Offset;
         }
 
         /// <summary>Adds one scalar to another</summary>
@@ -97,7 +106,8 @@ namespace S33M3CoreComponents.GUI.Nuclex
         {
             return new UniScalar(
               scalar.Fraction + summand.Fraction,
-              scalar.Offset + summand.Offset
+              scalar.Offset + summand.Offset,
+              scalar.ParentOffset + summand.ParentOffset
             );
         }
 
@@ -109,7 +119,8 @@ namespace S33M3CoreComponents.GUI.Nuclex
         {
             return new UniScalar(
               scalar.Fraction - subtrahend.Fraction,
-              scalar.Offset - subtrahend.Offset
+              scalar.Offset - subtrahend.Offset,
+              scalar.ParentOffset - subtrahend.ParentOffset
             );
         }
 
@@ -121,7 +132,8 @@ namespace S33M3CoreComponents.GUI.Nuclex
         {
             return new UniScalar(
               scalar.Fraction / divisor.Fraction,
-              scalar.Offset / divisor.Offset
+              scalar.Offset / divisor.Offset,
+              scalar.ParentOffset / divisor.ParentOffset
             );
         }
 
@@ -133,7 +145,8 @@ namespace S33M3CoreComponents.GUI.Nuclex
         {
             return new UniScalar(
               scalar.Fraction * factor.Fraction,
-              scalar.Offset * factor.Offset
+              scalar.Offset * factor.Offset,
+              scalar.ParentOffset * factor.ParentOffset
             );
         }
 
@@ -173,7 +186,7 @@ namespace S33M3CoreComponents.GUI.Nuclex
         public bool Equals(UniScalar other)
         {
             // For a struct, 'other' cannot be null
-            return (this.Fraction == other.Fraction) && (this.Offset == other.Offset);
+            return (this.Fraction == other.Fraction) && (this.Offset == other.Offset) && (this.ParentOffset == other.ParentOffset);
         }
 
         /// <summary>Obtains a hash code of this instance</summary>
@@ -210,6 +223,12 @@ namespace S33M3CoreComponents.GUI.Nuclex
         ///   the parent container the coordinate is used in.
         /// </remarks>
         public float Offset;
+
+
+        /// <summary>Modification in Pixel that will be applied to the Parent size</summary>
+        /// <remarks>
+        /// </remarks>
+        public float ParentOffset;
 
     }
 }

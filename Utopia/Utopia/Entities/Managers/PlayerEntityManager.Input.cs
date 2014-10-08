@@ -1,71 +1,95 @@
 ﻿using S33M3CoreComponents.Inputs.Actions;
 using Utopia.Action;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete.System;
 using Utopia.Shared.Entities.Interfaces;
 using S33M3CoreComponents.Cameras;
+using Utopia.Shared.Entities.Dynamic;
 
 namespace Utopia.Entities.Managers
 {
     //Handle all Input related stuff for player
     public partial class PlayerEntityManager
     {
+        private bool _isAutoRepeatedEvent;
+        private bool IsRestrictedMode
+        {
+            get
+            {
+                return _playerCharacter.HealthState == DynamicEntityHealthState.Dead;
+            }
+        }
+
         #region Private Methods
         /// <summary>
         /// Handle Player Actions - Movement and rotation input are not handled here
         /// </summary>
         private void inputHandler()
         {
-            if (_inputsManager.ActionsManager.isTriggered(Actions.Move_Mode, CatchExclusiveAction))
+            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(Actions.Move_Mode, CatchExclusiveAction))
             {
-                if (Player.DisplacementMode == EntityDisplacementModes.God)
+                if (!Player.CanFly)
                 {
-                    DisplacementMode = EntityDisplacementModes.Walking;
+                    logger.Warn("User want to fly but he can't!");
+                    return;
+                }
+
+                if (Player.DisplacementMode == EntityDisplacementModes.Flying)
+                {
+                    _playerCharacter.DisplacementMode = EntityDisplacementModes.Walking;
                 }
                 else
                 {
-                    DisplacementMode = EntityDisplacementModes.God;
+                    _playerCharacter.DisplacementMode = EntityDisplacementModes.Flying;
                 }
             }
 
             if (!HasMouseFocus) 
                 return; //the editor(s) can acquire the mouseFocus
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.DropMode, CatchExclusiveAction))
+            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(UtopiaActions.DropMode, CatchExclusiveAction))
             {
                 // switch the drop mode if possible
                 var tool = PlayerCharacter.Equipment.RightTool;
-                if (tool != null && tool is ITool)
+                if (tool is ITool)
                 {
                     PutMode = !PutMode;
                 }
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft, CatchExclusiveAction))
+            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(UtopiaActions.UseLeft, out _isAutoRepeatedEvent, CatchExclusiveAction))
             {
                 if (Player.EntityState.IsBlockPicked || Player.EntityState.IsEntityPicked)
                 {
-
                     var item = PlayerCharacter.Equipment.RightTool;
 
                     if (item == null)
-                        item = PlayerCharacter.HandTool;
-
-                    if (_putMode || !(item is ITool))
                     {
-                        // can't put the hand!
-                        if (item == PlayerCharacter.HandTool)
-                            return;
-
-                        // send put message to the server
-                        PlayerCharacter.PutUse();
-
-                        // client sync
-                        item.Put(Player);
+                        if (!_isAutoRepeatedEvent)
+                            HandleHandUse();
                     }
                     else
                     {
-                        // raise DynamicEntity.Use event and calls current tool Use method
-                        PlayerCharacter.ToolUse();
+                        var tool = item as ITool;
+
+                        if (_isAutoRepeatedEvent)
+                        {
+                            // don't repeat put actions
+                            if (_putMode || tool == null)
+                                return;
+
+                            if (!tool.RepeatedActionsAllowed)
+                                return;
+                        }
+
+                        if (_putMode || tool == null)
+                        {
+                            PlayerCharacter.PutUse();
+                        }
+                        else
+                        {
+                            PlayerCharacter.ToolUse();
+                        }
                     }
                 }
             }
@@ -81,73 +105,68 @@ namespace Utopia.Entities.Managers
                     _inputsManager.MouseManager.MouseCapture = false;
                 }
             }
-            
+
             if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityUse, CatchExclusiveAction))
             {
-                // using 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
-                // like opening a chest or a door  
-
-                if (Player.EntityState.IsEntityPicked)
+                if (IsRestrictedMode)
                 {
-                    var link = Player.EntityState.PickedEntityLink;
-
-                    IEntity entity = null;
-
-                    if (link.IsDynamic)
+                    if (Player.EntityState.IsEntityPicked && !Player.EntityState.PickedEntityLink.IsDynamic)
                     {
-                        //TODO: resolve dynamic entity
-                    }
-                    else
-                    {
-                        entity = link.ResolveStatic(_factory.LandscapeManager);
-                    }
-
-                    if (entity == null)
-                        return;
-                    
-                    // check if the entity need to be locked
-
-                    if (entity.RequiresLock)
-                    {
-                        if (_lockedEntity != null)
+                        var entity = Player.EntityState.PickedEntityLink.ResolveStatic(_factory.LandscapeManager);
+                        var soulStone = entity as SoulStone;
+                        if (soulStone != null)
                         {
-                            logger.Warn("Unable to lock two items at once");
-                            return;
-                        }
-
-                        _lockedEntity = entity;
-                        _itemMessageTranslator.RequestLock(_lockedEntity);
-                    }
-                    else
-                    {
-                        if (!link.IsDynamic)
-                        {
-                            if (entity is IUsableEntity)
+                            if (soulStone.DynamicEntityOwnerID == Player.DynamicId)
                             {
-                                // send use message to the server
-                                PlayerCharacter.EntityUse();
-
-                                var usableEntity = entity as IUsableEntity;
-                                usableEntity.Use();
-                            }
-                            else
-                            {
-                                // hand use
-                                // raise DynamicEntity.Use event that will invoke local tool and send a use-message to the server
-                                PlayerCharacter.HandUse();
+                                if (_ressurectionState == ressurectionStates.PreventRessurection)
+                                    _ressurectionState = ressurectionStates.None;
                             }
                         }
                     }
                 }
+                else
+                {
+                    // using 'picked' entity (picked here means entity is in world having cursor over it, not in your hand or pocket) 
+                    // like opening a chest or a door  
+
+                    HandleHandUse();
+                }
             }
 
-            if (_inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow, CatchExclusiveAction))
+            if (!IsRestrictedMode && _inputsManager.ActionsManager.isTriggered(UtopiaActions.EntityThrow, CatchExclusiveAction))
             {
                 //TODO unequip left item and throw it on the ground, (version 0 = place it at newCubeplace, animation later)                
                 // and next, throw the right tool if left tool is already thrown
             }
 
         }
+
+        private bool HandleHandUse()
+        {
+            if (!Player.EntityState.IsEntityPicked || Player.EntityState.PickedEntityLink.IsDynamic)
+                return false;
+
+            var entity = Player.EntityState.PickedEntityLink.ResolveStatic(_factory.LandscapeManager);
+
+            if (entity.RequiresLock)
+            {
+                if (_lockedEntity != null)
+                {
+                    logger.Warn("Unable to lock two items at once");
+                    return false;
+                }
+
+                _lockedEntity = entity;
+                _itemMessageTranslator.RequestLock(_lockedEntity);
+            }
+            else
+            {
+                // hand tool use
+                PlayerCharacter.HandUse();
+            }
+            return true;
+        }
+
         #endregion        
     }
 }

@@ -4,6 +4,10 @@ namespace Utopia.Shared.Entities.Events
     {
         Use,
         Put,
-        Craft
+        Craft,
+        /// <summary>
+        /// Provides entity state to execute a command
+        /// </summary>
+        Command
     }
 }

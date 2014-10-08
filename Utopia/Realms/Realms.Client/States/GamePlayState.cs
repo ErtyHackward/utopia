@@ -4,6 +4,7 @@ using Ninject;
 using Realms.Client.Components;
 using Realms.Client.Components.GUI;
 using S33M3CoreComponents.Inputs.Actions;
+using S33M3CoreComponents.Sound;
 using Utopia.Action;
 using Utopia.Entities;
 using Utopia.Entities.Managers;
@@ -12,10 +13,12 @@ using Utopia.Entities.Renderer;
 using Utopia.Entities.Renderer.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.GUI;
+using Utopia.GUI.CharacterSelection;
 using Utopia.GUI.Crafting;
 using Utopia.Network;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Net.Connections;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
 using Utopia.Worlds.SkyDomes;
@@ -34,6 +37,8 @@ using Utopia.Particules;
 using Utopia.Sounds;
 using Utopia.Shared.World;
 using Utopia.Worlds.Shadows;
+using Utopia.PostEffects;
+using Utopia.GUI.WindRose;
 
 namespace Realms.Client.States
 {
@@ -43,6 +48,10 @@ namespace Realms.Client.States
         private RealmGameSoundManager _sandboxGameSoundManager;
 
         private readonly IKernel _ioc;
+        private InputsManager _inputsManager;
+        private RealmsHud _hud;
+        private PlayerEntityManager _playerEntityManager;
+        private ServerComponent _serverComponent;
 
         public override string Name
         {
@@ -53,27 +62,31 @@ namespace Realms.Client.States
             :base(stateManager)
         {
             _ioc = ioc;
-            AllowMouseCaptureChange = false;
+            AllowMouseCaptureChange = true;
         }
 
         public override void Initialize(DeviceContext context)
         {
+            GameScope.CurrentGameScope.Disposed += CurrentGameScope_Disposed;
+
             var cameraManager = _ioc.Get<CameraManager<ICameraFocused>>();
             var timerManager = _ioc.Get<TimerManager>();
-            var inputsManager = _ioc.Get<InputsManager>();
-            inputsManager.ActionsManager.KeyboardAction += ActionsManager_KeyboardAction;
+            _inputsManager = _ioc.Get<InputsManager>();
+            _inputsManager.ActionsManager.KeyboardAction += ActionsManager_KeyboardAction;
 
             var guiManager = _ioc.Get<GuiManager>();
             var iconFactory = _ioc.Get<IconFactory>();
             var gameClock = _ioc.Get<IClock>();
-            //var inventory = _ioc.Get<InventoryComponent>();
-            
+            var inventory = _ioc.Get<InventoryComponent>();
+            var windRose = _ioc.Get<WindRoseComponent>();
             
             var chat = _ioc.Get<ChatComponent>();
+            chat.ActivatedChanged += chat_ActivatedChanged;
 
-            var hud = (RealmsHud)_ioc.Get<Hud>();
-            //hud.CraftingButton.Pressed += CraftingButton_Pressed;
-            //hud.InventoryButton.Pressed += InventoryButton_Pressed;
+
+            _hud = (RealmsHud)_ioc.Get<Hud>();
+            _hud.CraftingButton.Pressed += CraftingButton_Pressed;
+            _hud.InventoryButton.Pressed += InventoryButton_Pressed;
 
             var skyBackBuffer = _ioc.Get<StaggingBackBuffer>("SkyBuffer");
             skyBackBuffer.DrawOrders.UpdateIndex(0, 50, "SkyBuffer");
@@ -98,41 +111,45 @@ namespace Realms.Client.States
             var worldChunks = _ioc.Get<IWorldChunks2D>();
             var worldShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap ? _ioc.Get<WorldShadowMap>() : null;
             var pickingRenderer = _ioc.Get<IPickingRenderer>();
-            var selectedBlocksRenderer = _ioc.Get<SelectedBlocksRenderer>();
             var dynamicEntityManager = _ioc.Get<IVisualDynamicEntityManager>();
-            //var playerEntityManager = _ioc.Get<PlayerEntityManager>();
-            //playerEntityManager.Player.Inventory.ItemPut += InventoryOnItemPut;
-            //playerEntityManager.Player.Inventory.ItemTaken += InventoryOnItemTaken;
-            var playerEntityManager = _ioc.Get<IPlayerManager>();
 
+            _playerEntityManager = (PlayerEntityManager)_ioc.Get<IPlayerManager>();
+            _playerEntityManager.PlayerCharacter.Inventory.ItemPut += InventoryOnItemPut;
+            _playerEntityManager.PlayerCharacter.Inventory.ItemTaken += InventoryOnItemTaken;
+            _playerEntityManager.NeedToShowInventory += playerEntityManager_NeedToShowInventory;
+            
             var sharedFrameCB = _ioc.Get<SharedFrameCB>();
 
             _sandboxGameSoundManager = (RealmGameSoundManager)_ioc.Get<GameSoundManager>();
-            var serverComponent = _ioc.Get<ServerComponent>();
+            _serverComponent = _ioc.Get<ServerComponent>();
+            _serverComponent.ConnectionStatusChanged += ServerComponentOnConnectionStausChanged;
+            
             var fadeComponent = _ioc.Get<FadeComponent>();
-            fadeComponent.Visible = false;
             var voxelModelManager = _ioc.Get<VoxelModelManager>();
             var adminConsole = _ioc.Get<AdminConsole>();
             var toolRenderer = _ioc.Get<FirstPersonToolRenderer>();
             var particuleEngine = _ioc.Get<UtopiaParticuleEngine>();
             var ghostedRenderer = _ioc.Get<GhostedEntityRenderer>();
             var crafting = _ioc.Get<CraftingComponent>();
+            var charSelection = _ioc.Get<CharacterSelectionComponent>();
             var inventoryEvents = _ioc.Get<InventoryEventComponent>();
             var pickingManager = _ioc.Get<PickingManager>();
             var cracksRenderer = _ioc.Get<CracksRenderer>();
-            
+            var postEffectComponent = _ioc.Get<PostEffectComponent>();
+
             AddComponent(cameraManager);
-            AddComponent(serverComponent);
-            AddComponent(inputsManager);
+            AddComponent(_serverComponent);
+            AddComponent(_inputsManager);
             AddComponent(iconFactory);
             AddComponent(timerManager);
             AddComponent(skyBackBuffer);
-            AddComponent(playerEntityManager);
+            AddComponent(_playerEntityManager);
             AddComponent(dynamicEntityManager);
-            AddComponent(hud);
+            AddComponent(_hud);
             AddComponent(guiManager);
             AddComponent(pickingRenderer);
-            AddComponent(selectedBlocksRenderer);
+            AddComponent(inventory);
+            AddComponent(windRose);
             AddComponent(chat);
             AddComponent(skyDome);
             AddComponent(gameClock);
@@ -149,12 +166,12 @@ namespace Realms.Client.States
             AddComponent(inventoryEvents);
             AddComponent(pickingManager);
             AddComponent(cracksRenderer);
+            AddComponent(charSelection);
+            AddComponent(postEffectComponent);
 
             if (worldShadowMap != null)
                 AddComponent(worldShadowMap);
             
-            inputsManager.MouseManager.StrategyMode = true;
-
 #if DEBUG
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
             foreach (var gc in _ioc.Get<LoadingGameState>().GameComponents.Except(GameComponents))
@@ -168,7 +185,7 @@ namespace Realms.Client.States
             //Check if the GamePlay Components equal those that have been loaded inside the LoadingGameState
             foreach (var gc in GameComponents.Except(_ioc.Get<LoadingGameState>().GameComponents))
             {
-                if (gc.GetType() != typeof(Realms.Client.Components.GUI.LoadingComponent))
+                if (gc.GetType() != typeof(LoadingComponent))
                 {
                     logger.Warn("Missing LoadingGameState component, present inside GamePlayState : {0}", gc.GetType().ToString());
                 }
@@ -176,6 +193,49 @@ namespace Realms.Client.States
 
 #endif
             base.Initialize(context);
+        }
+
+        void chat_ActivatedChanged(object sender, EventArgs e)
+        {
+            var chat = _ioc.Get<ChatComponent>();
+            _hud.DisableNumbersHandling = chat.Activated;
+        }
+
+        void CurrentGameScope_Disposed(object sender, EventArgs e)
+        {
+            _inputsManager.ActionsManager.KeyboardAction -= ActionsManager_KeyboardAction;
+            _inputsManager = null;
+
+            _serverComponent.ConnectionStatusChanged -= ServerComponentOnConnectionStausChanged;
+            _serverComponent = null;
+            
+            _hud.CraftingButton.Pressed -= CraftingButton_Pressed;
+            _hud.InventoryButton.Pressed -= InventoryButton_Pressed;
+            _hud = null;
+            
+            _playerEntityManager.NeedToShowInventory -= playerEntityManager_NeedToShowInventory;
+            _playerEntityManager = null;
+
+            var chat = _ioc.Get<ChatComponent>();
+            chat.ActivatedChanged -= chat_ActivatedChanged;
+        }
+
+        private void ServerComponentOnConnectionStausChanged(object sender, TcpConnectionStatusEventArgs e)
+        {
+            if (e.Status == TcpConnectionStatus.Disconnected)
+            {
+                var vars = _ioc.Get<RealmRuntimeVariables>();
+                vars.MessageOnExit = "Server connection was interrupted. " + _serverComponent.LastErrorText;
+                StatesManager.ActivateGameState("MainMenu");
+            }
+        }
+
+        void playerEntityManager_NeedToShowInventory(object sender, InventoryEventArgs e)
+        {
+            if (StatesManager.CurrentState.Name != "Inventory")
+            {
+                StatesManager.ActivateGameStateAsync("Inventory", true);
+            }
         }
 
         void InventoryButton_Pressed(object sender, EventArgs e)
@@ -190,24 +250,34 @@ namespace Realms.Client.States
 
         private void InventoryOnItemTaken(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
+            var inventory = _ioc.Get<InventoryComponent>();
+            if (inventory.IsToolbarSwitching)
+                return;
+
             var iec = _ioc.Get<InventoryEventComponent>();
-            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " removed " + (e.Slot.ItemsCount > 1 ? "x" + e.Slot.ItemsCount : ""), false);
+            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " removed", false, e.Slot.ItemsCount);
         }
 
         private void InventoryOnItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
+            var inventory = _ioc.Get<InventoryComponent>();
+            if (inventory.IsToolbarSwitching)
+                return;
+
             var iec = _ioc.Get<InventoryEventComponent>();
-            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " added " + (e.Slot.ItemsCount > 1 ? "x" + e.Slot.ItemsCount : ""), true);
+            iec.Notify(e.Slot.Item, e.Slot.Item.Name + " added", true, e.Slot.ItemsCount);
         }
 
-        void ActionsManager_KeyboardAction(object sender, S33M3CoreComponents.Inputs.Actions.ActionsManagerEventArgs e)
+        void ActionsManager_KeyboardAction(object sender, ActionsManagerEventArgs e)
         {
+            var guiManager = _ioc.Get<GuiManager>();
+
             if (StatesManager.CurrentState.Name == "Settings") 
                 return;
 
             if (e.Action.ActionId == Actions.EngineExit)
             {
-                if (StatesManager.CurrentState.Name != "InGameMenu")
+                if (StatesManager.CurrentState.Name == "Gameplay")
                 {
                     StatesManager.ActivateGameStateAsync("InGameMenu", true);
                 }
@@ -221,27 +291,46 @@ namespace Realms.Client.States
             if (StatesManager.CurrentState.Name == "InGameMenu") 
                 return;
 
-            if (e.Action.ActionId == UtopiaActions.OpenInventory)
+            if (guiManager.ScreenIsLocked == false)
             {
-                if (StatesManager.CurrentState.Name != "Inventory")
+                switch (e.Action.ActionId)
                 {
-                    StatesManager.ActivateGameStateAsync("Inventory", true);
-                }
-                else
-                {
-                    StatesManager.ActivateGameStateAsync("Gameplay");
-                }
-            }
-
-            if (e.Action.ActionId == UtopiaActions.OpenCrafting)
-            {
-                if (StatesManager.CurrentState.Name != "Crafting")
-                {
-                    StatesManager.ActivateGameStateAsync("Crafting", true);
-                }
-                else
-                {
-                    StatesManager.ActivateGameStateAsync("Gameplay");
+                    case UtopiaActions.OpenInventory:
+                        if (StatesManager.CurrentState.Name != "Inventory")
+                        {
+                            StatesManager.ActivateGameStateAsync("Inventory", true);
+                        }
+                        else
+                        {
+                            StatesManager.ActivateGameStateAsync("Gameplay");
+                        }
+                        break;
+                    case UtopiaActions.OpenCrafting:
+                        if (StatesManager.CurrentState.Name != "Crafting")
+                        {
+                            StatesManager.ActivateGameStateAsync("Crafting", true);
+                        }
+                        else
+                        {
+                            StatesManager.ActivateGameStateAsync("Gameplay");
+                        }
+                        break;
+                    case UtopiaActions.SelectCharacter:
+                        if (StatesManager.CurrentState.Name != "CharSelection")
+                        {
+                            StatesManager.ActivateGameStateAsync("CharSelection", true);
+                        }
+                        else
+                        {
+                            StatesManager.ActivateGameStateAsync("Gameplay");
+                        }
+                        break;
+                    default:
+                        if (e.Action.ActionId == UtopiaActions.EntityUse && StatesManager.CurrentState.Name == "Inventory")
+                        {
+                            StatesManager.ActivateGameStateAsync("Gameplay");
+                        }
+                        break;
                 }
             }
         }
@@ -253,6 +342,9 @@ namespace Realms.Client.States
 
             var playerEntityManager = _ioc.Get<IPlayerManager>();
             playerEntityManager.EnableComponent();
+
+            var fadeComponent = _ioc.Get<FadeComponent>();
+            fadeComponent.Visible = false;
 
             base.OnEnabled(previousState);
         }

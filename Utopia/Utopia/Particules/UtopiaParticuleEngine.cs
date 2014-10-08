@@ -27,6 +27,7 @@ using Utopia.Entities.Managers.Interfaces;
 using Utopia.Entities.Voxel;
 using Utopia.Shared.Entities;
 using Utopia.Worlds.Weather;
+using Utopia.Shared.Entities.Events;
 
 namespace Utopia.Particules
 {
@@ -37,6 +38,11 @@ namespace Utopia.Particules
     public class UtopiaParticuleEngine : ParticuleEngine
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        public enum DynamicEntityParticuleType
+        {
+            Blood = 0
+        }
 
         #region Private Variables
         private SharedFrameCB _sharedFrameCB;
@@ -52,8 +58,11 @@ namespace Utopia.Particules
         private IWorldChunks2D _worldChunks;
         private readonly ILandscapeManager _landscapeManager;
 
-        private SpriteEmitter _staticEntityEmitter;
+        private SpriteStaticEmitter _staticEntityEmitter;
+        private SpriteDynamicEmitter _dynamicEntityEmitter;
         private IWeather _weather;
+
+        private List<DynamicEntityParticule> DynamicEntityParticules;
         #endregion
 
         #region Public Properties
@@ -97,8 +106,23 @@ namespace Utopia.Particules
         public override void Initialize()
         {
             //Create the Cube Emitter
-            _cubeEmitter = ToDispose(new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"ct*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, _landscapeManager, 32));
+            _cubeEmitter = ToDispose(new CubeEmitter(ClientSettings.TexturePack + @"Terran/", @"*.png", ClientSettings.TexturePack + @"BiomesColors/", 5, 0.1f, _worldParameters, _worldChunks, _landscapeManager, 32, _weather));
             AddEmitter(_d3dEngine.ImmediateContext, _cubeEmitter);
+
+            //Create the various dynamic Particules type
+            DynamicEntityParticules = new List<DynamicEntityParticule>();
+            //Blood
+            DynamicEntityParticule blood = new DynamicEntityParticule();
+            blood.ParticuleType = EntityParticuleType.Billboard;
+            blood.ParticuleId = 1; //Circle
+            blood.ApplyWindForce = false;
+            blood.Size = new Vector2(0.1f, 0.1f);
+            blood.ParticuleColor = SharpDX.Color.Red;
+            blood.ParticuleLifeTime = 0.4f;
+            blood.ParticuleLifeTimeRandomness = 0.1f;
+            blood.EmitVelocityRandomness = new Vector3(0.4f, 0.2f, 0.4f);
+            blood.AccelerationForce = new Vector3(-1.5f, -2.1f, -1.5f);
+            DynamicEntityParticules.Add(blood);
 
             base.Initialize();
         }
@@ -109,8 +133,11 @@ namespace Utopia.Particules
             ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Particules/", @"*.png", FilterFlags.Point, "ArrayTexture_Particules", out _particulesSpritesResource);
             ToDispose(_particulesSpritesResource);
 
-            _staticEntityEmitter = new SpriteEmitter(this, DXStates.Samplers.UVWrap_MinMagMipLinear, _particulesSpritesResource, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled, _weather);
+            _staticEntityEmitter = new SpriteStaticEmitter(this, DXStates.Samplers.UVWrap_MinMagMipLinear, _particulesSpritesResource, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled, _weather);
             AddEmitter(context, _staticEntityEmitter);
+
+            _dynamicEntityEmitter = new SpriteDynamicEmitter(this, DXStates.Samplers.UVWrap_MinMagMipLinear, _particulesSpritesResource, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadEnabled, _weather);
+            AddEmitter(context, _dynamicEntityEmitter);
 
             base.LoadContent(context);
         }
@@ -135,10 +162,11 @@ namespace Utopia.Particules
             }
         }
 
-        public void StaticEntityEmiters()
+        //Look inside all Surrending chunks for statis entities that are emitting particules
+        private void StaticEntityEmiters()
         {
             if (_worldChunks.Chunks == null) return;
-            foreach (VisualChunk chunk in _worldChunks.Chunks.Where(x => x.Graphics.IsFrustumCulled == false && x.DistanceFromPlayer < _worldChunks.StaticEntityViewRange))
+            foreach (VisualChunk chunk in _worldChunks.Chunks.Where(x => x.Graphics.IsFrustumCulled == false && x.DistanceFromPlayer < _worldChunks.StaticEntityViewRange && x.State == ChunkState.DisplayInSyncWithMeshes && x.ThreadStatus == S33M3DXEngine.Threading.ThreadsManager.ThreadStatus.Idle))
             {
                 foreach (var entityWithMeta in chunk.EmitterStaticEntities)
                 {
@@ -160,6 +188,23 @@ namespace Utopia.Particules
                 }
             }
         }
+
+        public void AddDynamicEntityParticules(Vector3 StartUpPosition, Vector3 StartUpPositionNormal, DynamicEntityParticuleType type)
+        {
+            AddDynamicEntityParticules(new Vector3D(StartUpPosition), StartUpPositionNormal, type);
+        }
+
+        public void AddDynamicEntityParticules(Vector3D StartUpPosition, Vector3 StartUpPositionNormal, DynamicEntityParticuleType type)
+        {
+            if (StartUpPosition == default(Vector3D)) return;
+
+            Vector3 velocity = StartUpPositionNormal;
+            velocity *= 1.5f;
+
+            _dynamicEntityEmitter.EmitParticule(DynamicEntityParticules[0], StartUpPosition, 15, velocity);
+        }
+
+
         #endregion
     }
 }

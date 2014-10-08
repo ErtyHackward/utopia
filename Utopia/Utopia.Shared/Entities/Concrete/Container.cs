@@ -1,5 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using ProtoBuf;
+using S33M3Resources.Structs;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Entities.Models;
@@ -12,21 +17,58 @@ namespace Utopia.Shared.Entities.Concrete
     /// </summary>
     [ProtoContract]
     [Description("Allows to store other entities inside this one.")]
-    public class Container : OrientedBlockLinkedItem
+    public class Container : OrientedBlockItem, IContainerEntity
     {
         SlotContainer<ContainedSlot> _content;
 
         [Category("Container")]
         [Description("Model state if the container is opened")]
-        [TypeConverter(typeof(ModelStateSelector))]
+        [TypeConverter(typeof(ModelStateConverter))]
         [ProtoMember(1)]
         public string OpenedState { get; set; }
 
         [Category("Container")]
         [Description("Model state if the container is closed")]
-        [TypeConverter(typeof(ModelStateSelector))]
+        [TypeConverter(typeof(ModelStateConverter))]
         [ProtoMember(2)]
         public string ClosedState { get; set; }
+
+        [Browsable(false)]
+        [ProtoMember(3)]
+        public SlotContainer<ContainedSlot> Content
+        {
+            get { return _content; }
+            set
+            {
+                if (_content == value)
+                    return;
+
+                if (_content != null)
+                {
+                    _content.ItemTaken -= ContentItemsChanged;
+                    _content.ItemPut -= ContentItemsChanged;
+                    _content.ItemExchanged -= ContentItemsChanged;
+                }
+
+                _content = value;
+
+                if (_content != null)
+                {
+                    _content.ItemTaken += ContentItemsChanged;
+                    _content.ItemPut += ContentItemsChanged;
+                    _content.ItemExchanged += ContentItemsChanged;
+                }
+            }
+        }
+
+        [Category("Container")]
+        [Description("How many slots container has")]
+        [TypeConverter(typeof(Vector2IConverter))]
+        public Vector2I ContainerSize
+        {
+            get { return _content.GridSize; }
+            set { _content.GridSize = value; }
+        }
 
         public override bool RequiresLock
         {
@@ -62,36 +104,7 @@ namespace Utopia.Shared.Entities.Concrete
             }
         }
 
-        public override ushort ClassId
-        {
-            get { return EntityClassId.Container; }
-        }
 
-        public SlotContainer<ContainedSlot> Content 
-        { 
-            get { return _content; }
-            set {
-
-                if (_content == value)
-                    return;
-
-                if (_content != null)
-                {
-                    _content.ItemTaken -= ContentItemsChanged;
-                    _content.ItemPut -= ContentItemsChanged;
-                    _content.ItemExchanged -= ContentItemsChanged;
-                }
-                
-                _content = value;
-
-                if (_content != null)
-                {
-                    _content.ItemTaken += ContentItemsChanged;
-                    _content.ItemPut += ContentItemsChanged;
-                    _content.ItemExchanged += ContentItemsChanged;
-                }
-            }
-        }
 
         protected override void OnInstanceChanged(VoxelModelInstance prev)
         {
@@ -117,8 +130,7 @@ namespace Utopia.Shared.Entities.Concrete
 
         public Container()
         {
-            Content = new SlotContainer<ContainedSlot>(this);
-            MountPoint = BlockFace.Top;
+            _content = new SlotContainer<ContainedSlot>(this);
         }
 
         public override object Clone()
@@ -127,10 +139,33 @@ namespace Utopia.Shared.Entities.Concrete
 
             var cont = obj as Container;
 
-            if (cont != null) 
-                cont.Content = new SlotContainer<ContainedSlot>(cont);
+            if (cont != null)
+                cont.Content = new SlotContainer<ContainedSlot>(cont, ContainerSize);
 
             return obj;
         }
+
+        public bool TakeItems(ushort blueprintId, int count)
+        {
+            return _content.TakeItem(blueprintId, count);
+        }
+
+        public bool PutItems(IItem item, int count)
+        {
+            return _content.PutItem(item, count);
+        }
+
+        public IEnumerable<ContainedSlot> Slots()
+        {
+            return _content;
+        }
+    }
+
+    public interface IContainerEntity
+    {
+        bool TakeItems(ushort blueprintId, int count);
+        bool PutItems(IItem item, int count);
+
+        IEnumerable<ContainedSlot> Slots();
     }
 }

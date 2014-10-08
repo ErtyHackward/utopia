@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ProtoBuf;
+using System.Linq;
 using S33M3Resources.Structs;
 
 namespace Utopia.Shared.Structs
@@ -97,6 +98,29 @@ namespace Utopia.Shared.Structs
             return _position.X <= position.X && _position.X + _size.X > position.X && _position.Y <= position.Y && _position.Y + _size.Y > position.Y;
         }
 
+        /// <summary>
+        /// Enumerates all points in range excluding other range
+        /// </summary>
+        /// <param name="range"></param>
+        /// <param name="exclude"></param>
+        /// <returns></returns>
+        public static IEnumerable<Vector2I> AllExclude(Range2I range, Range2I exclude)
+        {
+            if (range == exclude) return null;
+            return range.Where(pos => !exclude.Contains(pos));
+        }
+
+        /// <summary>
+        /// Enumerates all points in range excluding range specified
+        /// </summary>
+        /// <param name="exclude"></param>
+        /// <returns></returns>
+        public IEnumerable<Vector2I> AllExclude(Range2I exclude)
+        {
+            return AllExclude(this, exclude);
+        }
+
+
         public IEnumerator<Vector2I> GetEnumerator()
         {
             for (int x = _position.X; x < _position.X + _size.X; x++)
@@ -116,6 +140,35 @@ namespace Utopia.Shared.Structs
             return GetEnumerator();
         }
 
+        public static bool operator ==(Range2I one, Range2I two)
+        {
+            return one.Position == two.Position && one.Size == two.Size;
+        }
+
+        public static bool operator !=(Range2I one, Range2I two)
+        {
+            return !(one == two);
+        }
+
+        public bool Equals(Range2I other)
+        {
+            return other.Position.Equals(Position) && other.Size.Equals(Size);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (obj.GetType() != typeof(Range2I)) return false;
+            return Equals((Range2I)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Position.GetHashCode() * 397) ^ Size.GetHashCode();
+            }
+        }
 
     }
 }

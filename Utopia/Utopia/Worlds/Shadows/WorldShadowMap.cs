@@ -6,6 +6,7 @@ using S33M3CoreComponents.Maths;
 using S33M3DXEngine.Main;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Resources.VertexFormats;
+using Utopia.Shared.GameDXStates;
 using Utopia.Worlds.SkyDomes;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
@@ -18,6 +19,8 @@ using S33M3DXEngine.RenderStates;
 using S33M3CoreComponents.WorldFocus;
 using Utopia.Worlds.Chunks;
 using Utopia.Worlds.GameClocks;
+using Utopia.Resources.Effects.Entities;
+using Utopia.Entities.Voxel;
 
 namespace Utopia.Worlds.Shadows
 {
@@ -25,10 +28,12 @@ namespace Utopia.Worlds.Shadows
     {
         private int _smDrawID;
 
+
         private Color4 _whiteColor = new Color4(255, 255, 255, 255);
         private bool _debugSMTextureNeedToBeSaved = false;
 
-        private HLSLTerranShadow _shadowMapEffect;
+        private HLSLTerranShadow _landScapeShadowMapEffect;
+        private HLSLVoxelModelInstancedShadow _entitiesShadowMapEffect;
 
         private CameraManager<ICameraFocused> _camManager;
         private DrawableTex2D _shadowMap;
@@ -62,7 +67,9 @@ namespace Utopia.Worlds.Shadows
                              )
         {
             DrawOrders.UpdateIndex(0, 99, "SM_CREATION");
+
             _smDrawID = DrawOrders.AddIndex(10000, "SM_DRAW");
+
 
             _d3dEngine = d3dEngine;
             _camManager = camManager;
@@ -80,10 +87,8 @@ namespace Utopia.Worlds.Shadows
             _shadowMap = ToDispose(new DrawableTex2D(_d3dEngine));
             _shadowMap.Init(ShadowMapSize, ShadowMapSize, false, SharpDX.DXGI.Format.R32_Float);
 
-            _shadowMapEffect = new HLSLTerranShadow(context.Device, ClientSettings.EffectPack + @"Terran/ShadowMap.hlsl", VertexCubeSolid.VertexDeclaration);
-
-            _shadowMapEffect.TerraTexture.Value = WorldChunks.Terra_View;
-            _shadowMapEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(Utopia.Shared.GameDXStates.DXStates.Samplers.UVClamp_MinMagMipPoint);
+            _landScapeShadowMapEffect = ToDispose(new HLSLTerranShadow(context.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration));
+            _entitiesShadowMapEffect = ToDispose(new HLSLVoxelModelInstancedShadow(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VoxelInstanceData.VertexDeclaration));
         }
 
         private Vector2 depthBufferDrawSize = new Vector2(128, 128);
@@ -91,30 +96,46 @@ namespace Utopia.Worlds.Shadows
         {
             if (index == _smDrawID)
             {
-                //Draw the Dephbuffer texture
+                //Draw the DephtBuffer texture
+
                 _shadowMap.DrawDepthBuffer(context, ref depthBufferDrawSize);
+
             }
             else
             {
                 CreateLightViewProjectionMatrix(out LightViewProjection);
 
+                var m = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3());
+                m.Invert();
+
                 _shadowMap.Begin();
 
-                DynamicEntityManager.VoxelDraw(context, LightViewProjection);
+                // draw players
+                DynamicEntityManager.VoxelDraw(context, m * LightViewProjection);
 
+                // draw chunks
                 Matrix worldFocus = Matrix.Identity;
-
                 foreach (var chunk in WorldChunks.Chunks.Where(x => x.Graphics.IsExistingMesh4Drawing))
                 {
                     _worldFocusManager.CenterTranslationMatrixOnFocus(ref chunk.World, ref worldFocus);
-                    _shadowMapEffect.Begin(context);
-                    _shadowMapEffect.CBPerDraw.Values.LightWVP = Matrix.Transpose(worldFocus * LightViewProjection);
-                    _shadowMapEffect.CBPerDraw.IsDirty = true;
-                    _shadowMapEffect.Apply(context);
+                    _landScapeShadowMapEffect.Begin(context);
+                    _landScapeShadowMapEffect.CBPerDraw.Values.LightWVP = Matrix.Transpose(worldFocus * LightViewProjection);
+                    _landScapeShadowMapEffect.CBPerDraw.IsDirty = true;
+                    _landScapeShadowMapEffect.Apply(context);
 
                     chunk.Graphics.DrawSolidFaces(context);
                 }
-                
+
+                //WorldChunks.PrepareVoxelDraw(context, m * LightViewProjection);
+                _entitiesShadowMapEffect.Begin(context);
+                _entitiesShadowMapEffect.CBPerDraw.Values.LightWVP = Matrix.Transpose(m * LightViewProjection);
+                _entitiesShadowMapEffect.CBPerDraw.IsDirty = true;
+                _entitiesShadowMapEffect.Apply(context);
+                foreach (var chunk in WorldChunks.Chunks.Where(x => x.Graphics.IsExistingMesh4Drawing && x.DistanceFromPlayer <= WorldChunks.StaticEntityViewRange))
+                {
+                    WorldChunks.DrawStaticEntitiesShadow(context, chunk);
+                }
+
                 _shadowMap.End();
 
                 _d3dEngine.SetRenderTargetsAndViewPort(context);
@@ -133,7 +154,6 @@ namespace Utopia.Worlds.Shadows
         #region Private Methods
         private float lastLightUpdate = -100.0f;
 
-
         private void CreateLightViewProjectionMatrix(out Matrix lightProjection)
         {
             if (Math.Abs(lastLightUpdate - _clock.ClockTime.ClockTimeNormalized2) > 0.005f)
@@ -141,7 +161,7 @@ namespace Utopia.Worlds.Shadows
                 BackUpLightDirection = SkyDome.LightDirection;
                 lastLightUpdate = _clock.ClockTime.ClockTimeNormalized2;
             }
-
+            
             BoundingSphere sphere = new BoundingSphere(Vector3.Zero, 100);
 
             const float ExtraBackup = 20.0f;

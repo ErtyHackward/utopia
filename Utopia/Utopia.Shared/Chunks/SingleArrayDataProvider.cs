@@ -1,5 +1,6 @@
 using System;
 using ProtoBuf;
+using Utopia.Shared.Structs.Helpers;
 using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
@@ -122,26 +123,32 @@ namespace Utopia.Shared.Chunks
                                                      inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y)].Id;
         }
 
+
         /// <summary>
-        /// Operation is not supported
+        /// Sets a single block into location specified
         /// </summary>
-        /// <param name="worldPosition"></param>
+        /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public override void SetBlock(Vector3I worldPosition, byte blockValue, BlockTag tag = null)
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null, uint sourceDynamicId = 0)
         {
-            int index = ChunkCubes.Index(worldPosition.X, worldPosition.Y, worldPosition.Z);
+            int index = ChunkCubes.Index(inChunkPosition.X + DataProviderUser.ChunkPositionBlockUnit.X,
+                                         inChunkPosition.Y,
+                                         inChunkPosition.Z + DataProviderUser.ChunkPositionBlockUnit.Y);
+
             ChunkCubes.Cubes[index] = new TerraCube(blockValue);
 
-            if (tag != null) SetTag(tag, worldPosition);
+            SetTag(tag, inChunkPosition);
 
-            RefreshMetaData(ref worldPosition);
+            RefreshMetaData(BlockHelper.ConvertToGlobal(new Vector3I(DataProviderUser.ChunkPositionBlockUnit.X, 0, DataProviderUser.ChunkPositionBlockUnit.Y), inChunkPosition), blockValue);
 
             OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
                                    {
-                                       Locations = new[] { worldPosition },
+                                       Locations = new[] { inChunkPosition },
                                        Bytes = new[] { blockValue },
-                                       Tags = tag != null ? new[] { tag } : null
+                                       Tags = tag != null ? new[] { tag } : null,
+                                       SourceDynamicId = sourceDynamicId
                                    });
         }
 
@@ -150,46 +157,69 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         /// <param name="worldPosition"></param>
         /// <param name="blockValue"></param>
-        /// <param name="tag"></param>
         public void SetBlockWithoutEvents(Vector3I worldPosition, byte blockValue)
         {
             int index = ChunkCubes.Index(worldPosition.X, worldPosition.Y, worldPosition.Z);
             ChunkCubes.Cubes[index] = new TerraCube(blockValue);
-            RefreshMetaData(ref worldPosition);
+            RefreshMetaData(worldPosition, blockValue);
         }
 
-        private void RefreshMetaData(ref Vector3I worldPosition)
+        private void RefreshMetaData(Vector3I worldPosition, byte newBlockValue)
         {
-            //Must look from World Top to bottom to recompute the new High Block !
-            int yPosi = AbstractChunk.ChunkSize.Y - 1;
-            int index = ChunkCubes.Index(worldPosition.X, yPosi, worldPosition.Z);
-            while (ChunkCubes.Cubes[index].Id == WorldConfiguration.CubeId.Air && yPosi > 0)
-            {
-                index = ChunkCubes.FastIndex(index, yPosi, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1, false);
-                yPosi--;
-            }
-
             //From World Coordinate to Chunk Coordinate
             int arrayX = MathHelper.Mod(worldPosition.X, AbstractChunk.ChunkSize.X);
             int arrayZ = MathHelper.Mod(worldPosition.Z, AbstractChunk.ChunkSize.Z);
             //Compute 2D index of ColumnInfo and update ColumnInfo
             int index2D = arrayX * AbstractChunk.ChunkSize.Z + arrayZ;
-            ColumnsInfo[index2D].MaxHeight = (byte)yPosi;
-            ChunkMetaData.setChunkMaxHeightBuilt(ColumnsInfo);
-        }
 
+            if (newBlockValue != WorldConfiguration.CubeId.Air)
+            {
+                //Change being made above surface !
+                if (ColumnsInfo[index2D].MaxHeight < worldPosition.Y)
+                {
+                    ColumnsInfo[index2D].MaxHeight = (byte)worldPosition.Y;
+                    ChunkMetaData.setChunkMaxHeightBuilt((byte)worldPosition.Y);
+                    if (ColumnsInfo[index2D].IsWild)
+                    {
+                        ColumnsInfo[index2D].IsWild = false;
+                        ChunkMetaData.setChunkWildStatus(ColumnsInfo);
+                    }
+                }
+            }
+            else
+            {
+                //Change being made at the surface (Block removed)
+                if (ColumnsInfo[index2D].MaxHeight <= worldPosition.Y)
+                {
+                    int yPosi = worldPosition.Y - 1;
+                    int index = ChunkCubes.Index(worldPosition.X, yPosi, worldPosition.Z);
+                    while (ChunkCubes.Cubes[index].Id == WorldConfiguration.CubeId.Air && yPosi > 0)
+                    {
+                        index = ChunkCubes.FastIndex(index, yPosi, SingleArrayChunkContainer.IdxRelativeMove.Y_Minus1, false);
+                        yPosi--;
+                    }
+                    ChunkMetaData.setChunkMaxHeightBuilt((byte)yPosi);
+                    if (ColumnsInfo[index2D].IsWild)
+                    {
+                        ColumnsInfo[index2D].IsWild = false;
+                        ChunkMetaData.setChunkWildStatus(ColumnsInfo);
+                    }
+                }
+            }
+        }
+        
         /// <summary>
-        /// Operation is not supported
+        /// Sets a group of blocks
         /// </summary>
         /// <param name="positions"></param>
         /// <param name="values"></param>
-        /// <param name="tags"></param>
-        /// <exception cref="NotSupportedException"></exception>
-        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
+        /// <param name="tags"> </param>
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null, uint sourceDynamicId = 0)
         {
             for (int i = 0; i < positions.Length; i++)
             {
-                SetBlock(positions[i], values[i], tags[i]);
+                SetBlock(positions[i], values[i], tags == null ? null : tags[i], sourceDynamicId);
             }
         }
 
@@ -288,7 +318,7 @@ namespace Utopia.Shared.Chunks
         {
             BlockTag result;
             _tags.TryGetValue(inChunkPosition, out result);
-            return result;
+            return result == null ? null : (BlockTag)result.Clone();
         }
 
         public void SetTag(BlockTag tag, Vector3I inChunkPosition)
@@ -296,7 +326,7 @@ namespace Utopia.Shared.Chunks
             lock (_syncRoot)
             {
                 if (tag != null)
-                    _tags[inChunkPosition] = tag;
+                    _tags[inChunkPosition] = (BlockTag)tag.Clone();
                 else
                     _tags.Remove(inChunkPosition);
             }

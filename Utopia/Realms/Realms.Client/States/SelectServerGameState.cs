@@ -11,8 +11,9 @@ namespace Realms.Client.States
 {
     public class SelectServerGameState : GameState
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IKernel _iocContainer;
-
+        
         public List<ServerInfo> ServerList { get; set; }
 
         public override string Name
@@ -38,10 +39,24 @@ namespace Realms.Client.States
 
             selection.BackPressed += SelectionBackPressed;
             selection.ConnectPressed += SelectionConnectPressed;
-
+            
             webApi.ServerListReceived += WebApiServerListReceived;
 
             base.Initialize(context);
+        }
+
+        void List_SelectionChanged(object sender, EventArgs e)
+        {
+            var selection = _iocContainer.Get<ServerSelectionComponent>();
+
+            if (selection.List.SelectedItems.Count != 1)
+            {
+                selection.Description = "";
+                return;
+            }
+
+            var server = ServerList[selection.List.SelectedItems[0]];
+            selection.Description = server.Description;
         }
 
         void SelectionConnectPressed(object sender, EventArgs e)
@@ -50,34 +65,48 @@ namespace Realms.Client.States
             var vars = _iocContainer.Get<RealmRuntimeVariables>();
 
             vars.SinglePlayer = false;
-            vars.CurrentServerAddress = ServerList[selection.List.SelectedItems[0]].ServerAddress;
+
+            var item = ServerList[selection.List.SelectedItems[0]];
+            vars.CurrentServerAddress = item.ServerAddress + ":" + item.Port;
+            vars.CurrentServerLocalAddress = string.IsNullOrEmpty(item.LocalAddress) ? null : item.LocalAddress + ":" + item.Port;
+
+            logger.Info("Connecting to {0} {1}", item.ServerName, item.ServerAddress);
 
             StatesManager.ActivateGameStateAsync("LoadingGame");
         }
-
+        
         void WebApiServerListReceived(object sender, ServerListResponse e)
         {
-            var selection = _iocContainer.Get<ServerSelectionComponent>();
+            var gui = _iocContainer.Get<GuiManager>();
 
-            if (e.Exception == null)
-            {
-                selection.List.Items.Clear();
+            gui.RunInGuiThread(() => { 
+                var selection = _iocContainer.Get<ServerSelectionComponent>();
 
-                if (e.Servers != null)
+                if (e.Exception == null)
                 {
-                    foreach (var serverInfo in e.Servers)
-                    {
-                        selection.List.Items.Add(string.Format("{0} ({1})", serverInfo.ServerName, serverInfo.UsersCount) );
-                    }
-                    ServerList = e.Servers;
-                }
-            }
-            else
-            {
-                selection.List.Items.Clear();
-                selection.List.Items.Add("Error!");
-            }
+                    selection.List.Items.Clear();
 
+#if DEBUG
+                    if (e.Servers == null)
+                        e.Servers = new List<ServerInfo>();
+                    e.Servers.Add(new ServerInfo { ServerAddress = "127.0.0.1", Port = 4815, ServerName = "localhost" });
+#endif
+
+                    if (e.Servers != null)
+                    {
+                        foreach (var serverInfo in e.Servers)
+                        {
+                            selection.List.Items.Add(string.Format("{0} ({1})", serverInfo.ServerName, serverInfo.UsersCount));
+                        }
+                        ServerList = e.Servers;
+                    }
+                }
+                else
+                {
+                    selection.List.Items.Clear();
+                    selection.List.Items.Add("Error!");
+                }
+            });
         }
 
         public override void OnEnabled(GameState previousState)
@@ -88,7 +117,15 @@ namespace Realms.Client.States
             selection.List.Items.Clear();
             selection.List.Items.Add("Loading...");
 
+            selection.List.SelectionChanged += List_SelectionChanged;
+
             webApi.GetServersListAsync();
+        }
+
+        public override void OnDisabled(GameState nextState)
+        {
+            var selection = _iocContainer.Get<ServerSelectionComponent>();
+            selection.List.SelectionChanged -= List_SelectionChanged;
         }
 
         void SelectionBackPressed(object sender, EventArgs e)

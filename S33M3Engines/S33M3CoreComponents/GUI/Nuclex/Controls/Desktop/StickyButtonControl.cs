@@ -14,7 +14,6 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
         protected override void OnPressed()
         {
             Sticked = true;
-            base.OnPressed();
             
             // unstick all other buttons at our parent
 
@@ -29,6 +28,8 @@ namespace Utopia.GUI.NuclexUIPort.Controls.Desktop
                     }
                 }
             }
+
+            base.OnPressed();
         }
 
         public void Release()

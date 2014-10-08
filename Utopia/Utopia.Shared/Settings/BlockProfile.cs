@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
 using ProtoBuf;
+using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Enums;
 using S33M3Resources.Structs;
 using System.ComponentModel;
+using System.Globalization;
+using System;
+using System.Drawing.Design;
+using Utopia.Shared.Tools;
 
 namespace Utopia.Shared.Settings
 {
@@ -99,22 +104,6 @@ namespace Utopia.Shared.Settings
             set { _biomeColorArrayTexture = value; }
         }
 
-        //Texture id foreach face
-        [ProtoMember(20)]
-        public byte[] Textures = new byte[6];
-        [Description("Front texture Id"), Category("Textures")]
-        public byte Tex_Front { get { return Textures[(int)CubeFaces.Front]; } set { Textures[(int)CubeFaces.Front] = value; } }
-        [Description("Back texture Id"), Category("Textures")]
-        public byte Tex_Back { get { return Textures[(int)CubeFaces.Back]; } set { Textures[(int)CubeFaces.Back] = value; } }
-        [Description("Left texture Id"), Category("Textures")]
-        public byte Tex_Left { get { return Textures[(int)CubeFaces.Left]; } set { Textures[(int)CubeFaces.Left] = value; } }
-        [Description("Right texture Id"), Category("Textures")]
-        public byte Tex_Right { get { return Textures[(int)CubeFaces.Right]; } set { Textures[(int)CubeFaces.Right] = value; } }
-        [Description("Top texture Id"), Category("Textures")]
-        public byte Tex_Top { get { return Textures[(int)CubeFaces.Top]; } set { Textures[(int)CubeFaces.Top] = value; } }
-        [Description("Bottom texture Id"), Category("Textures")]
-        public byte Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
-
         private List<SoundSource> _walkingOverSound = new List<SoundSource>();
 
         [Description("Sound played when entity walk over a this cube"), Category("Sound")]
@@ -125,6 +114,47 @@ namespace Utopia.Shared.Settings
         [ProtoMember(22)]
         public uint Hardness { get; set; }
 
+        [Description("Sound played when entity hits this cube"), Category("Sound")]
+        [ProtoMember(23)]
+        public List<SoundSource> HitSounds { get; set; }
+
+        [ProtoMember(24)]
+        public TextureData[] Textures = new TextureData[6];
+        [Description("Front texture Id"), Category("Textures")]
+        public TextureData Tex_Front { get { return Textures[(int)CubeFaces.Front]; } set { Textures[(int)CubeFaces.Front] = value; } }
+        [Description("Back texture Id"), Category("Textures")]
+        public TextureData Tex_Back { get { return Textures[(int)CubeFaces.Back]; } set { Textures[(int)CubeFaces.Back] = value; } }
+        [Description("Left texture Id"), Category("Textures")]
+        public TextureData Tex_Left { get { return Textures[(int)CubeFaces.Left]; } set { Textures[(int)CubeFaces.Left] = value; } }
+        [Description("Right texture Id"), Category("Textures")]
+        public TextureData Tex_Right { get { return Textures[(int)CubeFaces.Right]; } set { Textures[(int)CubeFaces.Right] = value; } }
+        [Description("Top texture Id"), Category("Textures")]
+        public TextureData Tex_Top { get { return Textures[(int)CubeFaces.Top]; } set { Textures[(int)CubeFaces.Top] = value; } }
+        [Description("Bottom texture Id"), Category("Textures")]
+        public TextureData Tex_Bottom { get { return Textures[(int)CubeFaces.Bottom]; } set { Textures[(int)CubeFaces.Bottom] = value; } }
+
+        [Description("Indestructible block"), Category("General")]
+        [ProtoMember(25)]
+        public bool Indestructible { get; set; }
+
+        [Description("Block health impact when hitted, < 0 = damge, > 0 = Healing per second value"), Category("General")]
+        [ProtoMember(26)]
+        public int HealthModification { get; set; }
+
+        /// <summary>
+        /// Possible block transformations (example: ore from block)
+        /// </summary>
+        [Category("Gameplay")]
+        [Description("Allows to transform the item when it is picked")]
+        [ProtoMember(27)]
+        public List<ItemTransformation> Transformations { get; set; }
+
+        public BlockProfile()
+        {
+            HitSounds = new List<SoundSource>();
+            Transformations = new List<ItemTransformation>();
+        }
+
         [ProtoBeforeDeserialization]
         public void BeforeDeserialize()
         {
@@ -134,6 +164,78 @@ namespace Utopia.Shared.Settings
         public override string ToString()
         {
             return Name;
+        }
+    }
+
+
+    [ProtoContract]
+    [TypeConverter(typeof(TextureDataTypeConverter))]
+    public class TextureData
+    {
+        [ProtoContract]
+        public class TextureMeta
+        {
+            [Browsable(true)]
+            [ProtoMember(1)]
+            public string Name { get; set; }
+            [Browsable(false)]
+            [ProtoMember(2)]
+            public byte AnimationFrames { get; set; }
+
+            public override string ToString()
+            {
+                if (Name == null) return "";
+
+                if (AnimationFrames > 1)
+                {
+                    return string.Format("{0} [anim. {1} frames]", Name, AnimationFrames);
+                }
+                else
+                {
+                    return Name;
+                }
+            }
+        }
+
+        [ProtoMember(1)]
+        [Description("Texture file name")]
+        [Editor(typeof(TextureSelector), typeof(UITypeEditor))]
+        public TextureMeta Texture { get; set; }
+
+        [ProtoMember(2)]
+        [Description("Texture speed animation in fps")]
+        public byte AnimationSpeed { get; set; }
+
+        [Browsable(false)]
+        public int TextureArrayId { get; set; } //Need to be filled in at runtime.
+
+        [Browsable(false)]
+        public bool isAnimated { get { return Texture == null ? false : (Texture.AnimationFrames > 1); } }
+
+        public TextureData()
+        {
+            AnimationSpeed = 20;
+            if (this.Texture == null) this.Texture = new TextureMeta();
+        }
+
+        public TextureData(string name)
+            :base()
+        {
+            this.Texture = new TextureMeta() { Name = name };
+        }
+
+        //Property Grid editing Purpose
+        public class TextureDataTypeConverter : ExpandableObjectConverter
+        {
+            public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+            {   //This method is used to shown information in the PropertyGrid.
+                if (destinationType == typeof(string))
+                {
+                    TextureData d = (TextureData)value;
+                    return d.Texture.ToString();
+                }
+                return base.ConvertTo(context, culture, value, destinationType);
+            }
         }
     }
 }

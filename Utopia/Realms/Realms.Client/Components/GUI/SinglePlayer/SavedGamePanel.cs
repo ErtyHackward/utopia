@@ -66,7 +66,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
             //Refresh the items in the list box
             //Insert the various single world present on the computer
             _savedGameList.Items.Clear();
-            _savedGameList.SelectItem = -1;
+            _savedGameList.SelectItem(-1);
             foreach (var worldp in LocalWorlds.LocalWorldsParams)
             {
                 _savedGameList.Items.Add(worldp);
@@ -74,7 +74,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
 
             if (_savedGameList.Items.Count > 0)
             {
-                _savedGameList.SelectItem = 0;
+                _savedGameList.SelectItem(0);
             }
             NeedShowResults = false;
         }
@@ -82,7 +82,7 @@ namespace Realms.Client.Components.GUI.SinglePlayer
         public void RefreshWorldListAsync()
         {
             _savedGameList.Items.Clear();
-            _savedGameList.SelectItem = -1;
+            _savedGameList.SelectItem(-1);
             _savedGameList.Items.Add("Loading...");
             NeedShowResults = false;
             ThreadsManager.RunAsync(RefreshWorldList);

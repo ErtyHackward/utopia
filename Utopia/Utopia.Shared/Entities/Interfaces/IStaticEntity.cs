@@ -23,5 +23,20 @@ namespace Utopia.Shared.Entities.Interfaces
         /// Gets or sets current parent container
         /// </summary>
         IStaticContainer Container { get; set; }
+
+        /// <summary>
+        /// Is the item destroyed on world removed
+        /// </summary>
+        bool IsDestroyedOnWorldRemove { get; set; }
+
+        /// <summary>
+        /// Is the item destroyed on char death?
+        /// </summary>
+        bool IsDestroyedOnDeath { get; set; }
+
+        /// <summary>
+        /// Will be called before the entity is destroyed from world, without going into inventory
+        /// </summary>
+        void BeforeDestruction(IDynamicEntity destructor);
     }
 }

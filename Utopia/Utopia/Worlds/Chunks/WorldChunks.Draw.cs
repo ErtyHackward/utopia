@@ -55,7 +55,7 @@ namespace Utopia.Worlds.Chunks
                 chunk.Graphics.IsFrustumCulled = !_camManager.ActiveCamera.Frustum.IntersectsWithoutFar(ref chunk.ChunkWorldBoundingBox);
             }
         }
-        
+
         public override void Draw(DeviceContext context, int index)
         {
 
@@ -79,7 +79,7 @@ namespace Utopia.Worlds.Chunks
             if (index == TRANSPARENT_DRAW)
             {
                 //Only 2 index registered, no need to test the value of the index here it is for transparent one !
-                if (!_playerManager.IsHeadInsideWater)
+                if (!PlayerManager.IsHeadInsideWater)
                 {
                     //Head not inside Water => Draw water front Faces
                     RenderStatesRepo.ApplyStates(context, DXStates.Rasters.Default, DXStates.Blenders.Enabled, DXStates.DepthStencils.DepthReadWriteEnabled);
@@ -132,7 +132,7 @@ namespace Utopia.Worlds.Chunks
         public IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true)
         {
             //var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
-            
+
             //for (int chunkIndice = 0; chunkIndice < chunksLimit; chunkIndice++)
             //{
             //    var chunk = SortedChunks[chunkIndice];
@@ -153,8 +153,7 @@ namespace Utopia.Worlds.Chunks
             }
             else
             {
-                var pos = _playerManager.Player.Position.ToCubePosition();
-                var playerChunk = GetChunk(ref pos);
+                var playerChunk = GetChunk(PlayerManager.Player.Position.ToCubePosition());
 
                 if (SliceViewChunks <= 9)
                 {
@@ -206,6 +205,7 @@ namespace Utopia.Worlds.Chunks
                 _terraEffect.CBPerDraw.Values.PopUpValue = chunk.PopUpValue.ValueInterp;
                 _terraEffect.CBPerDraw.Values.LightViewProjection = Matrix.Transpose(ShadowMap.LightViewProjection);
                 _terraEffect.CBPerDraw.Values.SunVector = ShadowMap.BackUpLightDirection;
+                _terraEffect.CBPerDraw.Values.ShadowMapVars = new Vector3(0.002f, 0.0002f, 0.004f);
                 _terraEffect.CBPerDraw.Values.UseShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap;
                 _terraEffect.CBPerDraw.IsDirty = true;
                 _terraEffect.Apply(context);
@@ -249,7 +249,91 @@ namespace Utopia.Worlds.Chunks
                     _liquidEffect.CBPerDraw.IsDirty = true;
                     _liquidEffect.Apply(context);
                     chunk.Graphics.DrawLiquidFaces(context);
-                }   
+                }
+            }
+        }
+
+        public void DrawStaticEntitiesShadow(DeviceContext context, VisualChunk chunk)
+        {
+            //For Each different entity Model
+            foreach (var pair in chunk.AllPairs())
+            {
+                if (pair.Value.Count == 0) continue;
+                var entity = pair.Value.First();
+                entity.VisualVoxelModel.DrawInstanced(context, pair.Value.Where(ve => IsEntityVisible(ve.Entity.Position)).Select(ve => ve.VoxelEntity.ModelInstance).ToList());
+            }
+        }
+
+        private void DrawStaticEntities(DeviceContext context, VisualChunk chunk)
+        {
+            //For Each different entity Model
+            foreach (var pair in chunk.AllPairs())
+            {
+
+                // For each instance of the model - update data
+                foreach (var staticEntity in pair.Value)
+                {
+                    //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
+                    var sunPart = (float)staticEntity.BlockLight.A / 255;
+                    var sunColor = Skydome.SunColor * sunPart;
+                    var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
+                    staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
+                    staticEntity.VoxelEntity.ModelInstance.SunLightLevel = sunPart;
+                    if (!DrawStaticInstanced)
+                    {
+                        if (IsEntityVisible(staticEntity.Entity.Position))
+                        {
+                            var sw = Stopwatch.StartNew();
+                            staticEntity.VisualVoxelModel.Draw(context, _voxelModelEffect, staticEntity.VoxelEntity.ModelInstance);
+                            sw.Stop();
+                            _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
+                            _staticEntityDrawCalls++;
+                        }
+                    }
+                }
+
+                if (DrawStaticInstanced)
+                {
+                    if (pair.Value.Count == 0) continue;
+                    var entity = pair.Value.First();
+                    var sw = Stopwatch.StartNew();
+                    entity.VisualVoxelModel.DrawInstanced(context, _voxelModelInstancedEffect, pair.Value.Where(ve => IsEntityVisible(ve.Entity.Position)).Select(ve => ve.VoxelEntity.ModelInstance).ToList());
+                    sw.Stop();
+                    _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
+                    _staticEntityDrawCalls++;
+                }
+            }
+        }
+
+        private void PrepareVoxelDraw(DeviceContext context, Matrix viewProjection)
+        {
+            if (DrawStaticInstanced)
+            {
+                var focusMatrix = Matrix.Translation(_camManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3());
+                focusMatrix.Invert();
+
+                _voxelModelInstancedEffect.Begin(context);
+                _voxelModelInstancedEffect.CBPerFrame.Values.SunVector = Skydome.LightDirection;
+                _voxelModelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
+                _voxelModelInstancedEffect.CBPerFrame.Values.UseShadowMap = ClientSettings.Current.Settings.GraphicalParameters.ShadowMap;
+                _voxelModelInstancedEffect.CBPerFrame.Values.LightViewProjection = Matrix.Transpose(ShadowMap.LightViewProjection);
+                _voxelModelInstancedEffect.CBPerFrame.Values.ShadowMapVars = new Vector3(0.001f, 0.0002f, 0.004f);
+                _voxelModelInstancedEffect.CBPerFrame.Values.Focus = Matrix.Transpose(focusMatrix);
+                _voxelModelInstancedEffect.CBPerFrame.IsDirty = true;
+
+                if (ShadowMap.ShadowMap != null)
+                {
+                    //Depth Shadow Mapping !
+                    _voxelModelInstancedEffect.ShadowMap.Value = ShadowMap.ShadowMap.DepthMap;
+                    _voxelModelInstancedEffect.ShadowMap.IsDirty = true;
+                }
+            }
+            else
+            {
+                _voxelModelEffect.Begin(context);
+                _voxelModelEffect.CBPerFrame.Values.LightDirection = Skydome.LightDirection;
+                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(viewProjection);
+                _voxelModelEffect.CBPerFrame.IsDirty = true;
             }
         }
 
@@ -258,61 +342,14 @@ namespace Utopia.Worlds.Chunks
             _staticEntityDrawTime = 0;
             _staticEntityDrawCalls = 0;
 
-            if (DrawStaticInstanced)
-            {
-                _voxelModelInstancedEffect.Begin(context);
-                _voxelModelInstancedEffect.CBPerFrame.Values.LightDirection = _skydome.LightDirection;
-                _voxelModelInstancedEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
-                _voxelModelInstancedEffect.CBPerFrame.IsDirty = true;
-            }
-            else
-            {
-                _voxelModelEffect.Begin(context);
-                _voxelModelEffect.CBPerFrame.Values.LightDirection = _skydome.LightDirection;
-                _voxelModelEffect.CBPerFrame.Values.ViewProjection = Matrix.Transpose(_camManager.ActiveCamera.ViewProjection3D);
-                _voxelModelEffect.CBPerFrame.IsDirty = true;
-            }
+            PrepareVoxelDraw(context, _camManager.ActiveCamera.ViewProjection3D);
 
             foreach (var chunk in ChunksToDraw())
             {
-                if (chunk.DistanceFromPlayer > StaticEntityViewRange) 
+                if (chunk.DistanceFromPlayer > StaticEntityViewRange)
                     continue;
-                
-                foreach (var pair in chunk.AllPairs())
-                {
-                    // update instances data
-                    foreach (var staticEntity in pair.Value)
-                    {
-                        //The staticEntity.Color is affected at entity creation time in the LightingManager.PropagateLightInsideStaticEntities(...)
-                        var sunPart = (float)staticEntity.BlockLight.A / 255;
-                        var sunColor = _skydome.SunColor * sunPart;
-                        var resultColor = Color3.Max(staticEntity.BlockLight.ToColor3(), sunColor);
-                        staticEntity.VoxelEntity.ModelInstance.LightColor = resultColor;
 
-                        if (!DrawStaticInstanced)
-                        {
-                            if (IsEntityVisible(staticEntity.Entity.Position))
-                            {
-                                var sw = Stopwatch.StartNew();
-                                staticEntity.VisualVoxelModel.Draw(context, _voxelModelEffect, staticEntity.VoxelEntity.ModelInstance);
-                                sw.Stop();
-                                _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
-                                _staticEntityDrawCalls++;
-                            }
-                        }
-                    }
-
-                    if (DrawStaticInstanced)
-                    {
-                        if (pair.Value.Count == 0) continue;
-                        var entity = pair.Value.First();
-                        var sw = Stopwatch.StartNew();
-                        entity.VisualVoxelModel.DrawInstanced(context, _voxelModelInstancedEffect, pair.Value.Where(ve => IsEntityVisible(ve.Entity.Position)).Select(ve => ve.VoxelEntity.ModelInstance).ToList());
-                        sw.Stop();
-                        _staticEntityDrawTime += sw.Elapsed.TotalMilliseconds;
-                        _staticEntityDrawCalls++;
-                    }
-                }
+                DrawStaticEntities(context, chunk);
             }
         }
 
@@ -328,29 +365,33 @@ namespace Utopia.Worlds.Chunks
             }
 
             //Create Biomes Colors texture Array
-            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"BiomesColors/", @"*.png", FilterFlags.Point, "BiomesColors_WorldChunk", out _biomesColors_View, SharpDX.DXGI.Format.BC1_UNorm);
-            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", TexturePackConfig.Current.Settings.enuSamplingFilter, "ArrayTexture_WorldChunk", out _terra_View);
-            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"AnimatedTextures/", @"*.png", FilterFlags.Point, "ArrayTexture_AnimatedTextures", out _textureAnimation_View, SharpDX.DXGI.Format.BC4_UNorm);
-            
 
-            _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"BiomesColors/", @"*.png", FilterFlags.Point, "BiomesColors_WorldChunk", out _biomesColors_View, SharpDX.DXGI.Format.BC1_UNorm);
+
+            _terra_View = VisualWorldParameters.CubeTextureManager.CubeArrayTexture;
+            //ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"Terran/", @"ct*.png", TexturePackConfig.Current.Settings.enuSamplingFilter, "ArrayTexture_WorldChunk", out _terra_View);
+            ArrayTexture.CreateTexture2DFromFiles(_d3dEngine.Device, context, ClientSettings.TexturePack + @"AnimatedTextures/", @"*.png", FilterFlags.Point, "ArrayTexture_AnimatedTextures", out _textureAnimation_View, SharpDX.DXGI.Format.BC4_UNorm);
+
+
+            _terraEffect = new HLSLTerran(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Terran.hlsl", VertexCubeSolid.VertexDeclaration, SharedFrameCb.CBPerFrame);
             _terraEffect.TerraTexture.Value = _terra_View;
             _terraEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(TexturePackConfig.Current.Settings.enuTexMipCreationFilteringId);
             _terraEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _terraEffect.BiomesColors.Value = _biomesColors_View;
-            _terraEffect.SkyBackBuffer.Value = _skyBackBuffer.BackBuffer;
+            _terraEffect.SkyBackBuffer.Value = _skyBackBuffer.RenderTextureView;
 
-            _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, _sharedFrameCB.CBPerFrame);
+            _liquidEffect = new HLSLLiquid(_d3dEngine.Device, ClientSettings.EffectPack + @"Terran/Liquid.hlsl", VertexCubeLiquid.VertexDeclaration, SharedFrameCb.CBPerFrame);
             _liquidEffect.TerraTexture.Value = _terra_View;
             _liquidEffect.SamplerDiffuse.Value = RenderStatesRepo.GetSamplerState(TexturePackConfig.Current.Settings.enuTexMipCreationFilteringId);
             _liquidEffect.SamplerOverlay.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVWrap_MinMagMipLinear);
             _liquidEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
             _liquidEffect.BiomesColors.Value = _biomesColors_View;
             _liquidEffect.AnimatedTextures.Value = _textureAnimation_View;
-            _liquidEffect.SkyBackBuffer.Value = _skyBackBuffer.BackBuffer;
+            _liquidEffect.SkyBackBuffer.Value = _skyBackBuffer.RenderTextureView;
 
             _voxelModelEffect = ToDispose(new HLSLVoxelModel(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModel.hlsl", VertexVoxel.VertexDeclaration));
             _voxelModelInstancedEffect = ToDispose(new HLSLVoxelModelInstanced(_d3dEngine.Device, ClientSettings.EffectPack + @"Entities\VoxelModelInstanced.hlsl", VoxelInstanceData.VertexDeclaration));
+            _voxelModelInstancedEffect.SamplerBackBuffer.Value = RenderStatesRepo.GetSamplerState(DXStates.Samplers.UVClamp_MinMagMipPoint);
         }
 
         private void _skyBackBuffer_OnStaggingBackBufferChanged(ShaderResourceView newStaggingBackBuffer)
@@ -367,13 +408,13 @@ namespace Utopia.Worlds.Chunks
 
         private void DisposeDrawComponents()
         {
-            _terra_View.Dispose();
-            _liquidEffect.Dispose();
-            _terraEffect.Dispose();
-            _biomesColors_View.Dispose();
-            _voxelModelEffect.Dispose();
-            _voxelModelInstancedEffect.Dispose();
-            _textureAnimation_View.Dispose();
+            //_terra_View.Dispose();
+            if (_liquidEffect != null) _liquidEffect.Dispose();
+            if (_terraEffect != null) _terraEffect.Dispose();
+            if (_biomesColors_View != null) _biomesColors_View.Dispose();
+            if (_voxelModelEffect != null) _voxelModelEffect.Dispose();
+            if (_voxelModelInstancedEffect != null) _voxelModelInstancedEffect.Dispose();
+            if (_textureAnimation_View != null) _textureAnimation_View.Dispose();
         }
         #endregion
 

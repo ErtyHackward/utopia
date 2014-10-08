@@ -49,13 +49,11 @@ namespace Utopia.Worlds.Cubes
 
             BlockProfile blockProfile = _wp.WorldParameters.Configuration.BlockProfiles[cube.Id];
             bool IsEmissiveColor = blockProfile.IsEmissiveColorLightSource;
-            //Les 4 vertex de ma face.... en fct de leur position dans le cube leur valeur en Z va changer ! (Face Top, Bottom, ...
+            //Les 4 vertex de ma face.... en fct de leur position dans le cube leur valeur en Z va changer ! (Face Top, Bottom, ...)
             Vector4B topLeft;
             Vector4B topRight;
             Vector4B bottomLeft;
             Vector4B bottomRight;
-
-            int cubeFaceType = (int)cubeFace;
 
             //x = Is Upper VErtex or not
             //y = Cube Face
@@ -101,10 +99,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor BackLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ?_cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor BackRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ?_cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 1, 1, 0);
+                    topRight = cubePosition + new Vector4B(1, 1, 1, 0);
+                    bottomLeft = cubePosition + new Vector4B(0, 0, 1, 0);
+                    bottomRight = cubePosition + new Vector4B(1, 0, 1, 0);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -113,8 +111,9 @@ namespace Utopia.Worlds.Cubes
                         verticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackTop_Cube, BackLeftTop_Cube);
                         vertexInfo.X = 1;
+                        
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Front, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, blockProfile.Tex_Front.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Front.AnimationSpeed, blockProfile.Tex_Front.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -126,7 +125,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackTop_Cube, BackRightTop_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Front, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, blockProfile.Tex_Front.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Front.AnimationSpeed, blockProfile.Tex_Front.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -138,7 +137,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackLeft_Cube, BackBottom_Cube, BackLeftBottom_Cube);
                         vertexInfo.X = 0;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Front, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, blockProfile.Tex_Front.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Front.AnimationSpeed, blockProfile.Tex_Front.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -150,7 +149,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Back_Cube, BackRight_Cube, BackBottom_Cube, BackRightBottom_Cube);
                         vertexInfo.X = 0;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Front, ref  newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, blockProfile.Tex_Front.TextureArrayId, ref  newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Front.AnimationSpeed, blockProfile.Tex_Front.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -179,10 +178,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor FrontLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor FrontRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(1, 1, 0, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(0, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(1, 1, 0, 0);
+                    topRight = cubePosition + new Vector4B(0, 1, 0, 0);
+                    bottomLeft = cubePosition + new Vector4B(1, 0, 0, 0);
+                    bottomRight = cubePosition + new Vector4B(0, 0, 0, 0);
 
                     hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -192,7 +191,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontLeftTop_Cube, FrontLeft_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, blockProfile.Tex_Back.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Back.AnimationSpeed, blockProfile.Tex_Back.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -204,7 +203,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontTop_Cube, FrontRight_Cube, FrontRightTop_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, blockProfile.Tex_Back.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Back.AnimationSpeed, blockProfile.Tex_Back.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -216,7 +215,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontLeft_Cube, FrontLeftBottom_Cube);
                         vertexInfo.X = 0;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, blockProfile.Tex_Back.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Back.AnimationSpeed, blockProfile.Tex_Back.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -228,7 +227,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Front_Cube, FrontBottom_Cube, FrontRight_Cube, FrontRightBottom_Cube);
                         vertexInfo.X = 0;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Back, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, blockProfile.Tex_Back.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Back.AnimationSpeed, blockProfile.Tex_Back.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -257,10 +256,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor BottomLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor BottomRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(0, 1, 0, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 1, 0, 0);
+                    topRight = cubePosition + new Vector4B(1, 1, 0, 0);
+                    bottomLeft = cubePosition + new Vector4B(0, 1, 1, 0);
+                    bottomRight = cubePosition + new Vector4B(1, 1, 1, 0);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -270,7 +269,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomLeft_Cube, BottomLeftTop_Cube, BottomTop_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, blockProfile.Tex_Top.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Top.AnimationSpeed, blockProfile.Tex_Top.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -282,7 +281,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomRight_Cube, BottomBottom_Cube, BottomRightBottom_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, blockProfile.Tex_Top.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Top.AnimationSpeed, blockProfile.Tex_Top.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -294,7 +293,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomBottom_Cube, BottomLeft_Cube, BottomLeftBottom_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, blockProfile.Tex_Top.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Top.AnimationSpeed, blockProfile.Tex_Top.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -306,7 +305,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Bottom_Cube, BottomTop_Cube, BottomRight_Cube, BottomRightTop_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Top, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, blockProfile.Tex_Top.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Top.AnimationSpeed, blockProfile.Tex_Top.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -336,10 +335,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor TopLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor TopRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 0, 1, 0);
+                    topRight = cubePosition + new Vector4B(1, 0, 1, 0);
+                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, 0);
+                    bottomRight = cubePosition + new Vector4B(1, 0, 0, 0);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -348,7 +347,7 @@ namespace Utopia.Worlds.Cubes
                         verticeDico.Add(hashVertex, vertexOffset0);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopBottom_Cube, TopLeft_Cube, TopLeftBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, blockProfile.Tex_Bottom.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Bottom.AnimationSpeed, blockProfile.Tex_Bottom.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -359,7 +358,7 @@ namespace Utopia.Worlds.Cubes
                         verticeDico.Add(hashVertex, vertexOffset1);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopTop_Cube, TopLeft_Cube, TopLeftTop_Cube);
                         vertexInfo.X = 0;
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, blockProfile.Tex_Bottom.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Bottom.AnimationSpeed, blockProfile.Tex_Bottom.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -370,7 +369,7 @@ namespace Utopia.Worlds.Cubes
                         verticeDico.Add(hashVertex, vertexOffset2);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopBottom_Cube, TopRight_Cube, TopRightBottom_Cube);
                         vertexInfo.X = 0;
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, blockProfile.Tex_Bottom.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Bottom.AnimationSpeed, blockProfile.Tex_Bottom.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -381,7 +380,7 @@ namespace Utopia.Worlds.Cubes
                         verticeDico.Add(hashVertex, vertexOffset3);
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Top_Cube, TopTop_Cube, TopRight_Cube, TopRightTop_Cube);
                         vertexInfo.X = 0;
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Bottom, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, blockProfile.Tex_Bottom.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Bottom.AnimationSpeed, blockProfile.Tex_Bottom.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -411,10 +410,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor RightLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor RightRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(0, 1, 0, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(0, 0, 1, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(0, 1, 1, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(0, 1, 0, 0);
+                    bottomRight = cubePosition + new Vector4B(0, 0, 1, 0);
+                    bottomLeft = cubePosition + new Vector4B(0, 0, 0, 0);
+                    topRight = cubePosition + new Vector4B(0, 1, 1, 0);
 
                     hashVertex = (long)cubeFace + ((long)topLeft.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -424,7 +423,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightRight_Cube, RightRightTop_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, blockProfile.Tex_Left.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Left.AnimationSpeed, blockProfile.Tex_Left.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -436,7 +435,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightTop_Cube, RightLeft_Cube, RightLeftTop_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, blockProfile.Tex_Left.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Left.AnimationSpeed, blockProfile.Tex_Left.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -448,7 +447,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightRight_Cube, RightRightBottom_Cube);
                         vertexInfo.X = 0;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, blockProfile.Tex_Left.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Left.AnimationSpeed, blockProfile.Tex_Left.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -460,7 +459,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Right_Cube, RightBottom_Cube, RightLeft_Cube, RightLeftBottom_Cube);
                         vertexInfo.X = 0;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Left, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, blockProfile.Tex_Left.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Left.AnimationSpeed, blockProfile.Tex_Left.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -488,10 +487,10 @@ namespace Utopia.Worlds.Cubes
                     ByteColor LeftLeftBottom_Cube = (ind[SingleArrayChunkContainer.DownLeftIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownLeftIndex]].EmissiveColor : new ByteColor();
                     ByteColor LeftRightBottom_Cube = (ind[SingleArrayChunkContainer.DownRightIndex] != int.MaxValue) ? _cubesHolder.Cubes[ind[SingleArrayChunkContainer.DownRightIndex]].EmissiveColor : new ByteColor();
 
-                    topLeft = cubePosition + new Vector4B(1, 1, 1, cubeFaceType);
-                    topRight = cubePosition + new Vector4B(1, 1, 0, cubeFaceType);
-                    bottomLeft = cubePosition + new Vector4B(1, 0, 1, cubeFaceType);
-                    bottomRight = cubePosition + new Vector4B(1, 0, 0, cubeFaceType);
+                    topLeft = cubePosition + new Vector4B(1, 1, 1, 0);
+                    topRight = cubePosition + new Vector4B(1, 1, 0, 0);
+                    bottomLeft = cubePosition + new Vector4B(1, 0, 1, 0);
+                    bottomRight = cubePosition + new Vector4B(1, 0, 0, 0);
 
                     hashVertex = (long)cubeFace + ((long)topRight.GetHashCode() << 8) + ((long)cube.Id << 40) + ((long)yBlockOffset << 48);
                     if (verticeDico.TryGetValue(hashVertex, out vertexOffset0) == false)
@@ -501,7 +500,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LefttRight_Cube, LeftRightTop_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topRight, blockProfile.Tex_Right.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Right.AnimationSpeed, blockProfile.Tex_Left.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -513,7 +512,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftTop_Cube, LeftLeft_Cube, LeftLeftTop_Cube);
                         vertexInfo.X = 1;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref topLeft, blockProfile.Tex_Right.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Right.AnimationSpeed, blockProfile.Tex_Left.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -525,7 +524,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LeftLeft_Cube, LeftLeftBottom_Cube);
                         vertexInfo.X = 0;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomLeft, blockProfile.Tex_Right.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Right.AnimationSpeed, blockProfile.Tex_Left.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 
@@ -537,7 +536,7 @@ namespace Utopia.Worlds.Cubes
                         if (!IsEmissiveColor) newColor = ByteColor.Average(Left_Cube, LeftBottom_Cube, LefttRight_Cube, LeftRightBottom_Cube);
                         vertexInfo.X = 0;
                         //if (chunk.SliceValue > 0 && newColor == ByteColor.Zero) newColor = new ByteColor(0, 0, 0, 40);
-                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, _wp.WorldParameters.Configuration.BlockProfiles[cube.Id].Tex_Right, ref newColor, ref vertexInfo, ref biomeInfo));
+                        chunk.Graphics.SolidCubeVertices.Add(new VertexCubeSolid(ref bottomRight, blockProfile.Tex_Right.TextureArrayId, ref newColor, ref vertexInfo, ref biomeInfo, blockProfile.Tex_Right.AnimationSpeed, blockProfile.Tex_Left.Texture.AnimationFrames));
                         generatedVertex++;
                     }
 

@@ -66,14 +66,7 @@ namespace Utopia.Entities.Voxel
             vf.IndexBuffer.Dispose();
             vf.VertexBuffer.Dispose();
             
-            foreach (var voxelModelState in VoxelModel.States)
-            {
-                foreach (var ps in voxelModelState.PartsStates)
-                {
-                    if (ps.ActiveFrame == index)
-                        ps.ActiveFrame = byte.MaxValue;
-                }
-            }
+            VoxelModel.RemoveFrameAt(index);
 
             ArrayHelper.RemoveAt(ref _visualFrames, index);
         }
@@ -87,7 +80,7 @@ namespace Utopia.Entities.Voxel
             List<VertexVoxelInstanced> vertices;
             List<ushort> indices;
             
-            _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[frameIndex].BlockData, out vertices, out indices);
+            _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[frameIndex], out vertices, out indices);
             
             _visualFrames[frameIndex].VertexBuffer.Dispose();
             _visualFrames[frameIndex].IndexBuffer.Dispose();
@@ -122,7 +115,7 @@ namespace Utopia.Entities.Voxel
                 List<VertexVoxelInstanced> vertices;
                 List<ushort> indices;
 
-                _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[i].BlockData, out vertices, out indices);
+                _voxelMeshFactory.GenerateVoxelFaces(_model.Frames[i], out vertices, out indices);
 
                 frame.VertexBuffer = _voxelMeshFactory.InitBuffer(vertices);
                 frame.IndexBuffer = _voxelMeshFactory.InitBuffer(indices);
@@ -239,7 +232,7 @@ namespace Utopia.Entities.Voxel
                 var state = instance.State;
                 var voxelModelPartState = state.PartsStates[partIndex];
 
-                instanceData[instanceIndex].LightColor = instance.LightColor;
+                instanceData[instanceIndex].LightColor = new Color4( instance.LightColor, instance.SunLightLevel);
 
                 // apply rotations from the state and instance (if the head)
                 if (_model.Parts[partIndex].IsHead)
@@ -266,18 +259,13 @@ namespace Utopia.Entities.Voxel
             _voxelMeshFactory.Engine.ImmediateContext.DrawIndexedInstanced(ib.IndicesCount, instanceData.Length, 0, 0, 0);
         }
 
-        /// <summary>
-        /// Performs instanced drawing of the group of models (should be the instances of the same model)
-        /// </summary>
-        /// <param name="context"> </param>
-        /// <param name="effect"></param>
-        /// <param name="instances"></param>
+
         public void DrawInstanced(DeviceContext context, HLSLVoxelModelInstanced effect, IList<VoxelModelInstance> instances)
         {
-            if (!_initialized) 
+            if (!_initialized)
                 return;
 
-            if (instances.Count == 0) 
+            if (instances.Count == 0)
                 return;
 
             if (_model.ColorMapping != null)
@@ -288,6 +276,17 @@ namespace Utopia.Entities.Voxel
 
             effect.Apply(context);
 
+            DrawInstanced(context, instances);
+        }
+
+        /// <summary>
+        /// Performs instanced drawing of the group of models (should be the instances of the same model)
+        /// </summary>
+        /// <param name="context"> </param>
+        /// <param name="effect"></param>
+        /// <param name="instances"></param>
+        public void DrawInstanced(DeviceContext context, IList<VoxelModelInstance> instances)
+        {
             if (VoxelModel.Frames.Count == 1 && VoxelModel.Parts.Count == 1)
             {
                 // we have only one frame and part, so every model have the same VB
@@ -336,7 +335,7 @@ namespace Utopia.Entities.Voxel
         public static readonly VertexDeclaration VertexDeclaration;
 
         public Matrix Transform;
-        public Color3 LightColor;
+        public Color4 LightColor;
 
         static VoxelInstanceData()
         {
@@ -344,11 +343,11 @@ namespace Utopia.Entities.Voxel
             { 
                 new InputElement("POSITION",  0, Format.R8G8B8A8_UInt,      0,                          0, InputClassification.PerVertexData,   0), 
                 new InputElement("INFO",      0, Format.R8G8B8A8_UInt,      InputElement.AppendAligned, 0, InputClassification.PerVertexData,   0),
-                new InputElement("TRANSFORM", 0, Format.R32G32B32A32_Float, 0,                          1, InputClassification.PerInstanceData, 1), //World Matrix Row0
-                new InputElement("TRANSFORM", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row1
-                new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row2
-                new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //World Matrix Row3
-                new InputElement("COLOR",     0, Format.R32G32B32_Float,    InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1)
+                new InputElement("TRANSFORM", 0, Format.R32G32B32A32_Float, 0,                          1, InputClassification.PerInstanceData, 1), //TRANSFORM Matrix Row0
+                new InputElement("TRANSFORM", 1, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //TRANSFORM Matrix Row1
+                new InputElement("TRANSFORM", 2, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //TRANSFORM Matrix Row2
+                new InputElement("TRANSFORM", 3, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1), //TRANSFORM Matrix Row3
+                new InputElement("COLOR",     0, Format.R32G32B32A32_Float, InputElement.AppendAligned, 1, InputClassification.PerInstanceData, 1)
             };
 
             VertexDeclaration = new VertexDeclaration(elements);

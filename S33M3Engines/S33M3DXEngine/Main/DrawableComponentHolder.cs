@@ -16,5 +16,10 @@ namespace S33M3DXEngine.Main
             DrawableComponent = _drawableComponent;
             DrawOrder = _drawOrder;
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}, {2}", DrawableComponent, DrawOrder.DrawID, DrawOrder.Order);
+        }
     }
 }

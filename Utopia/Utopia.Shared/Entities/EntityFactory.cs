@@ -8,6 +8,7 @@ using S33M3Resources.Structs;
 using SharpDX;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Entities.Interfaces;
@@ -16,6 +17,7 @@ using Utopia.Shared.Configuration;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Net.Interfaces;
 using Utopia.Shared.Net.Messages;
+using Utopia.Shared.Server.Managers;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
@@ -30,6 +32,8 @@ namespace Utopia.Shared.Entities
     /// </summary>
     public class EntityFactory
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public WorldConfiguration Config { get; set; }
 
         /// <summary>
@@ -68,20 +72,9 @@ namespace Utopia.Shared.Entities
         {
             var protoTypeModel = RuntimeTypeModel.Default;
 
-            var entityInterface =           protoTypeModel.Add(typeof(IEntity), true);
-            var entityType =                protoTypeModel.Add(typeof(Entity), true);
-            var dynEntityType =             protoTypeModel.Add(typeof(DynamicEntity), true);
-            var staticEntityType =          protoTypeModel.Add(typeof(StaticEntity), true);
-            var charEntityType =            protoTypeModel.Add(typeof(CharacterEntity), true);
-            var rpgCharType =               protoTypeModel.Add(typeof(RpgCharacterEntity), true);
-            var itemType =                  protoTypeModel.Add(typeof(Item), true);
+            var entityInterface =           protoTypeModel.Add(typeof(IEntity), true); // we need to register all entities hierarchy
             var slotType =                  protoTypeModel.Add(typeof(Slot), true);
             var containedSlotType =         protoTypeModel.Add(typeof(ContainedSlot), true);
-            var blockItem =                 protoTypeModel.Add(typeof(BlockItem), true);
-            var orientedBlockItem =         protoTypeModel.Add(typeof(OrientedBlockItem), true);
-            var blockLinkedItem =           protoTypeModel.Add(typeof(BlockLinkedItem), true);
-            var orientedBlockLinkedItem =   protoTypeModel.Add(typeof(OrientedBlockLinkedItem), true);
-            var resourceCollector =         protoTypeModel.Add(typeof(ResourcesCollector), true);
             var worldConfig =               protoTypeModel.Add(typeof(WorldConfiguration), true);
             var soundSource =               protoTypeModel.Add(typeof(SoundSource), true);
             var chunkDataProvider =         protoTypeModel.Add(typeof(ChunkDataProvider), true);
@@ -100,45 +93,8 @@ namespace Utopia.Shared.Entities
             worldConfig.AddSubType(100, typeof(UtopiaWorldConfiguration));
             worldConfig.AddSubType(101, typeof(FlatWorldConfiguration));
 
-            entityInterface.AddSubType(100, typeof(Entity));
-
-            // entities hierarchy
-            entityType.AddSubType(100, typeof(DynamicEntity));
-            entityType.AddSubType(101, typeof(StaticEntity));
-
-            dynEntityType.AddSubType(100, typeof(CharacterEntity));
-            dynEntityType.AddSubType(101, typeof(GodEntity));
-
-            charEntityType.AddSubType(100, typeof(RpgCharacterEntity));
-            charEntityType.AddSubType(101, typeof(Npc));
-
-            rpgCharType.AddSubType(100, typeof(PlayerCharacter));
-
-            staticEntityType.AddSubType(100, typeof(Item));
-
-            itemType.AddSubType(100, typeof(BlockItem));
-            itemType.AddSubType(101, typeof(BlockLinkedItem));
-            itemType.AddSubType(102, typeof(ResourcesCollector));
-            itemType.AddSubType(103, typeof(CubeResource));
-            itemType.AddSubType(104, typeof(Food));
-            itemType.AddSubType(105, typeof(Stuff));
-            itemType.AddSubType(106, typeof(GodHandTool));
-
-            blockItem.AddSubType(100, typeof(OrientedBlockItem));
-
-            orientedBlockItem.AddSubType(100, typeof(Door));
-
-            blockLinkedItem.AddSubType(100, typeof(OrientedBlockLinkedItem));
-            blockLinkedItem.AddSubType(101, typeof(Plant));
-            blockLinkedItem.AddSubType(102, typeof(LightSource));
-
-            orientedBlockLinkedItem.AddSubType(100, typeof(Container));
-
-            resourceCollector.AddSubType(100, typeof(BasicCollector));
-
             // slots hierarchy
 
-            //protoTypeModel.Add(typeof(SlotContainer<BlueprintSlot>), true);
             var slotContainer = protoTypeModel.Add(typeof(SlotContainer<ContainedSlot>), true);
 
             slotContainer.AddSubType(100, typeof(CharacterEquipment));
@@ -217,36 +173,8 @@ namespace Utopia.Shared.Entities
             var boundingbox = protoTypeModel.Add(typeof(BoundingBox), true);
             boundingbox.AddField(1, "Minimum");
             boundingbox.AddField(2, "Maximum");
-
-            #region Network messages
-
+            
             var iBinaryMessage = protoTypeModel.Add(typeof(IBinaryMessage), true);
-
-            iBinaryMessage.AddSubType(100, typeof(BlocksChangedMessage));
-            iBinaryMessage.AddSubType(101, typeof(ChatMessage));
-            iBinaryMessage.AddSubType(102, typeof(ChunkDataMessage));
-            iBinaryMessage.AddSubType(103, typeof(DateTimeMessage));
-            iBinaryMessage.AddSubType(104, typeof(ErrorMessage));
-            iBinaryMessage.AddSubType(105, typeof(GameInformationMessage));
-            iBinaryMessage.AddSubType(106, typeof(GetChunksMessage));
-            iBinaryMessage.AddSubType(107, typeof(LoginMessage));
-            iBinaryMessage.AddSubType(108, typeof(LoginResultMessage));
-            iBinaryMessage.AddSubType(109, typeof(EntityHeadDirectionMessage));
-            iBinaryMessage.AddSubType(110, typeof(EntityInMessage));
-            iBinaryMessage.AddSubType(111, typeof(EntityOutMessage));
-            iBinaryMessage.AddSubType(112, typeof(EntityPositionMessage));
-            iBinaryMessage.AddSubType(113, typeof(EntityUseMessage));
-            iBinaryMessage.AddSubType(114, typeof(PingMessage));
-            iBinaryMessage.AddSubType(115, typeof(EntityVoxelModelMessage));
-            iBinaryMessage.AddSubType(116, typeof(ItemTransferMessage));
-            iBinaryMessage.AddSubType(117, typeof(EntityEquipmentMessage));
-            iBinaryMessage.AddSubType(118, typeof(WeatherMessage));
-            iBinaryMessage.AddSubType(119, typeof(EntityImpulseMessage));
-            iBinaryMessage.AddSubType(120, typeof(EntityLockMessage));
-            iBinaryMessage.AddSubType(121, typeof(EntityLockResultMessage));
-            iBinaryMessage.AddSubType(122, typeof(UseFeedbackMessage));
-            iBinaryMessage.AddSubType(123, typeof(RequestDateTimeSyncMessage));
-            #endregion
         }
 
         /// <summary>
@@ -258,11 +186,6 @@ namespace Utopia.Shared.Entities
         {
             var handler = EntityCreated;
             if (handler != null) handler(this, e);
-        }
-
-        protected virtual Entity CreateCustomEntity(ushort classId)
-        {
-            return null;
         }
 
         /// <summary>
@@ -282,68 +205,9 @@ namespace Utopia.Shared.Entities
             return entity;
         }
 
-        /// <summary>
-        /// Returns new entity object by its classId. New entity will have unique ID
-        /// </summary>
-        /// <param name="classId">Entity class identificator</param>
-        /// <returns></returns>
-        public Entity CreateFromClassId(ushort classId)
+        public T CreateFromBluePrint<T>(ushort bluePrintId) where T : Entity
         {
-            var entity = CreateCustomEntity(classId); // External implementation of the entity creation.
-
-            if (entity == null)
-            {
-                switch (classId)
-                {
-                    case EntityClassId.PlayerCharacter:
-                        entity = new PlayerCharacter();
-                        break;
-                    case EntityClassId.NonPlayerCharacter:
-                        entity = new Npc();
-                        break;
-                    case EntityClassId.Plant:
-                        entity = new Plant();
-                        break;
-                    case EntityClassId.CubeResource:
-                        entity = new CubeResource();
-                        break;
-                    case EntityClassId.LightSource:
-                        entity = new LightSource();
-                        break;
-                    case EntityClassId.OrientedBlockLinkedItem:
-                        entity = new OrientedBlockLinkedItem();
-                        break;
-                    case EntityClassId.OrientedBlockItem:
-                        entity = new OrientedBlockItem();
-                        break;
-                    case EntityClassId.Container:
-                        entity = new Container();
-                        break;
-                    case EntityClassId.Door:
-                        entity = new Door();
-                        break;
-                    case EntityClassId.BasicCollector:
-                        entity = new BasicCollector();
-                        break;
-                    case EntityClassId.GodEntity:
-                        entity = new GodEntity();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException("classId");
-                }
-            }
-
-            InjectFields(entity);
-
-            // allow post produce prepare
-            OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
-
-            return entity;
-        }
-
-        public Entity CreateFromBluePrint(IEntity entity)
-        {
-            return CreateFromBluePrint(entity.BluePrintId);
+            return (T)CreateFromBluePrint(bluePrintId);
         }
 
         public Entity CreateFromBluePrint(ushort bluePrintId)
@@ -355,15 +219,33 @@ namespace Utopia.Shared.Entities
             }
 
             Entity entity;
-            if (Config.BluePrints.TryGetValue(bluePrintId, out entity) == false)
+
+            //Block creation
+            if (bluePrintId < 256)
             {
-                throw new ArgumentOutOfRangeException("bluePrintId");
+                var res = CreateEntity<CubeResource>();
+                res.BluePrintId = bluePrintId;
+                var profile = Config.BlockProfiles[bluePrintId];
+                res.CubeId = (byte)bluePrintId;
+                res.Name = profile.Name;
+                res.MaxStackSize = Config.CubeStackSize;
+                res.PutSound = Config.ResourcePut;
+                entity = res;
+            }
+            else
+            {
+                if (Config.BluePrints.TryGetValue(bluePrintId, out entity) == false)
+                {
+                    throw new ArgumentOutOfRangeException("bluePrintId");
+                }
+
+                //Create a clone of this entity.
+                entity = (Entity)entity.Clone();
             }
 
-            //Create a clone of this entity.
-            entity = (Entity)entity.Clone();
-
             InjectFields(entity);
+
+            entity.FactoryInitialize();
 
             // allow post produce prepare
             OnEntityCreated(new EntityFactoryEventArgs { Entity = entity });
@@ -377,16 +259,24 @@ namespace Utopia.Shared.Entities
         /// <param name="entity"></param>
         protected virtual void InjectFields(IEntity entity)
         {
-            if (entity is IWorldInteractingEntity)
+            var interactingEntity = entity as IWorldInteractingEntity;
+            if (interactingEntity != null)
             {
-                var item = entity as IWorldInteractingEntity;
+                var item = interactingEntity;
                 item.EntityFactory = this;
             }
 
-            if (entity is ISoundEmitterEntity)
+            var emitterEntity = entity as ISoundEmitterEntity;
+            if (emitterEntity != null)
             {
-                var item = entity as ISoundEmitterEntity;
+                var item = emitterEntity;
                 item.SoundEngine = SoundEngine;
+            }
+
+            var custInit = entity as ICustomInitialization;
+            if (custInit != null)
+            {
+                custInit.Initialize(this);
             }
         }
         
@@ -427,22 +317,15 @@ namespace Utopia.Shared.Entities
 
                 foreach (var blueprintSlot in set)
                 {
-                    Item item;
-                    if (blueprintSlot.BlueprintId < 256)
+                    try
                     {
-                        var res = CreateEntity<CubeResource>();
-                        res.BluePrintId = blueprintSlot.BlueprintId;
-                        //var res = new CubeResource();
-                        var profile = Config.BlockProfiles[blueprintSlot.BlueprintId];
-                        res.SetCube((byte)blueprintSlot.BlueprintId, profile.Name);
-                        item = res;
+                        var item = (Item)CreateFromBluePrint(blueprintSlot.BlueprintId);
+                        container.PutItem(item, blueprintSlot.GridPosition, blueprintSlot.ItemsCount);
                     }
-                    else
+                    catch (Exception x)
                     {
-                        item = (Item)CreateFromBluePrint(blueprintSlot.BlueprintId);
+                        logger.Error("Unable to create the item from blueprint {0}: {1}", blueprintSlot.BlueprintId, x.Message);
                     }
-
-                    container.PutItem(item, blueprintSlot.GridPosition, blueprintSlot.ItemsCount);
                 }
             }
         }
@@ -452,25 +335,35 @@ namespace Utopia.Shared.Entities
         {
             switch ((MessageTypes)imsg.MessageId)
             {
-                case MessageTypes.EntityIn:
+                case MessageTypes.EntityData:
+                {
+                    var msg = (EntityDataMessage)imsg;
+                    if (msg.Entity != null)
                     {
-                        var msg = (EntityInMessage)imsg;
-
-                        if (msg.Entity != null)
-                        {
-                            PrepareEntity(msg.Entity);
-                        }
+                        PrepareEntity(msg.Entity);
                     }
+
+                }
+                    break;
+                case MessageTypes.EntityIn:
+                {
+                    var msg = (EntityInMessage)imsg;
+
+                    if (msg.Entity != null)
+                    {
+                        PrepareEntity(msg.Entity);
+                    }
+                }
                     break;
                 case MessageTypes.EntityEquipment:
-                    {
-                        var msg = (EntityEquipmentMessage)imsg;
+                {
+                    var msg = (EntityEquipmentMessage)imsg;
 
-                        if (msg.Entity != null)
-                        {
-                            PrepareEntity(msg.Entity);
-                        }
+                    if (msg.Entity != null)
+                    {
+                        PrepareEntity(msg.Entity);
                     }
+                }
                     break;
             }
         }
@@ -499,6 +392,16 @@ namespace Utopia.Shared.Entities
                 InjectFields(charEntity.HandTool);
             }
 
+            var container = entity as Container;
+
+            if (container != null)
+            {
+                foreach (var containedSlot in container.Slots())
+                {
+                    InjectFields(containedSlot.Item);
+                }
+            }
+            
             if (entity is GodEntity)
             {
                 var godEntity = (GodEntity)entity;

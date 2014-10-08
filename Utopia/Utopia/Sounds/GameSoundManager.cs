@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using S33M3DXEngine.Debug.Interfaces;
 using S33M3DXEngine.Main;
 using S33M3CoreComponents.Cameras;
 using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3Resources.Structs;
+using Utopia.Entities.Managers;
 using Utopia.Shared.Chunks;
 using Utopia.Shared.Entities.Interfaces;
-using Utopia.Shared.Structs;
 using Vector3D = S33M3Resources.Structs.Vector3D;
-using Utopia.Shared.Structs.Landscape;
 using Utopia.Shared.Settings;
 using Utopia.Entities.Managers.Interfaces;
 using Utopia.Worlds.Chunks.ChunkEntityImpacts;
@@ -21,11 +19,11 @@ using S33M3CoreComponents.Maths;
 using Utopia.Worlds.Chunks;
 using Utopia.Shared.World.Processors.Utopia.Biomes;
 using Utopia.Worlds.GameClocks;
-using Utopia.Entities.Managers;
 using Utopia.Shared.World;
 using Utopia.Shared.Sounds;
 using System.IO;
 using System.Linq;
+using Utopia.Shared.Entities.Dynamic;
 
 namespace Utopia.Sounds
 {
@@ -35,6 +33,8 @@ namespace Utopia.Sounds
     /// </summary>
     public class GameSoundManager : GameComponent, IDebugInfo
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private struct DynamicEntitySoundTrack
         {
             public IDynamicEntity Entity;
@@ -49,6 +49,7 @@ namespace Utopia.Sounds
             public string Path;
             public float Volume;
             public float Power;
+            public int Priority;
         }
 
         #region Private Variables
@@ -60,7 +61,7 @@ namespace Utopia.Sounds
         private IChunkEntityImpactManager _chunkEntityImpactManager;
         private IWorldChunks2D _worldChunk;
         private IClock _gameClockTime;
-        private IPlayerManager _playerEntityManager;
+        private readonly PlayerEntityManager _playerEntityManager;
         private VisualWorldParameters _visualWorldParameters;
         private UtopiaProcessorParams _biomesParams;
         private Dictionary<IItem, ISoundVoice> _staticEntityPlayingVoices = new Dictionary<IItem, ISoundVoice>();
@@ -68,7 +69,7 @@ namespace Utopia.Sounds
         private FastRandom _rnd;
 
         private Vector3 _listenerPosition;
-        private IDynamicEntity _player;
+
 
         private readonly SortedList<string, KeyValuePair<ISoundVoice, List<Vector3>>> _sharedSounds = new SortedList<string, KeyValuePair<ISoundVoice, List<Vector3>>>();
 
@@ -97,11 +98,10 @@ namespace Utopia.Sounds
                                 CameraManager<ICameraFocused> cameraManager,
                                 SingleArrayChunkContainer singleArray,
                                 IVisualDynamicEntityManager dynamicEntityManager,
-                                IDynamicEntity player,
                                 IChunkEntityImpactManager chunkEntityImpactManager,
                                 IWorldChunks2D worldChunk,
                                 IClock gameClockTime,
-                                IPlayerManager playerEntityManager,
+                                PlayerEntityManager playerEntityManager,
                                 VisualWorldParameters visualWorldParameters,
                                 IClock worlClock)
         {
@@ -120,8 +120,8 @@ namespace Utopia.Sounds
             }
 
             _dynamicEntityManager = dynamicEntityManager;
-            _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = player, Position = player.Position, isLocalSound = true });
-            _player = player;
+            _stepsTracker.Add(new DynamicEntitySoundTrack { Entity = _playerEntityManager.Player, Position = _playerEntityManager.Player.Position, isLocalSound = true });
+            _playerEntityManager.PlayerEntityChanged += _playerEntityManager_PlayerEntityChanged;
 
             //Register to Events
             
@@ -134,7 +134,21 @@ namespace Utopia.Sounds
             _rnd = new FastRandom();
             MoodsSounds = new Dictionary<MoodSoundKey, List<IUtopiaSoundSource>>();
 
-            this.IsDefferedLoadContent = true; //Make LoadContent executed in thread
+            IsDefferedLoadContent = true; //Make LoadContent executed in thread
+        }
+
+        void _playerEntityManager_PlayerEntityChanged(object sender, PlayerEntityChangedEventArgs e)
+        {
+            _stepsTracker.RemoveAll(t => t.Entity == e.PreviousCharacter);
+
+            if (e.PlayerCharacter != null)
+            {
+                _stepsTracker.Add(new DynamicEntitySoundTrack { 
+                    Entity = _playerEntityManager.Player, 
+                    Position = _playerEntityManager.Player.Position, 
+                    isLocalSound = true 
+                });
+            }
         }
 
         public override void BeforeDispose()
@@ -152,7 +166,7 @@ namespace Utopia.Sounds
             #region Load Derived classes sounds
             foreach (var data in _preLoad)
             {
-                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias, SourceCategory.FX);
+                ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(data.Path, data.Alias, SourceCategory.FX, priority:data.Priority);
                 if (dataSource != null)
                 {
                     dataSource.Volume = data.Volume;
@@ -170,7 +184,7 @@ namespace Utopia.Sounds
                     RegisterStepSound(cube.Id, new SoundMetaData()
                     {
                         Path = walkingSound.FilePath,
-                        Alias = walkingSound.Alias,
+                        Alias = walkingSound.Alias ?? Path.GetFileNameWithoutExtension(walkingSound.FilePath),
                         Volume = walkingSound.Volume,
                         Power = walkingSound.Power
                     }
@@ -182,7 +196,7 @@ namespace Utopia.Sounds
             {
                 foreach (var sound in pair.Value)
                 {
-                    ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(sound.Path, sound.Alias, SourceCategory.FX);
+                    ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(sound.Path, sound.Alias, SourceCategory.FX, priority:100);
                     if (dataSource != null)
                     {
                         dataSource.Volume = sound.Volume;
@@ -202,7 +216,7 @@ namespace Utopia.Sounds
                 {
                     foreach (var biomeSound in biome.AmbientSound)
                     {
-                        ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.FilePath, biomeSound.Alias, SourceCategory.Music);
+                        ISoundDataSource dataSource = _soundEngine.AddSoundSourceFromFile(biomeSound.FilePath, biomeSound.Alias, SourceCategory.Music, priority: biomeSound.Priority);
                         if (dataSource != null)
                         {
                             dataSource.Volume = biomeSound.Volume;
@@ -246,6 +260,9 @@ namespace Utopia.Sounds
                     case "peace":
                         type = MoodType.Peace;
                         break;
+                    case "dead":
+                        type = MoodType.Dead;
+                        break;
                     default:
                         continue;
                 }
@@ -254,8 +271,8 @@ namespace Utopia.Sounds
                 {
                     Alias = "Mood" + fileMetaData[0],
                     FilePath = moodSoundFile,
-                    Volume = type == MoodType.Peace ? 0.1f : 0.4f,
-                    isStreamed = true
+                    Volume = type == MoodType.Peace ? 0.1f : 0.6f,
+                    isStreamed = true                    
                 };
 
                 if (time == TimeOfDaySound.FullDay)
@@ -289,22 +306,30 @@ namespace Utopia.Sounds
             _soundEngine.Update3DSounds();
 
             //Get current player chunk
-            VisualChunk chunk = _worldChunk.GetChunk(MathHelper.Floor(_player.Position.X), MathHelper.Floor(_player.Position.Z));
-            Vector3I playerPosition = (Vector3I)_player.Position;
+            VisualChunk chunk;
+            if (!_worldChunk.GetSafeChunk(MathHelper.Floor(_playerEntityManager.Player.Position.X), MathHelper.Floor(_playerEntityManager.Player.Position.Z), out chunk)) 
+                return;
 
             //Always active background music linked to player Mood + Time
-            MoodSoundProcessing(ref playerPosition);
+            MoodSoundProcessing(_playerEntityManager.Player);
 
             //Activate Ambiant sounds following player positions, biomes, times, ...
             if (_biomesParams != null)
             {
-                AmbiantSoundProcessing(chunk, ref playerPosition);
+                AmbiantSoundProcessing(chunk, _playerEntityManager.Player);
             }
 
             //Walking step sound processing
             WalkingSoundProcessing();
 
-            StaticEntitiesEmittedSoundProcessing();
+            try
+            {
+                StaticEntitiesEmittedSoundProcessing();
+            }
+            catch (InvalidOperationException x)
+            {
+                logger.Error("Error when processing static sounds: {0}", x.Message);
+            }
         }
 
         public string GetDebugInfo()
@@ -349,9 +374,9 @@ namespace Utopia.Sounds
             _preLoad.Add(metaData);
         }
 
-        protected void PreLoadSound(string alias, string path, float volume, float power)
+        protected void PreLoadSound(string alias, string path, float volume, float power, int priority)
         {
-            _preLoad.Add(new SoundMetaData() { Alias = alias, Path = path, Volume = volume, Power = power });
+            _preLoad.Add(new SoundMetaData() { Alias = alias, Path = path, Volume = volume, Power = power, Priority = priority });
         }
 
         #region Walking Sound Processing
@@ -454,18 +479,17 @@ namespace Utopia.Sounds
         #region Biome ambiant Sound Processing
         private ISoundVoice _currentlyPLayingAmbiantSound;
         private Biome _previousBiomePlaying;
-        private void AmbiantSoundProcessing(VisualChunk chunk, ref Vector3I newPlayerPosition)
+        private void AmbiantSoundProcessing(VisualChunk chunk, ICharacterEntity player)
         {
-            ChunkColumnInfo columnInfo = chunk.BlockData.GetColumnInfo(newPlayerPosition.X - chunk.ChunkPositionBlockUnit.X, newPlayerPosition.Z - chunk.ChunkPositionBlockUnit.Y);
+            ChunkColumnInfo columnInfo = chunk.BlockData.GetColumnInfo(player.Position.ToCubePosition().X - chunk.ChunkPositionBlockUnit.X, player.Position.ToCubePosition().Z - chunk.ChunkPositionBlockUnit.Y);
 
-            //Testing "Fear" Condition !
-            bool playerAboveMaxChunkheight = (columnInfo.MaxHeight - newPlayerPosition.Y < -15);
-            bool playerBelowMaxChunkheight = (columnInfo.MaxHeight - newPlayerPosition.Y > 15);
+            bool playerAboveMaxChunkheight = (columnInfo.MaxHeight - player.Position.ToCubePosition().Y < -15);
+            bool playerBelowMaxChunkheight = (columnInfo.MaxHeight - player.Position.ToCubePosition().Y > 15);
 
             Biome currentBiome = _biomesParams.Biomes[chunk.BlockData.ChunkMetaData.ChunkMasterBiomeType];
 
-            //Ambiant sound are just for surface "chunk", of not stop playing them !
-            if (playerAboveMaxChunkheight || playerBelowMaxChunkheight)
+            //Ambiant sound are just for surface "chunk", if not stop playing them !
+            if (playerAboveMaxChunkheight || playerBelowMaxChunkheight || player.HealthState == DynamicEntityHealthState.Dead)
             {
                 if (_currentlyPLayingAmbiantSound != null)
                 {
@@ -495,10 +519,12 @@ namespace Utopia.Sounds
                     }
                 }
                 //Pickup next biome ambiant sound, and start it !
-                int nextAmbientSoundId = _rnd.Next(0, currentBiome.AmbientSound.Count);
-                _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(currentBiome.AmbientSound[nextAmbientSoundId].Alias, SourceCategory.Music ,false, 3000);
-
-                _previousBiomePlaying = currentBiome;
+                if (currentBiome.AmbientSound.Count > 0)
+                {
+                    int nextAmbientSoundId = _rnd.Next(0, currentBiome.AmbientSound.Count);
+                    _currentlyPLayingAmbiantSound = _soundEngine.StartPlay2D(currentBiome.AmbientSound[nextAmbientSoundId].Alias, SourceCategory.Music, false, 3000);
+                    _previousBiomePlaying = currentBiome;
+                }
             }
         }
         #endregion
@@ -506,9 +532,9 @@ namespace Utopia.Sounds
         #region Mood Sound Processing
         private ISoundVoice _currentlyPlayingMoodSound;
         private MoodSoundKey _previousMood = null;
-        private void MoodSoundProcessing(ref Vector3I newPlayerPosition)
+        private void MoodSoundProcessing(ICharacterEntity player)
         {
-            MoodSoundKey currentMood = new MoodSoundKey() { TimeOfDay = GetTimeofDay(), Type = GetMoodType(ref newPlayerPosition) };
+            MoodSoundKey currentMood = new MoodSoundKey() { TimeOfDay = GetTimeofDay(), Type = GetMoodType(player) };
 
             //No sound was playing, or a new one needs to be played
             if (_currentlyPlayingMoodSound == null || 
@@ -547,11 +573,17 @@ namespace Utopia.Sounds
             }
         }
 
-        private MoodType GetMoodType(ref Vector3I newPlayerPosition)
+        private MoodType GetMoodType(ICharacterEntity player)
         {
-          
+            if (player.HealthState == DynamicEntityHealthState.Dead)
+            {
+                return MoodType.Dead;
+            }
+
+            //Add drowning sound !
+
             //Testing "Fear" Condition !
-            bool playerNearBottom = newPlayerPosition.Y <= 30;
+            bool playerNearBottom = player.Position.Y <= 30;
 
             if (playerNearBottom)
             {
@@ -596,7 +628,8 @@ namespace Utopia.Sounds
 
         private void DynamicEntityManagerEntityRemoved(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)
         {
-            _stepsTracker.RemoveAt(_stepsTracker.FindIndex(p => p.Entity == e.Entity));
+            var index = _stepsTracker.FindIndex(p => p.Entity.DynamicId == e.Entity.DynamicId);
+            _stepsTracker.RemoveAt(index);
         }
 
         private void DynamicEntityManagerEntityAdded(object sender, Shared.Entities.Events.DynamicEntityEventArgs e)

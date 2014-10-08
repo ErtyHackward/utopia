@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ProtoBuf;
 using S33M3Resources.Structs;
 using Utopia.Shared.Configuration;
@@ -12,7 +13,7 @@ namespace Utopia.Shared.Chunks
     [ProtoContract]
     public class InsideDataProvider : ChunkDataProvider
     {
-        private readonly object _writeSyncRoot = new object();
+        private readonly object _syncRoot = new object();
         private Vector3I _chunkSize;
         private byte[] _blockBytes;
         private ChunkColumnInfo[] _chunkColumns;
@@ -57,8 +58,18 @@ namespace Utopia.Shared.Chunks
         [ProtoMember(3)]
         public Dictionary<Vector3I, BlockTag> SerializeTags
         {
-            get { return _tags; }
-            set { _tags = value; }
+            get {
+                lock (_syncRoot)
+                {
+                    return new Dictionary<Vector3I, BlockTag>(_tags);
+                }
+            }
+            set {
+                lock (_syncRoot)
+                {
+                    _tags = value;     
+                }
+            }
         }
 
         /// <summary>
@@ -92,7 +103,7 @@ namespace Utopia.Shared.Chunks
 
         public override object WriteSyncRoot
         {
-            get { return _writeSyncRoot; }
+            get { return _syncRoot; }
         }
 
         /// <summary>
@@ -130,9 +141,20 @@ namespace Utopia.Shared.Chunks
         /// </summary>
         public void BeginTransaction()
         {
-            if (_transaction)
-                throw new InvalidOperationException("Transaction is already started");
-            _transaction = true;
+            // if there are currently other transaction running, wait unit it will finish
+            while (true)
+            {
+                lock (_syncRoot)
+                {
+                    if (!_transaction)
+                    {
+                        _transaction = true;
+                        break;
+                    }
+                }
+
+                Thread.Sleep(0);
+            }
         }
 
         /// <summary>
@@ -142,14 +164,16 @@ namespace Utopia.Shared.Chunks
         {
             if (!_transaction)
                 throw new InvalidOperationException("Transaction was not started");
-            _transaction = false;
-
+            lock (_syncRoot)
+            {
+                _transaction = false;    
+            }
+            
             if (_transactionPositions.Count == 0) 
                 return;
 
             lock (_transactionPositions)
             {
-
                 OnBlockDataChanged(new ChunkDataProviderDataChangedEventArgs
                                        {
                                            Count = _transactionPositions.Count,
@@ -175,36 +199,37 @@ namespace Utopia.Shared.Chunks
             // no need to do anything?
             if (_chunkSize == newSize) return;
 
-            _chunkColumns = new ChunkColumnInfo[newSize.X * newSize.Z];
-
-            // copy data
-            if (_blockBytes != null && copyData)
+            lock (_syncRoot)
             {
-                lock (_writeSyncRoot) { }
-                
-                var newArray = new byte[newSize.X * newSize.Y * newSize.Z];
+                _chunkColumns = new ChunkColumnInfo[newSize.X * newSize.Z];
 
-                Vector3I copySize;
-
-                copySize.x = newSize.X > _chunkSize.X ? _chunkSize.X : newSize.X;
-                copySize.y = newSize.Y > _chunkSize.Y ? _chunkSize.Y : newSize.Y;
-                copySize.z = newSize.Z > _chunkSize.Z ? _chunkSize.Z : newSize.Z;
-
-                for (int x = 0; x < copySize.X; x++)
+                // copy data
+                if (_blockBytes != null && copyData)
                 {
-                    for (int y = 0; y < copySize.Y; y++)
+                    var newArray = new byte[newSize.X * newSize.Y * newSize.Z];
+
+                    Vector3I copySize;
+
+                    copySize.x = newSize.X > _chunkSize.X ? _chunkSize.X : newSize.X;
+                    copySize.y = newSize.Y > _chunkSize.Y ? _chunkSize.Y : newSize.Y;
+                    copySize.z = newSize.Z > _chunkSize.Z ? _chunkSize.Z : newSize.Z;
+
+                    for (int x = 0; x < copySize.X; x++)
                     {
-                        for (int z = 0; z < copySize.Z; z++)
+                        for (int y = 0; y < copySize.Y; y++)
                         {
-                            newArray[x * newSize.Y + y + z * newSize.Y * newSize.X] = _blockBytes[x * _chunkSize.Y + y + z * _chunkSize.Y * _chunkSize.X];
+                            for (int z = 0; z < copySize.Z; z++)
+                            {
+                                newArray[x * newSize.Y + y + z * newSize.Y * newSize.X] = _blockBytes[x * _chunkSize.Y + y + z * _chunkSize.Y * _chunkSize.X];
+                            }
                         }
                     }
+
+                    _blockBytes = newArray;
                 }
 
-                _blockBytes = newArray;
+                _chunkSize = newSize;
             }
-
-            _chunkSize = newSize;
         }
 
         /// <summary>
@@ -222,17 +247,18 @@ namespace Utopia.Shared.Chunks
             if (bytes.Length != arrayLength)
                 throw new ArgumentOutOfRangeException(string.Format("Wrong block buffer size. Expected: {0}, Actual: {1}", arrayLength, bytes.Length));
 
-            lock (_writeSyncRoot) { }
-
-            BlockBytes = bytes;
-
-            _tags.Clear();
-
-            if (tags != null)
+            lock (_syncRoot)
             {
-                foreach (var keyValuePair in tags)
+                BlockBytes = bytes;
+
+                _tags.Clear();
+
+                if (tags != null)
                 {
-                    _tags.Add(keyValuePair.Key, keyValuePair.Value);
+                    foreach (var keyValuePair in tags)
+                    {
+                        _tags.Add(keyValuePair.Key, keyValuePair.Value);
+                    }
                 }
             }
 
@@ -246,16 +272,18 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public override byte GetBlock(Vector3I inChunkPosition)
         {
-            if (_blockBytes == null) return 0;
-            //return _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X];
-            return _blockBytes[((inChunkPosition.Z * _chunkSize.X) + inChunkPosition.X) * _chunkSize.Y + inChunkPosition.Y];
+            if (_blockBytes == null) 
+                return 0;
+            lock (_syncRoot)
+                return _blockBytes[((inChunkPosition.Z * _chunkSize.X) + inChunkPosition.X) * _chunkSize.Y + inChunkPosition.Y];
         }
 
         public byte GetBlock(int x, int y, int z)
         {
-            if (_blockBytes == null) return 0;
-            //return _blockBytes[x * _chunkSize.Y + y + z * _chunkSize.Y * _chunkSize.X];
-            return _blockBytes[((z * _chunkSize.X) + x) * _chunkSize.Y + y];
+            if (_blockBytes == null) 
+                return 0;
+            lock (_syncRoot)
+                return _blockBytes[((z * _chunkSize.X) + x) * _chunkSize.Y + y];
         }
 
         /// <summary>
@@ -265,22 +293,34 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public override BlockTag GetTag(Vector3I inChunkPosition)
         {
-            BlockTag result;
-            _tags.TryGetValue(inChunkPosition, out result);
-            return result;
+            lock (_syncRoot)
+            {
+                BlockTag result;
+                _tags.TryGetValue(inChunkPosition, out result);
+                return result == null ? null : (BlockTag)result.Clone();
+            }
         }
 
         private void SetTag(BlockTag tag, Vector3I inChunkPosition)
         {
-            if (tag != null)
-                _tags[inChunkPosition] = tag;
-            else
-                _tags.Remove(inChunkPosition);
+            lock (_syncRoot)
+            {
+                if (tag != null)
+                    _tags[inChunkPosition] = (BlockTag)tag.Clone();
+                else
+                    _tags.Remove(inChunkPosition);
+            }
         }
 
         public override IEnumerable<KeyValuePair<Vector3I, BlockTag>> GetTags()
         {
-            return _tags;
+            lock (_syncRoot)
+            {
+                foreach (var blockTag in _tags)
+                {
+                    yield return blockTag;
+                }
+            }
         }
 
         public IEnumerable<KeyValuePair<Vector3I, byte>> AllBlocks(bool includeEmpty = false)
@@ -306,24 +346,27 @@ namespace Utopia.Shared.Chunks
                 }
             }
         }
-
+        
         /// <summary>
         /// Sets a single block into location specified
         /// </summary>
         /// <param name="inChunkPosition"></param>
         /// <param name="blockValue"></param>
         /// <param name="tag"></param>
-        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null)
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public override void SetBlock(Vector3I inChunkPosition, byte blockValue, BlockTag tag = null, uint sourceDynamicId = 0)
         {
-            lock (_writeSyncRoot) { }
-
-            if (_blockBytes == null)
+            lock (_syncRoot)
             {
-                _blockBytes = new byte[_chunkSize.X * _chunkSize.Y * _chunkSize.Z];
+                if (_blockBytes == null)
+                {
+                    _blockBytes = new byte[_chunkSize.X * _chunkSize.Y * _chunkSize.Z];
+                }
+
+                _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X] = blockValue;
+                RefreshMetaData(ref inChunkPosition, blockValue);
+                SetTag(tag, inChunkPosition);
             }
-            _blockBytes[inChunkPosition.X * _chunkSize.Y + inChunkPosition.Y + inChunkPosition.Z * _chunkSize.Y * _chunkSize.X] = blockValue;
-            RefreshMetaData(ref inChunkPosition);
-            SetTag(tag, inChunkPosition);
 
             if (_transaction)
             {
@@ -342,37 +385,41 @@ namespace Utopia.Shared.Chunks
                                            Count = 1,
                                            Locations = new[] {inChunkPosition},
                                            Bytes = new[] {blockValue},
-                                           Tags = tag != null ? new[] {tag} : null
+                                           Tags = tag != null ? new[] {tag} : null,
+                                           SourceDynamicId = sourceDynamicId
                                        });
             }
         }
 
+
         /// <summary>
         /// Sets a group of blocks
         /// </summary>
-        /// <param name="positions">internal chunk positions</param>
+        /// <param name="positions"></param>
         /// <param name="values"></param>
         /// <param name="tags"> </param>
-        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null)
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for the change</param>
+        public override void SetBlocks(Vector3I[] positions, byte[] values, BlockTag[] tags = null, uint sourceDynamicId = 0)
         {
-            lock (_writeSyncRoot) { }
-
-            if (_blockBytes == null)
+            lock (_syncRoot)
             {
-                _blockBytes = new byte[_chunkSize.X * _chunkSize.Y * _chunkSize.Z];
-            }
+                if (_blockBytes == null)
+                {
+                    _blockBytes = new byte[_chunkSize.X * _chunkSize.Y * _chunkSize.Z];
+                }
 
-            for (var i = 0; i < positions.Length; i++)
-            {
-                _blockBytes[positions[i].X * _chunkSize.Y + positions[i].Y + positions[i].Z * _chunkSize.Y * _chunkSize.X] = values[i];
-                RefreshMetaData(ref positions[i]);
-            }
-
-            if (tags != null)
-            {
                 for (var i = 0; i < positions.Length; i++)
                 {
-                    SetTag(tags[i], positions[i]);
+                    _blockBytes[positions[i].X * _chunkSize.Y + positions[i].Y + positions[i].Z * _chunkSize.Y * _chunkSize.X] = values[i];
+                    RefreshMetaData(ref positions[i], values[i]);
+                }
+
+                if (tags != null)
+                {
+                    for (var i = 0; i < positions.Length; i++)
+                    {
+                        SetTag(tags[i], positions[i]);
+                    }
                 }
             }
             
@@ -395,7 +442,8 @@ namespace Utopia.Shared.Chunks
                                            Count = positions.Length,
                                            Locations = positions,
                                            Bytes = values,
-                                           Tags = tags
+                                           Tags = tags,
+                                           SourceDynamicId = sourceDynamicId
                                        });
             }
         }
@@ -407,19 +455,41 @@ namespace Utopia.Shared.Chunks
             return _chunkColumns[inChunkPositionZ * _chunkSize.X + inChunkPositionX];
         }
 
-        private void RefreshMetaData(ref Vector3I inChunkPosition)
+        private void RefreshMetaData(ref Vector3I inChunkPosition, byte newBlockValue)
         {
-            //Must look from World Top to bottom to recompute the new High Block !
-            int yPosi = _chunkSize.Y - 1;
-            while (GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air && yPosi > 0)
+            int indexColumn = inChunkPosition.X * _chunkSize.Z + inChunkPosition.Z;
+            if (newBlockValue != WorldConfiguration.CubeId.Air)
             {
-                yPosi--;
+                //Change being made above surface !
+                if (ColumnsInfo[indexColumn].MaxHeight < inChunkPosition.Y)
+                {
+                    ColumnsInfo[indexColumn].MaxHeight = (byte)inChunkPosition.Y;
+                    ChunkMetaData.setChunkMaxHeightBuilt((byte)inChunkPosition.Y);
+                    if (ColumnsInfo[indexColumn].IsWild)
+                    {
+                        ColumnsInfo[indexColumn].IsWild = false;
+                        ChunkMetaData.setChunkWildStatus(ColumnsInfo);
+                    }
+                }
             }
-
-            //Compute 2D index of ColumnInfo and update ColumnInfo
-            int index2D = inChunkPosition.X * _chunkSize.Z + inChunkPosition.Z;
-            ColumnsInfo[index2D].MaxHeight = (byte)yPosi;
-            ChunkMetaData.setChunkMaxHeightBuilt(ColumnsInfo);
+            else
+            {
+                //Change being made at the surface (Block removed)
+                if (ColumnsInfo[indexColumn].MaxHeight <= inChunkPosition.Y)
+                {
+                    int yPosi = inChunkPosition.Y - 1;
+                    while (yPosi > 0 && GetBlock(inChunkPosition.X, yPosi, inChunkPosition.Z) == WorldConfiguration.CubeId.Air)
+                    {
+                        yPosi--;
+                    }
+                    ChunkMetaData.setChunkMaxHeightBuilt((byte)yPosi);
+                    if (ColumnsInfo[indexColumn].IsWild)
+                    {
+                        ColumnsInfo[indexColumn].IsWild = false;
+                        ChunkMetaData.setChunkWildStatus(ColumnsInfo);
+                    }
+                }
+            }
         }
         #endregion
 

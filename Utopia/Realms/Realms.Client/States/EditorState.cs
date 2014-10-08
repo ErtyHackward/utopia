@@ -1,11 +1,14 @@
 ﻿using System;
 using Ninject;
+using Ninject.Parameters;
 using Realms.Client.Components.GUI;
+using S33M3CoreComponents.Cameras.Interfaces;
 using Utopia.Components;
 using Utopia.Entities;
 using Utopia.Entities.Voxel;
 using S33M3CoreComponents.States;
 using S33M3CoreComponents.GUI;
+using Utopia.Particules;
 
 namespace Realms.Client.States
 {
@@ -46,6 +49,10 @@ namespace Realms.Client.States
             AddComponent(_modelEditor);
             AddComponent(gui);
             AddComponent(iconFactory);
+
+            var vars = _ioc.Get<RealmRuntimeVariables>();
+            _modelEditor.Author = vars.DisplayName;
+
             base.Initialize(context);
         }
 

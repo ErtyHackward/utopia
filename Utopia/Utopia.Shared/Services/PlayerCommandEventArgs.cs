@@ -6,7 +6,7 @@ namespace Utopia.Shared.Services
 {
     public class PlayerCommandEventArgs : EventArgs
     {
-        public IServerCommand Command { get; set; }
+        public IChatCommand Command { get; set; }
         public string[] Params { get; set; }
 
         public bool HaveParameters

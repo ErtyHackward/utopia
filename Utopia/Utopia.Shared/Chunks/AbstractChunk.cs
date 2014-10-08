@@ -36,7 +36,7 @@ namespace Utopia.Shared.Chunks
         private EntityCollection _entities;
 
         /// <summary>
-        /// Gets or sets current chunk position
+        /// Gets or sets current chunk position - In Chunk coordinate
         /// </summary>
         [ProtoMember(1)]
         public Vector3I Position { get; set; }
@@ -92,8 +92,18 @@ namespace Utopia.Shared.Chunks
                 }
             }
         }
-        
 
+        /// <summary>
+        /// Return the chunk position in Block unit
+        /// </summary>
+        public Vector3D BlockPosition
+        {
+            get
+            {
+                return new Vector3D(Position.X * ChunkSize.X, Position.Y * ChunkSize.Y, Position.Z * ChunkSize.Z);
+            }
+        }
+        
         #endregion
         
         protected AbstractChunk(ChunkDataProvider blockDataProvider)

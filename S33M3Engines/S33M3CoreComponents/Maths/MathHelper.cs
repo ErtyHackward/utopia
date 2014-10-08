@@ -355,5 +355,63 @@ namespace S33M3CoreComponents.Maths
             int result = value % div;
             return result < 0 ? result + div : result;
         }
+
+        /// <summary>
+        /// Will give back the Least common multiple from a list of numbers
+        /// </summary>
+        /// <param name="Numbers"></param>
+        /// <returns></returns>
+        public static int LCM(List<int> Numbers)
+        {
+            if (Numbers == null) return 0;
+
+            int lcmResult = -1;
+            int workingNumber;
+
+            foreach (var number in Numbers)
+            {
+                if (lcmResult == -1)
+                {
+                    lcmResult = number;
+                    continue;
+                }
+
+                workingNumber = number;
+
+                lcmResult = LCMComputing(lcmResult, workingNumber);
+
+            }
+            return lcmResult == -1 ? 0 : lcmResult;
+        }
+
+        private static int GCD(int a, int b)
+        {
+            // Make a >= b.
+            a = Math.Abs(a);
+            b = Math.Abs(b);
+            if (a < b)
+            {
+                int tmp = a;
+                a = b;
+                b = tmp;
+            }
+
+            // Pull out remainders.
+            for (; ; )
+            {
+                int remainder = a % b;
+                if (remainder == 0) return b;
+                a = b;
+                b = remainder;
+            };
+        }
+
+        // Return the least common multiple
+        // (LCM) of two numbers.
+        private static int LCMComputing(int a, int b)
+        {
+            return a * b / GCD(a, b);
+        }
+
     }
 }

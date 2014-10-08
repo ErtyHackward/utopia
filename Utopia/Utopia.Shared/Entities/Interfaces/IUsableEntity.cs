@@ -6,7 +6,7 @@ namespace Utopia.Shared.Entities.Interfaces
     public interface IUsableEntity
     {
         /// <summary>
-        /// Executes entity specific logic, (toolless use)
+        /// Executes entity specific logic, (handtool use)
         /// </summary>
         void Use();
     }

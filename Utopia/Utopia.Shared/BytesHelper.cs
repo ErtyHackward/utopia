@@ -96,4 +96,19 @@ namespace Utopia.Shared
             return string.Format(FileSizeFormatProvider.Instance, "{0:fs}", value);
         }
     }
+
+    public static class OtherHelper
+    {
+        /// <summary>
+        /// Tells if the collection has at least the number of items
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static bool CountAtLeast<T>(this IEnumerable<T> collection, int number)
+        {
+            return collection.Take(number).Count() == number;
+        }
+    }
 }

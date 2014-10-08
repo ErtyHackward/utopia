@@ -8,12 +8,32 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtoBuf;
 using ProtoBuf.Meta;
 using SharpDX;
+using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Concrete;
+using Utopia.Shared.Server.Structs;
 
 namespace Utopia.Tests
 {
     [TestClass]
     public class ProtobufInheritanceTest
     {
+        [TestMethod]
+        public void ProtoContainerTest()
+        {
+            EntityFactory.InitializeProtobufInheritanceHierarchy();
+            
+            var chunk = new ServerChunk();
+            var container = new Container();
+            container.Content.PutItem(new Food(), 1);
+            chunk.Entities.Add(container);
+
+            var data = chunk.Compress();
+
+            var nChunk = new ServerChunk();
+            nChunk.Decompress(data);
+
+        }
+
         [TestMethod]
         public void ProtoInheritanceTest()
         {

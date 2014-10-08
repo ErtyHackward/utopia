@@ -18,15 +18,32 @@ namespace Utopia.Resources.Effects.Entities
         //
         // !! Set the Marshaling update flag to one in this case !
         //
-        [StructLayout(LayoutKind.Explicit, Size = 80)]
+        [StructLayout(LayoutKind.Explicit, Size = 224)]
         public struct CBPerFrameStructure
         {
             [FieldOffset(0)]
             public Matrix ViewProjection;
+
             [FieldOffset(64)]
-            public Vector3 LightDirection;
-            [FieldOffset(76)]
+            public Matrix LightViewProjection;
+
+            [FieldOffset(128)]
             public float FogDistance;
+
+            [FieldOffset(132)]
+            public Vector3 SunVector;
+
+            [FieldOffset(144)]
+            public Vector3 ShadowMapVars;
+
+            /// <summary>
+            /// Indicates if shadow map is enabled
+            /// </summary>
+            [FieldOffset(156)]
+            public bool UseShadowMap;
+
+            [FieldOffset(160)]
+            public Matrix Focus;
         }
 
         [StructLayout(LayoutKind.Explicit, Size = 1024)]
@@ -39,6 +56,8 @@ namespace Utopia.Resources.Effects.Entities
         public CBuffer<CBPerFrameStructure> CBPerFrame;
         public CBuffer<CBPerModelStructure> CBPerModel;
 
+        public ShaderResource ShadowMap;
+        public ShaderSampler SamplerBackBuffer;
         #endregion
 
         #region Define Shaders EntryPoints Names
@@ -59,6 +78,12 @@ namespace Utopia.Resources.Effects.Entities
 
             CBPerModel = ToDispose(new CBuffer<CBPerModelStructure>(device, "VoxelModel", true));
             CBuffers.Add(CBPerModel);
+
+            ShadowMap = new ShaderResource("ShadowMap");
+            ShaderResources.Add(ShadowMap);
+
+            SamplerBackBuffer = new ShaderSampler("SamplerBackBuffer");
+            ShaderSamplers.Add(SamplerBackBuffer);
             
             //Load the shaders
             base.LoadShaders(shadersEntryPoint == null ? _shadersEntryPoint : shadersEntryPoint);

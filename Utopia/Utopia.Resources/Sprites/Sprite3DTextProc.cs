@@ -143,8 +143,11 @@ namespace Utopia.Resources.Sprites
                         //All other characters goes here
                         RectangleF desc = _spriteFont.CharDescriptors[character];
                         //Create texture coordinate in Texture coordinate
-                        RectangleF sourceRectInTexCoord = new RectangleF((desc.Left / (float)_spriteFont.SpriteTexture.Width), desc.Top / (float)_spriteFont.SpriteTexture.Height, desc.Right / (float)_spriteFont.SpriteTexture.Width, desc.Bottom / (float)_spriteFont.SpriteTexture.Height);
-
+                        RectangleF sourceRectInTexCoord = new RectangleF(desc.Left / (float)_spriteFont.SpriteTexture.Width, 
+                                                                         desc.Top / (float)_spriteFont.SpriteTexture.Height, 
+                                                                         desc.Width / (float)_spriteFont.SpriteTexture.Width, 
+                                                                         desc.Height / (float)_spriteFont.SpriteTexture.Height);
+                        
                         //Apply Kerning
                         if (!isFirstChar && _spriteFont.WithKerning)
                         {

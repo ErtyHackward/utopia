@@ -48,6 +48,7 @@ type
 		File: String;
 		Title: String;
 		Parameters: String;
+		ErrorCode: Integer;
 	end;
 	
 var
@@ -55,6 +56,31 @@ var
 	products: array of TProduct;
 	DependencyPage: TOutputProgressWizardPage;
   
+procedure AddProductWithError(FileName, Parameters, Title, Size, URL: string; errorCode : Integer);
+var
+	path: string;
+	i: Integer;
+begin
+	installMemo := installMemo + '%1' + Title + #13;
+	
+	path := ExpandConstant('{tmp}{\}') + FileName;
+	if not FileExists(path) then begin
+		path := ExpandConstant('{tmp}{\}') + FileName;
+		
+		isxdl_AddFile(URL, path);
+		
+		downloadMemo := downloadMemo + '%1' + Title + #13;
+		downloadMessage := downloadMessage + '    ' + Title + ' (' + Size + ')' + #13;
+	end;
+	
+	i := GetArrayLength(products);
+	SetArrayLength(products, i + 1);
+	products[i].File := path;
+	products[i].Title := Title;
+	products[i].Parameters := Parameters;
+	products[i].ErrorCode := errorCode;
+end;
+
 procedure AddProduct(FileName, Parameters, Title, Size, URL: string);
 var
 	path: string;
@@ -77,6 +103,7 @@ begin
 	products[i].File := path;
 	products[i].Title := Title;
 	products[i].Parameters := Parameters;
+	products[i].ErrorCode := 0;
 end;
 
 function InstallProducts: Boolean;
@@ -97,7 +124,7 @@ begin
 			
 			if Exec(products[i].File, products[i].Parameters, '', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then begin
 				//success; ResultCode contains the exit code
-				if ResultCode = 0 then
+				if (ResultCode = 0) or (ResultCode = products[i].ErrorCode) then
 					finishCount := finishCount + 1
 				else begin
 					Result := false;

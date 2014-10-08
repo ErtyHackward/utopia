@@ -98,16 +98,28 @@ namespace Utopia.Shared.Net.Messages
         /// </summary>
         UseFeedback = 23,
         /// <summary>
-        /// Requests one or more voxel models
-        /// </summary>
-        GetVoxelModels = 24,
-        /// <summary>
-        /// Contains requested voxel model
-        /// </summary>
-        VoxelModelData = 25,
-        /// <summary>
         /// Client request server DateTime for syncing server <-> Client time
         /// </summary>
-        RequestDateTimeSync = 26
+        RequestDateTimeSync = 26,
+        /// <summary>
+        /// Client request for dynamic entity to resync
+        /// </summary>
+        GetEntity = 27,
+        /// <summary>
+        /// Server response for GetEntity message
+        /// </summary>
+        EntityData = 28,
+        /// <summary>
+        /// Entity Health change !
+        /// </summary>
+        EntityHealth = 29,
+        /// <summary>
+        /// Health State change
+        /// </summary>
+        EntityHealthState = 30,
+        /// <summary>
+        /// Afflication State change
+        /// </summary>
+        EntityAfflictionState = 31
     }
 }

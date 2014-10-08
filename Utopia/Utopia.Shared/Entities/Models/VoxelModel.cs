@@ -1,9 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using ProtoBuf;
+using S33M3CoreComponents.Maths;
+using S33M3Resources.Structs;
+using SharpDX;
+using Utopia.Shared.LandscapeEntities.Trees;
 using Utopia.Shared.Structs;
 
 namespace Utopia.Shared.Entities.Models
@@ -15,8 +20,6 @@ namespace Utopia.Shared.Entities.Models
     [ProtoContract]
     public class VoxelModel
     {
-        public const int ModelFormatVersion = 2;
-
         public VoxelModel()
         {
             Frames = new List<VoxelFrame>();
@@ -67,6 +70,12 @@ namespace Utopia.Shared.Entities.Models
         [ProtoMember(7)]
         public ColorMapping ColorMapping { get; set; }
 
+        /// <summary>
+        /// Gets or sets model author nickname
+        /// </summary>
+        [ProtoMember(8)]
+        public string Author { get; set; }
+
         [ProtoAfterDeserialization]
         public void Deserialized()
         {
@@ -75,8 +84,7 @@ namespace Utopia.Shared.Entities.Models
                 voxelModelState.ParentModel = this;
             }
         }
-
-
+        
         /// <summary>
         /// Calculates a md5 hash from a model
         /// </summary>
@@ -84,125 +92,13 @@ namespace Utopia.Shared.Entities.Models
         {
             using (var ms = new MemoryStream())
             {
-                var writer = new BinaryWriter(ms);
-
-                SaveImpl(writer);
-
+                Hash = null;
+                Serializer.Serialize(ms, this);
                 ms.Position = 0;
                 Hash = Md5Hash.Calculate(ms);
             }
         }
-
-        private void SaveImpl(BinaryWriter writer, Md5Hash hash = null)
-        {
-            writer.Write(ModelFormatVersion);
-
-            writer.Write(Name);
-
-            if (hash != null)
-            {
-                writer.Write((byte)16);
-                writer.Write(hash.Bytes);
-            }
-            else writer.Write((byte)0);
-
-            ColorMapping.Write(writer, ColorMapping);
-
-            writer.Write((byte)Frames.Count);
-            foreach (var voxelFrame in Frames)
-            {
-                voxelFrame.Save(writer);
-            }
-            writer.Write((byte)Parts.Count);
-            foreach (var voxelModelPart in Parts)
-            {
-                voxelModelPart.Save(writer);
-            }
-            writer.Write((byte)States.Count);
-            foreach (var voxelModelState in States)
-            {
-                voxelModelState.Save(writer);
-            }
-            writer.Write((byte)Animations.Count);
-            foreach (var voxelModelAnimation in Animations)
-            {
-                voxelModelAnimation.Save(writer);
-            }
-        }
-
-        public void Save(BinaryWriter writer)
-        {
-            UpdateHash();
-            SaveImpl(writer, Hash);
-        }
-
-        public void Load(BinaryReader reader)
-        {
-            var version = reader.ReadInt32();
-
-            if (version != ModelFormatVersion)
-                throw new InvalidDataException("Invalid model format version. Convert models to the v" + ModelFormatVersion + " format to use");
-
-            Name = reader.ReadString();
-
-            var count = reader.ReadByte();
-
-            if (count > 0)
-            {
-                var hash = reader.ReadBytes(count);
-                if (hash.Length != 16)
-                    throw new EndOfStreamException();
-                Hash = new Md5Hash(hash);
-            }
-            else Hash = null;
-
-            ColorMapping = ColorMapping.Read(reader);
-
-            count = reader.ReadByte();
-
-            Frames.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                var frame = new VoxelFrame();
-                frame.Load(reader);
-                Frames.Add(frame);
-            }
-
-            count = reader.ReadByte();
-
-            Parts.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                var modelPart = new VoxelModelPart();
-                modelPart.Load(reader);
-                Parts.Add(modelPart);
-            }
-
-            count = reader.ReadByte();
-
-            States.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                var modelState = new VoxelModelState(this);
-                modelState.Load(reader);
-                States.Add(modelState);
-            }
-
-            count = reader.ReadByte();
-
-            Animations.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                var modelState = new VoxelModelAnimation();
-                modelState.Load(reader);
-                Animations.Add(modelState);
-            }
-        }
-
+        
         /// <summary>
         /// Removes a state from index, updates animations indices
         /// </summary>
@@ -230,6 +126,9 @@ namespace Utopia.Shared.Entities.Models
 
         public void SaveToFile(string path)
         {
+            if (File.Exists(path))
+                File.Delete(path);
+
             using (var fs = new GZipStream(File.OpenWrite(path), CompressionMode.Compress))
             {
                 Serializer.Serialize(fs, this);
@@ -238,9 +137,14 @@ namespace Utopia.Shared.Entities.Models
 
         public static VoxelModel LoadFromFile(string path)
         {
-            using (var fs = new GZipStream(File.OpenRead(path), CompressionMode.Decompress))
+            return LoadFromStream(File.OpenRead(path));
+        }
+
+        public static VoxelModel LoadFromStream(Stream stream)
+        {
+            using (var fs = new GZipStream(stream, CompressionMode.Decompress))
             {
-                return Serializer.Deserialize<VoxelModel>(fs);   
+                return Serializer.Deserialize<VoxelModel>(fs);
             }
         }
 
@@ -269,12 +173,131 @@ namespace Utopia.Shared.Entities.Models
         /// <returns></returns>
         public VoxelModelState GetMainState()
         {
-            var mainIndex = States.FindIndex(s => s.Name == "Main");
+            var mainIndex = States.FindIndex(s => string.Equals(s.Name, "Main", StringComparison.InvariantCultureIgnoreCase));
 
             if (mainIndex == -1)
                 mainIndex = 0;
 
             return States[mainIndex];
+        }
+
+        /// <summary>
+        /// Returns the state that will be used as default icon
+        /// </summary>
+        /// <returns></returns>
+        public VoxelModelState GetIconState()
+        {
+            var iconIndex = States.FindIndex(s => string.Equals(s.Name, "Icon", StringComparison.InvariantCultureIgnoreCase));
+
+            if (iconIndex != -1)
+                return States[iconIndex];
+
+            return GetMainState();
+        }
+
+        public void AddPart(VoxelModelPart part)
+        {
+            foreach (var voxelModelState in States)
+            {
+                voxelModelState.PartsStates.Add(new VoxelModelPartState());
+            }
+
+            Parts.Add(part);
+        }
+
+        public void RemovePartAt(int selectedPartIndex)
+        {
+            Parts.RemoveAt(selectedPartIndex);
+
+            foreach (var voxelModelState in States)
+            {
+                voxelModelState.PartsStates.RemoveAt(selectedPartIndex);
+            }
+        }
+
+        public void RemoveFrameAt(int index)
+        {
+            Frames.RemoveAt(index);
+            
+            foreach (var voxelModelState in States)
+            {
+                foreach (var ps in voxelModelState.PartsStates)
+                {
+                    if (ps.ActiveFrame == index)
+                        ps.ActiveFrame = byte.MaxValue;
+                    if (ps.ActiveFrame == byte.MaxValue)
+                        continue;
+                    if (ps.ActiveFrame > index)
+                        ps.ActiveFrame--;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Performs integrity checks
+        /// </summary>
+        public void Validate()
+        {
+            foreach (var voxelModelState in States)
+            {
+                if (voxelModelState.PartsStates.Count != Parts.Count)
+                {
+                    if (Debugger.IsAttached)
+                    {
+                        // we have different partsStates count than Parts count
+                        // remember what you were doing to have this issue
+                        // tell erty about that, he will fix the bug
+
+                        Debugger.Break();
+                    }
+
+                    if (voxelModelState.PartsStates.Count > Parts.Count)
+                        voxelModelState.PartsStates.RemoveRange(Parts.Count, voxelModelState.PartsStates.Count - Parts.Count);
+                }
+            }
+        }
+
+        public static VoxelModel GenerateTreeModel(int seed, TreeBluePrint blueprint, TreeLSystem treeSystem = null)
+        {
+            if (treeSystem == null)
+                treeSystem = new TreeLSystem();
+
+            var blocks = treeSystem.Generate(seed, new Vector3I(), blueprint);
+
+            var max = new Vector3I(int.MinValue);
+            var min = new Vector3I(int.MaxValue);
+
+            foreach (var blockWithPosition in blocks)
+            {
+                max = Vector3I.Max(max, blockWithPosition.WorldPosition);
+                min = Vector3I.Min(min, blockWithPosition.WorldPosition);
+            }
+
+            var size = max - min + Vector3I.One;
+            var model = new VoxelModel();
+            model.Name = "Tree Example";
+            model.ColorMapping = new ColorMapping();
+            model.ColorMapping.BlockColors = new Color4[64];
+            model.ColorMapping.BlockColors[0] = Color.Brown.ToColor4();
+            model.ColorMapping.BlockColors[1] = Color.Green.ToColor4();
+
+            var frame = new VoxelFrame(size);
+            foreach (var blockWithPosition in blocks)
+            {
+                frame.BlockData.SetBlock(blockWithPosition.WorldPosition - min, blockWithPosition.BlockId == blueprint.TrunkBlock ? (byte)1 : (byte)2);
+            }
+
+            model.Frames.Add(frame);
+            var part = new VoxelModelPart();
+            part.Name = "Main";
+            model.Parts.Add(part);
+
+            var state = new VoxelModelState(model);
+            state.Name = "Default";
+            state.PartsStates[0].Translation = new Vector3(min.X, 0, min.Z);
+            model.States.Add(state);
+
+            return model;
         }
     }
 

@@ -28,10 +28,12 @@ namespace S33M3CoreComponents.Sound
         private float _voiceVolume;
         private Stopwatch _fadingTimer = new Stopwatch();
         private Stopwatch _deferredStartTimer = new Stopwatch();
+        private Stopwatch _playingTime = new Stopwatch();
         private uint _defferedStart;
         private bool _deferredPaused;
         private bool _isPlaying;
         private FastRandom _rnd = new FastRandom();
+        private int _priority = -1;
         #endregion
 
         #region Public Properties
@@ -44,6 +46,18 @@ namespace S33M3CoreComponents.Sound
         {
             get { return _voice; }
             set { _voice = value; }
+        }
+
+        public Stopwatch PlayingTime
+        {
+            get { return _playingTime; }
+            set { _playingTime = value; }
+        }
+
+        public int Priority
+        {
+            get { return _priority; }
+            set { _priority = value; }
         }
 
         public bool IsPlaying
@@ -155,6 +169,7 @@ namespace S33M3CoreComponents.Sound
 
         public void Start(float soundVolume, uint fadeIn = 0)
         {
+            _playingTime.Start();
             if (fadeIn > 0 && !is3DSound)
             {
                 IsFadingMode = true;
@@ -184,6 +199,8 @@ namespace S33M3CoreComponents.Sound
 
         public void Stop(uint fadeOut = 0)
         {
+            _playingTime.Stop();
+
             if (fadeOut > 0 && !is3DSound)
             {
                 IsFadingMode = true;
@@ -204,7 +221,6 @@ namespace S33M3CoreComponents.Sound
                 MinDefferedStart = 0;
                 IsPlaying = false;
             }
-
         }
 
         public void SetVolume(float volume, int operationSet)

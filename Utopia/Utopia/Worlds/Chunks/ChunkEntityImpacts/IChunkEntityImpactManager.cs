@@ -24,11 +24,12 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         event EventHandler<StaticEventArgs> StaticEntityRemoved;
 
         SingleArrayChunkContainer CubesHolder { get; set; }
+
         IWorldChunks2D WorldChunks { get; set; }
-        bool ReplaceBlock(ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
+        bool ReplaceBlock(Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
         bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChange, BlockTag blockTag = null);
         void LateInitialization(ServerComponent server, SingleArrayChunkContainer cubesHolder, IWorldChunks2D worldChunks, IChunkStorageManager chunkStorageManager, ILightingManager lightManager, VisualWorldParameters wp);
-        void CheckImpact(TerraCubeWithPosition cube, VisualChunkBase cubeChunk);
+        void CheckImpact(VisualChunkBase cubeChunk, Range3I cubeRange);
 
         void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0);
         IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0);

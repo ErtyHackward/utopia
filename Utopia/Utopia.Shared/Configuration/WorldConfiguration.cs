@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.IO.Compression;
 using ProtoBuf;
@@ -8,6 +9,7 @@ using ProtoBuf.Meta;
 using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Entities.Sound;
 using Utopia.Shared.Services;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Structs;
@@ -26,11 +28,6 @@ namespace Utopia.Shared.Configuration
     [ProtoContract]
     public abstract class WorldConfiguration
     {
-        /// <summary>
-        /// Realm format version
-        /// </summary>
-        private const int RealmFormat = 1;
-
         private const string FormatMagic = "s33m3&Erty Hackward";
         
         #region Public Properties
@@ -126,14 +123,68 @@ namespace Utopia.Shared.Configuration
         /// <summary>
         /// Gets or sets list of all possible recipes
         /// </summary>
+        [Browsable(false)]
         [ProtoMember(13, OverwriteList = true)]
         public List<Recipe> Recipes { get; set; }
 
         /// <summary>
         /// Get or sets Tree template, that will be added in the biome.
         /// </summary>
+        [Browsable(false)]
         [ProtoMember(14, OverwriteList = true)]
         public List<TreeBluePrint> TreeBluePrints { get; set; }
+
+        [ProtoMember(15, OverwriteList = true)]
+        public List<CharacterClassItem> CharacterClasses { get; set; }
+
+        /// <summary>
+        /// Indicates if cube resources is infinte or not
+        /// </summary>
+        [Description("Indicates if cube resources is infinte or not")]
+        [ProtoMember(16)]
+        public bool IsInfiniteResources { get; set; }
+
+        /// <summary>
+        /// Cube resource stack size
+        /// </summary>
+        [Description("Tells how much items could be in the cube stack")]
+        [ProtoMember(17)]
+        public int CubeStackSize { get; set; }
+
+        [Description("The compatibility configuration version")]
+        [Browsable(false)]
+        [ProtoMember(18)]
+        public int Version { get; set; }
+
+        [Description("Entity that should be created when player die")]
+        [Editor(typeof(BlueprintTypeEditor<Entity>), typeof(UITypeEditor))]
+        [TypeConverter(typeof(BlueprintTextHintConverter))]
+        [ProtoMember(19)]
+        public ushort GraveBlueprint { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on resource block put")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(20)]
+        public StaticEntitySoundSource ResourcePut { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on resource block take ")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(21)]
+        public StaticEntitySoundSource ResourceTake { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on entity take")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(22)]
+        public StaticEntitySoundSource EntityTake { get; set; }
+
+        [Category("Sound")]
+        [Description("Sound played on entity put (default)")]
+        [TypeConverter(typeof(ShortSoundSelector))]
+        [ProtoMember(23)]
+        public StaticEntitySoundSource EntityPut { get; set; }
 
         private Dictionary<int, TreeBluePrint> _treeBluePrintsDico;
         [Browsable(false)]
@@ -195,6 +246,7 @@ namespace Utopia.Shared.Configuration
 
             Factory = factory;
             WorldHeight = 128;
+            CubeStackSize = 50;
 
             InitCollections();
         }
@@ -253,28 +305,23 @@ namespace Utopia.Shared.Configuration
         }
         #endregion
 
-        public object CreateNewCube()
+        public BlockProfile CreateNewCube(BlockProfile copyFrom = null)
         {
             //Get New Cube ID.
             //We keep the id from 0 to 99 for "System" cubes
             //101 to 254 for Custom created cubes
-            byte newProfileId;
-            if (BlockProfiles.Where(x => x != null).Count(x => x.Id > 99) >= 1)
-            {
-                newProfileId = (byte)(BlockProfiles.Where(x => x.Id > 99).Select(y => y.Id).Max() + 1);
-            }
-            else newProfileId = 100;
+            byte newProfileId = (byte)(BlockProfiles.Where(x => x != null).Max(x => x.Id) + 1);
 
-            BlockProfile newCubeProfile = new BlockProfile()
+            BlockProfile newCubeProfile = copyFrom ?? new BlockProfile()
             {
                 Name = "NewCustomCube",
                 Id = newProfileId,
-                Tex_Top = 1,
-                Tex_Bottom = 1,
-                Tex_Back = 1,
-                Tex_Front = 1,
-                Tex_Left = 1,
-                Tex_Right = 1,
+                Tex_Top = new TextureData(),
+                Tex_Bottom = new TextureData(),
+                Tex_Back = new TextureData(),
+                Tex_Front = new TextureData(),
+                Tex_Left = new TextureData(),
+                Tex_Right = new TextureData(),
                 LightAbsorbed = 255,
                 IsPickable = true,
                 IsSolidToEntity = true,
@@ -283,6 +330,12 @@ namespace Utopia.Shared.Configuration
                 Friction = 0.25f,
                 IsSystemCube = false
             };
+
+            if (copyFrom != null)
+            {
+                newCubeProfile.Id = newProfileId;
+                newCubeProfile.IsSystemCube = false;
+            }
 
             if (BlockProfiles.Length <= newProfileId)
             {
@@ -300,7 +353,8 @@ namespace Utopia.Shared.Configuration
             //Get cube profile id
             int profileID = 0;
             while(BlockProfiles[profileID] != profile) profileID++;
-            if (profileID <= 99) return false; //Don't remove system cube
+            if (profileID <= 18) return false; //Don't remove system cube
+            
             //New Array
             BlockProfile[] newArray = new BlockProfile[255];
 
@@ -329,6 +383,9 @@ namespace Utopia.Shared.Configuration
             }
         }
 
+        public bool isCubesProfilesIDInitialized { get; set; }
+
+      
         public void InjectMandatoryObjects()
         {
             CreateDefaultValues();
@@ -346,6 +403,7 @@ namespace Utopia.Shared.Configuration
             ContainerSets = new Dictionary<string, SlotContainer<BlueprintSlot>>();
             Recipes = new List<Recipe>();
             TreeBluePrints = new List<TreeBluePrint>();
+            CharacterClasses = new List<CharacterClassItem>();
         }
 
         private void CreateDefaultValues()
@@ -355,7 +413,11 @@ namespace Utopia.Shared.Configuration
             CreateDefaultEntities();
         }
 
-        protected void AddNewEntity(IEntity entityInstance)
+        /// <summary>
+        /// Adds the entity to the configuration, assign unique bleprintid
+        /// </summary>
+        /// <param name="entityInstance"></param>
+        public void AddNewEntity(IEntity entityInstance)
         {
             //Generate a new Blueprint ID, it will represent this Blue print, and must be unique
             ushort newId;
@@ -366,7 +428,7 @@ namespace Utopia.Shared.Configuration
                 newId = (ushort)(BluePrints.Values.Select(x => x.BluePrintId).Max() + 1);
 
             entityInstance.BluePrintId = newId;
-            entityInstance.IsSystemEntity = false;
+            //entityInstance.IsSystemEntity = false;
 
             BluePrints.Add(newId, (Entity)entityInstance);
         }
@@ -374,16 +436,6 @@ namespace Utopia.Shared.Configuration
         //Definition of default cube profile
         protected virtual void CreateDefaultCubeProfiles()
         {
-            FilledUpReservedCubeInArray();
-        }
-
-        private void FilledUpReservedCubeInArray()
-        {
-            //Field up to 100 included for Reserved Cube ID
-            for (byte currentCubeId = (byte)(BlockProfiles.Where(x => x != null && x.Id < 100).Max(x => x.Id) + 1); currentCubeId < 100; currentCubeId++)
-            {
-                BlockProfiles[currentCubeId] = new BlockProfile { Name = "System Reserved", Id = currentCubeId };
-            }
         }
 
         protected virtual void CreateDefaultEntities()
@@ -408,5 +460,33 @@ namespace Utopia.Shared.Configuration
             Flat = 2
         }
         #endregion
+
+        /// <summary>
+        /// Returns a list of all used models in the configuration
+        /// </summary>
+        public List<string> GetUsedModelsNames()
+        {
+            var needToLoadModels = BluePrints.Values.OfType<IVoxelEntity>().Select(e => e.ModelName).Where(m => !string.IsNullOrEmpty(m)).ToList();
+            needToLoadModels.AddRange(CharacterClasses.Select(c => c.ModelName));
+            needToLoadModels.AddRange(TreeBluePrints.Select(c => c.SeedModel));
+            needToLoadModels = needToLoadModels.Distinct().ToList();
+            return needToLoadModels;
+        }
+    }
+
+    [ProtoContract]
+    public class CharacterClassItem
+    {
+        [ProtoMember(1)]
+        public string ClassName { get; set; }
+
+        [Editor(typeof(ModelSelector), typeof(UITypeEditor))]
+        [ProtoMember(2)]
+        public string ModelName { get; set; }
+
+        public override string ToString()
+        {
+            return ClassName ?? "no name";
+        }
     }
 }

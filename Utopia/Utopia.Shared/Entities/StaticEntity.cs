@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using ProtoBuf;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
 using Utopia.Shared.Interfaces;
@@ -15,6 +16,8 @@ namespace Utopia.Shared.Entities
     /// Provides basic functionality for all static entities
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(Item))]
+    [ProtoInclude(101, typeof(TreeSoul))]
     public abstract class StaticEntity : Entity, IStaticEntity
     {
         /// <summary>
@@ -31,6 +34,16 @@ namespace Utopia.Shared.Entities
         [ProtoMember(2)]
         public Quaternion Rotation { get; set; }
 
+        [Description("The entity will be destroyed when removed from the world")]
+        [Category("Gameplay")]
+        [ProtoMember(3)]
+        public bool IsDestroyedOnWorldRemove { get; set; }
+
+        [Description("The entity will be destroyed when character dies")]
+        [Category("Gameplay")]
+        [ProtoMember(4)]
+        public bool IsDestroyedOnDeath { get; set; }
+        
         private IStaticContainer _container;
 
         /// <summary>
@@ -103,6 +116,14 @@ namespace Utopia.Shared.Entities
             
             // wrong root
             throw new InvalidOperationException("Unable to take link from that object");
+        }
+
+        /// <summary>
+        /// Will be called before an entity is removed from world without going into inventory
+        /// </summary>
+        public virtual void BeforeDestruction(IDynamicEntity destructor)
+        {
+
         }
     }
 }

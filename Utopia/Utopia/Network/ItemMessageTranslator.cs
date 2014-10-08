@@ -1,4 +1,6 @@
 ﻿using System;
+using Ninject;
+using Utopia.Entities.Managers;
 using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
@@ -14,12 +16,13 @@ namespace Utopia.Network
     /// </summary>
     public class ItemMessageTranslator : IDisposable
     {
-        private readonly PlayerCharacter _playerEntity;
         private readonly ServerComponent _server;
+        private PlayerCharacter _playerEntity;
         private ContainedSlot _tempSlot;
         private bool _pendingOperation;
         private ISlotContainer<ContainedSlot> _sourceContainer;
         private IEntity _lockedEntity;
+        private bool _skipInventoryEvents;
 
         /// <summary>
         /// Occurs when server locks the entity requested
@@ -46,6 +49,7 @@ namespace Utopia.Network
         public bool Enabled { get; set; }
 
         private ISlotContainer<ContainedSlot> _container;
+        private PlayerEntityManager _playerEntityManager;
 
         /// <summary>
         /// Gets or sets second container to perform transfer operations
@@ -76,32 +80,74 @@ namespace Utopia.Network
             }
         }
 
+        public PlayerCharacter PlayerEntity
+        {
+            get { return _playerEntity; }
+            set { 
+                if (_playerEntity == value)
+                    return;
+
+                if (_playerEntity != null)
+                {
+                    _playerEntity.Inventory.ItemPut -= InventoryItemPut;
+                    _playerEntity.Inventory.ItemTaken -= InventoryItemTaken;
+                    _playerEntity.Inventory.ItemExchanged -= InventoryItemExchanged;
+
+                    _playerEntity.Equipment.ItemPut -= InventoryItemPut;
+                    _playerEntity.Equipment.ItemTaken -= InventoryItemTaken;
+                    _playerEntity.Equipment.ItemExchanged -= InventoryItemExchanged;
+                }
+
+                _playerEntity = value;
+
+                if (_playerEntity != null)
+                {
+                    _playerEntity.Inventory.ItemPut += InventoryItemPut;
+                    _playerEntity.Inventory.ItemTaken += InventoryItemTaken;
+                    _playerEntity.Inventory.ItemExchanged += InventoryItemExchanged;
+
+                    _playerEntity.Equipment.ItemPut += InventoryItemPut;
+                    _playerEntity.Equipment.ItemTaken += InventoryItemTaken;
+                    _playerEntity.Equipment.ItemExchanged += InventoryItemExchanged;
+                }
+
+            }
+        }
+
+        [Inject]
+        public PlayerEntityManager PlayerEntityManager
+        {
+            get { return _playerEntityManager; }
+            set { 
+                _playerEntityManager = value;
+
+                if (PlayerEntityManager == null) throw new ArgumentNullException("playerEntityManager");
+
+                PlayerEntity = _playerEntityManager.PlayerCharacter;
+                _playerEntityManager.PlayerEntityChanged += playerEntityManager_PlayerEntityChanged;
+            }
+        }
+
         /// <summary>
         /// Creates new instance of ItemMessageTranslator.
         /// </summary>
         /// <param name="server"></param>
-        /// <param name="playerEntity"></param>
-        public ItemMessageTranslator(ServerComponent server, PlayerCharacter playerEntity)
+        public ItemMessageTranslator(ServerComponent server)
         {
             if (server == null) throw new ArgumentNullException("server");
-            if (playerEntity == null) throw new ArgumentNullException("playerEntity");
             
-            _playerEntity = playerEntity;
-            
-            _playerEntity.Inventory.ItemPut += InventoryItemPut;
-            _playerEntity.Inventory.ItemTaken += InventoryItemTaken;
-            _playerEntity.Inventory.ItemExchanged += InventoryItemExchanged;
-
-            _playerEntity.Equipment.ItemPut += InventoryItemPut;
-            _playerEntity.Equipment.ItemTaken += InventoryItemTaken;
-            _playerEntity.Equipment.ItemExchanged += InventoryItemExchanged;
-
             _server = server;
             _server.MessageEntityLockResult += ServerMessageEntityLockResult;
+            _server.MessageItemTransfer += _server_MessageItemTransfer;
 
             Enabled = true;
         }
 
+        void playerEntityManager_PlayerEntityChanged(object sender, PlayerEntityChangedEventArgs e)
+        {
+            PlayerEntity = e.PlayerCharacter;
+        }
+        
         /// <summary>
         /// Sends request to the server to obtain container lock, when received LockResult event will fire
         /// </summary>
@@ -137,15 +183,16 @@ namespace Utopia.Network
                 ReleaseLock();
             }
 
-            _playerEntity.Inventory.ItemPut -= InventoryItemPut;
-            _playerEntity.Inventory.ItemTaken -= InventoryItemTaken;
-            _playerEntity.Inventory.ItemExchanged -= InventoryItemExchanged;
+            PlayerEntity.Inventory.ItemPut -= InventoryItemPut;
+            PlayerEntity.Inventory.ItemTaken -= InventoryItemTaken;
+            PlayerEntity.Inventory.ItemExchanged -= InventoryItemExchanged;
 
-            _playerEntity.Equipment.ItemPut -= InventoryItemPut;
-            _playerEntity.Equipment.ItemTaken -= InventoryItemTaken;
-            _playerEntity.Equipment.ItemExchanged -= InventoryItemExchanged;
+            PlayerEntity.Equipment.ItemPut -= InventoryItemPut;
+            PlayerEntity.Equipment.ItemTaken -= InventoryItemTaken;
+            PlayerEntity.Equipment.ItemExchanged -= InventoryItemExchanged;
 
             _server.MessageEntityLockResult -= ServerMessageEntityLockResult;
+            _server.MessageItemTransfer -= _server_MessageItemTransfer;
         }
 
         void ServerMessageEntityLockResult(object sender, ProtocolMessageEventArgs<EntityLockResultMessage> e)
@@ -159,6 +206,33 @@ namespace Utopia.Network
                 _lockedEntity = null;
                 OnEntityLockFailed();
             }
+        }
+
+        void _server_MessageItemTransfer(object sender, ProtocolMessageEventArgs<ItemTransferMessage> e)
+        {
+            try
+            {
+                _skipInventoryEvents = true;
+
+                if (e.Message.DestinationContainerEntityLink.DynamicEntityId == PlayerEntity.DynamicId)
+                {
+                    // god gave us an item(s)
+
+                    var item = PlayerEntity.EntityFactory.CreateFromBluePrint<Item>((ushort)e.Message.ItemEntityId);
+                    PlayerEntity.Inventory.PutItem(item, e.Message.ItemsCount);
+                }
+
+                if (e.Message.SourceContainerEntityLink.DynamicEntityId == PlayerEntity.DynamicId)
+                {
+                    // god took us an item(s)
+                    PlayerEntity.Inventory.TakeItem(e.Message.SourceContainerSlot, e.Message.ItemsCount);
+                }
+            }
+            finally
+            {
+                _skipInventoryEvents = false;
+            }
+
         }
 
         void InventoryItemExchanged(object sender, EntityContainerEventArgs<ContainedSlot> e)
@@ -209,6 +283,9 @@ namespace Utopia.Network
             if (!Enabled)
                 return;
 
+            if (_skipInventoryEvents)
+                return;
+
             // at this point we need to remember what was taken to create appropriate message
             if (_pendingOperation)
                 throw new InvalidOperationException("Unable to take another item, release first previous taken item");
@@ -227,6 +304,9 @@ namespace Utopia.Network
         private void InventoryItemPut(object sender, EntityContainerEventArgs<ContainedSlot> e)
         {
             if (!Enabled)
+                return;
+
+            if (_skipInventoryEvents)
                 return;
 
             if (!_pendingOperation)

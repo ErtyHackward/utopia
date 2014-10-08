@@ -144,14 +144,9 @@ namespace Realms.Client
             {
                 ActionId = UtopiaActions.UseLeft,
                 TriggerType = MouseTriggerMode.ButtonPressed,
-                Binding = MouseButton.LeftButton
-            });
-
-            inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
-            {
-                ActionId = UtopiaActions.UseLeft,
-                TriggerType = MouseTriggerMode.ButtonReleased,
-                Binding = MouseButton.LeftButton
+                Binding = MouseButton.LeftButton,
+                WithAutoResetButtonPressed = true,
+                AutoResetTimeInS = 0.2f
             });
 
             inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
@@ -165,13 +160,6 @@ namespace Realms.Client
             {
                 ActionId = UtopiaActions.UseRight,
                 TriggerType = MouseTriggerMode.ButtonPressed,
-                Binding = MouseButton.RightButton
-            });
-
-            inputsManager.ActionsManager.AddActions(new MouseTriggeredAction()
-            {
-                ActionId = UtopiaActions.UseRight,
-                TriggerType = MouseTriggerMode.ButtonReleased,
                 Binding = MouseButton.RightButton
             });
 
@@ -317,6 +305,13 @@ namespace Realms.Client
                 ActionId = UtopiaActions.OpenCrafting,
                 TriggerType = KeyboardTriggerMode.KeyReleased,
                 Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.Crafting
+            }, rebindSettingsBasedAction);
+
+            inputsManager.ActionsManager.AddActions(new KeyboardTriggeredAction
+            {
+                ActionId = UtopiaActions.SelectCharacter,
+                TriggerType = KeyboardTriggerMode.KeyReleased,
+                Binding = ClientSettings.Current.Settings.KeyboardMapping.Game.CharSelect
             }, rebindSettingsBasedAction);
         }
     }

@@ -7,6 +7,7 @@ namespace Utopia.Shared.Entities.Dynamic
     /// Represents a character with RPG skills system
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(PlayerCharacter))]
     public abstract class RpgCharacterEntity : CharacterEntity
     {
         protected RpgCharacterEntity()

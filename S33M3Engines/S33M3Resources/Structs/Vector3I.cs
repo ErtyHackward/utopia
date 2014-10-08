@@ -47,6 +47,13 @@ namespace S33M3Resources.Structs
             this.z = (int)z;
         }
 
+        public Vector3I(int p)
+        {
+            x = p;
+            y = p;
+            z = p;
+        }
+
         /// <summary>
         /// Returns length between vectors using sqrt
         /// </summary>
@@ -121,7 +128,7 @@ namespace S33M3Resources.Structs
 
         public override string ToString()
         {
-            return string.Format("[{0};{1};{2}]", x, y, z);
+            return string.Format("[{0:000}; {1:000}; {2:000}]", x, y, z);
         }
 
         public static implicit operator Vector3(Vector3I pos)

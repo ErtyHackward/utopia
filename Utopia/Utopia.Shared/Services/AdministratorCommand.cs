@@ -6,7 +6,7 @@ namespace Utopia.Shared.Services
     /// <summary>
     /// Base administrator command class 
     /// </summary>
-    public abstract class AdministratorCommand : IServerCommand, IRoleRestrictedCommand
+    public abstract class AdministratorCommand : IChatCommand, IRoleRestrictedCommand
     {
         public bool HasAccess(UserRole role)
         {

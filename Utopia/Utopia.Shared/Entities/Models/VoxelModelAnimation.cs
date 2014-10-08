@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
 using ProtoBuf;
-using Utopia.Shared.Interfaces;
-using Utopia.Shared.Tools.BinarySerializer;
 
 namespace Utopia.Shared.Entities.Models
 {
@@ -10,7 +8,7 @@ namespace Utopia.Shared.Entities.Models
     /// Represents a voxel model animation
     /// </summary>
     [ProtoContract]
-    public class VoxelModelAnimation : IBinaryStorable
+    public class VoxelModelAnimation
     {
         /// <summary>
         /// Gets or sets animation name
@@ -30,47 +28,19 @@ namespace Utopia.Shared.Entities.Models
         [ProtoMember(3)]
         public List<AnimationStep> Steps { get; private set; }
 
+        /// <summary>
+        /// Gets start animation index (default -1)
+        /// </summary>
+        [ProtoMember(4)]
+        [DefaultValue(-1)]
+        public int StartFrame { get; set; }
+
         public VoxelModelAnimation()
         {
             Steps = new List<AnimationStep>();
+            StartFrame = -1;
         }
-
-        public void Save(BinaryWriter writer)
-        {
-            if (string.IsNullOrEmpty(Name))
-                Name = "unnamed";
-
-            writer.Write(Name);
-
-            writer.Write((byte)Steps.Count);
-
-            foreach (var animationStep in Steps)
-            {
-                writer.Write(animationStep.StateIndex);
-                writer.Write(animationStep.Duration);
-            }
-
-        }
-
-        public void Load(BinaryReader reader)
-        {
-            Name = reader.ReadString();
-
-            var count = reader.ReadByte();
-
-            Steps.Clear();
-
-            for (var i = 0; i < count; i++)
-            {
-                AnimationStep step;
-
-                step.StateIndex = reader.ReadByte();
-                step.Duration = reader.ReadInt32();
-
-                Steps.Add(step);
-            }
-        }
-
+        
         public override string ToString()
         {
             return Name;

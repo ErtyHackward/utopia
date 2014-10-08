@@ -29,6 +29,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>9e741a56</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,7 +41,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -71,31 +72,27 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\protobuf-net.2.0.0.621\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.2.4.2\lib\net40\SharpDX.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.D3DCompiler, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.D3DCompiler, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.D3DCompiler.2.4.2\lib\net40\SharpDX.D3DCompiler.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.D3DCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.Direct3D11, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.Direct3D11, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.Direct3D11.2.4.2\lib\net40\SharpDX.Direct3D11.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.DXGI, Version=2.4.2.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
+    <Reference Include="SharpDX.DXGI, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpDX.DXGI.2.4.2\lib\net40\SharpDX.DXGI.dll</HintPath>
+      <HintPath>$(SharpDXPackageBinDir)\SharpDX.DXGI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+    <Reference Include="System.Data.SQLite, Version=1.0.92.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.84.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+      <HintPath>..\..\Library\System.Data.SQLite\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -113,8 +110,50 @@
     <Compile Include="Chunks\ChunkDataProvider.cs" />
     <Compile Include="Chunks\ChunkDataProviderBufferChangedEventArgs.cs" />
     <Compile Include="Chunks\ChunkDataProviderDataChangedEventArgs.cs" />
+    <Compile Include="Chunks\ChunkSpawnableEntity.cs" />
+    <Compile Include="Chunks\ChunkSpawnableEntity.designer.cs">
+      <DependentUpon>ChunkSpawnableEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\CursorRelativeMovement.cs" />
+    <Compile Include="Chunks\IEntitySpawningControler.cs" />
+    <Compile Include="ClassExt\CursorHelper.cs" />
+    <Compile Include="ClassExt\ListExtension.cs" />
+    <Compile Include="Entities\Concrete\TreeSoul.cs" />
+    <Compile Include="Entities\Concrete\TreeSoulKiller.cs" />
+    <Compile Include="Entities\GrowingEntity.cs" />
+    <Compile Include="Entities\Concrete\PlantGrowingEntity.cs" />
+    <Compile Include="Entities\Concrete\TreeGrowingEntity.cs" />
+    <Compile Include="Entities\GrowingEntity.designer.cs">
+      <DependentUpon>GrowingEntity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\AssemblyHelper.cs" />
+    <Compile Include="Server\AStar\AStarFunc.cs" />
+    <Compile Include="Server\AStar\AStarNodeFunc.cs" />
+    <Compile Include="Server\AStar\AStarNodeFunc3D.cs" />
+    <Compile Include="Server\Commands\NpcAddActivityCommand.cs" />
+    <Compile Include="Server\Commands\NpcAddPointCommand.cs" />
+    <Compile Include="Server\Commands\NpcComehereCommand.cs" />
+    <Compile Include="Server\Commands\NpcSelectCommand.cs" />
+    <Compile Include="Server\Commands\NpcSpawnCommand.cs" />
+    <Compile Include="Server\Commands\WipeChunkCommand.cs" />
+    <Compile Include="Server\Commands\WipeNpcsCommand.cs" />
+    <Compile Include="Server\Managers\EntityGrowingManager.cs" />
+    <Compile Include="Server\Structs\AnimalAI.cs" />
+    <Compile Include="Server\Structs\GeneralAI.cs" />
+    <Compile Include="Server\Structs\HumanAI.cs" />
+    <Compile Include="Services\Season.designer.cs">
+      <DependentUpon>Season.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Structs\Scope.cs" />
+    <Compile Include="Structs\UtopiaTime.cs" />
+    <Compile Include="Structs\UtopiaTimeConfiguration.cs" />
+    <Compile Include="Structs\UtopiaTimeSpan.cs" />
+    <Compile Include="Tools\BlueprintTextHintConverter.cs" />
+    <Compile Include="Tools\BlueprintTypeEditor.cs" />
+    <Compile Include="Tools\UtopiaTimeSpanConverter.cs" />
+    <Compile Include="Tools\ValueTypeTypeConverter.cs" />
+    <Compile Include="World\Processors\Utopia\UtopiaEntitySpawningControler.cs" />
     <Compile Include="Chunks\GeneratedChunk.cs" />
     <Compile Include="Chunks\LandscapeCursor.cs" />
     <Compile Include="Chunks\LandscapeManager.cs" />
@@ -125,31 +164,60 @@
     <Compile Include="Chunks\Tags\LiquidTag.cs" />
     <Compile Include="ClassExt\ArrayExtensions.cs" />
     <Compile Include="ClassExt\OtherExtensions.cs" />
+    <Compile Include="Configuration\CheckValuesEditor.cs" />
     <Compile Include="Configuration\EditorConfigHelper.cs" />
+    <Compile Include="Configuration\FlagsEditor.cs" />
+    <Compile Include="Configuration\CheckValuesEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\FlagsEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Configuration\FlatWorldConfiguration.cs" />
     <Compile Include="Configuration\Processor\FlatProcessorParams.cs" />
     <Compile Include="Configuration\IProcessorParams.cs" />
     <Compile Include="Configuration\Processor\UtopiaProcessorParams.cs" />
     <Compile Include="Configuration\UtopiaWorldConfiguration.cs" />
     <Compile Include="Entities\BlockItem.cs" />
+    <Compile Include="Entities\Concrete\Animal.cs" />
     <Compile Include="Entities\Concrete\BasicCollector.cs" />
+    <Compile Include="Entities\Concrete\Extractor.cs" />
     <Compile Include="Entities\Concrete\Food.cs" />
     <Compile Include="Entities\Concrete\GodHandTool.cs" />
     <Compile Include="Entities\Concrete\HandTool.cs" />
+    <Compile Include="Entities\Concrete\Interface\ICustomInitialization.cs" />
+    <Compile Include="Entities\Concrete\Interface\IOwnerBindable.cs" />
     <Compile Include="Entities\Concrete\ItemOrientation.cs" />
+    <Compile Include="Entities\Concrete\Ladder.cs" />
+    <Compile Include="Entities\Concrete\MeleeWeapon.cs" />
+    <Compile Include="Entities\Concrete\MusicPlayer.cs" />
     <Compile Include="Entities\Concrete\Stuff.cs" />
+    <Compile Include="Entities\Concrete\System\SoulStone.cs" />
     <Compile Include="Entities\Designation.cs" />
+    <Compile Include="Entities\DynamicEntityParticule.cs" />
+    <Compile Include="Entities\Dynamic\DynamicEntityAfflictionState.cs" />
+    <Compile Include="Entities\Dynamic\DynamicEntityHealthState.cs" />
+    <Compile Include="Entities\Dynamic\Energy.cs" />
+    <Compile Include="Entities\Dynamic\Energy.designer.cs">
+      <DependentUpon>Energy.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Dynamic\GodEntity.cs" />
     <Compile Include="Entities\Dynamic\GodHandToolState.cs" />
     <Compile Include="Entities\Dynamic\ToolState.cs" />
-    <Compile Include="Entities\EntityParticule.cs" />
+    <Compile Include="Entities\StaticEntityParticule.cs" />
+    <Compile Include="Entities\Events\EntityAfflicationStateChangeEventArgs.cs" />
+    <Compile Include="Entities\Events\EnergyChangedEventArgs.cs" />
+    <Compile Include="Entities\Events\EntityDisplacementModeEventArgs.cs" />
+    <Compile Include="Entities\Events\EntityHealthChangeEventArgs.cs" />
+    <Compile Include="Entities\Events\EntityHealthStateChangeEventArgs.cs" />
     <Compile Include="Entities\Events\UseType.cs" />
     <Compile Include="Entities\GlobalState.cs" />
-    <Compile Include="Entities\Interfaces\IGlobalStateManager.cs" />
     <Compile Include="Entities\Interfaces\IMoveAI.cs" />
     <Compile Include="Entities\Interfaces\INpc.cs" />
     <Compile Include="Entities\Interfaces\ISoundEmitterEntity.cs" />
+    <Compile Include="Entities\Inventory\BlockToolImpact.cs" />
     <Compile Include="Entities\Inventory\EntityPosition.cs" />
+    <Compile Include="Entities\Inventory\EntityToolImpact.cs" />
     <Compile Include="Entities\Inventory\PickType.cs" />
     <Compile Include="Entities\Path3D.cs" />
     <Compile Include="Entities\Recipe.cs" />
@@ -163,7 +231,7 @@
     <Compile Include="Entities\Concrete\OrientedBlockItem.cs" />
     <Compile Include="Entities\Concrete\OrientedBlockLinkedItem.cs" />
     <Compile Include="Entities\Concrete\Plant.cs" />
-    <Compile Include="Entities\Concrete\LightSource.cs" />
+    <Compile Include="Entities\Concrete\LinkedLightSource.cs" />
     <Compile Include="Entities\Dynamic\ICharacterEntity.cs" />
     <Compile Include="Entities\Events\EntityBodyRotationEventArgs.cs" />
     <Compile Include="Entities\Interfaces\BlockFace.cs" />
@@ -179,7 +247,6 @@
     <Compile Include="Entities\Dynamic\PlayerCharacter.cs" />
     <Compile Include="Entities\Dynamic\RpgCharacterEntity.cs" />
     <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\EntityClassId.cs" />
     <Compile Include="Entities\EntityCollection.cs" />
     <Compile Include="Entities\EntityDisplacementModes.cs" />
     <Compile Include="Entities\EntityFactory.cs" />
@@ -235,6 +302,8 @@
     <Compile Include="Enums\CubeFaces.cs" />
     <Compile Include="Enums\enuCubeFamilly.cs" />
     <Compile Include="GameDXStates\DXStates.cs" />
+    <Compile Include="GraphicManagers\CubeTexturesManager.cs" />
+    <Compile Include="Helpers\DllLoadHelper.cs" />
     <Compile Include="Interfaces\IAbstractChunk.cs" />
     <Compile Include="Chunks\InsideDataProvider.cs" />
     <Compile Include="Chunks\SingleArrayChunkContainer.cs" />
@@ -242,7 +311,10 @@
     <Compile Include="ClassExt\RandomExtensions.cs" />
     <Compile Include="ClassExt\RectangleExtensions.cs" />
     <Compile Include="ClassExt\StringExtensions.cs" />
+    <Compile Include="Interfaces\ICustomStorage.cs" />
     <Compile Include="Interfaces\IDynamicEntityManager.cs" />
+    <Compile Include="Interfaces\IGlobalStateManager.cs" />
+    <Compile Include="Interfaces\IWorldProcessorBuffered.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityBluePrint.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntityStaticItem.designer.cs">
@@ -251,28 +323,90 @@
     <Compile Include="LandscapeEntities\Trees\TreeBluePrint.designer.cs">
       <DependentUpon>TreeBluePrint.cs</DependentUpon>
     </Compile>
+    <Compile Include="Net\Connections\ClientConnection.cs" />
+    <Compile Include="Net\Messages\EntityAfflictionStateMessage.cs" />
+    <Compile Include="Net\Messages\EntityDataMessage.cs" />
+    <Compile Include="Net\Messages\EntityHealthMessage.cs" />
+    <Compile Include="Net\Messages\EntityHealthStateMessage.cs" />
+    <Compile Include="Net\Messages\GetEntityMessage.cs" />
+    <Compile Include="Net\Web\Responses\ModelsListResponse.cs" />
     <Compile Include="Net\Web\Responses\VerifyResponse.cs" />
+    <Compile Include="PerfLimit.cs" />
     <Compile Include="RealmEditor\PropertyGridDisplay.cs" />
     <Compile Include="RuntimeVariables.cs" />
     <Compile Include="Entities\Faction.cs" />
+    <Compile Include="Server\AStar\AStar.cs" />
+    <Compile Include="Server\AStar\AStarList.cs" />
+    <Compile Include="Server\AStar\AStarNode.cs" />
+    <Compile Include="Server\AStar\AStarNode3D.cs" />
+    <Compile Include="Server\Commands\AdditemCommand.cs" />
+    <Compile Include="Server\Commands\BanCommand.cs" />
+    <Compile Include="Server\Commands\DefaultRoleCommand.cs" />
+    <Compile Include="Server\Commands\HelpCommand.cs" />
+    <Compile Include="Server\Commands\KickCommand.cs" />
+    <Compile Include="Server\Commands\MotdCommand.cs" />
+    <Compile Include="Server\Commands\SaveCommand.cs" />
+    <Compile Include="Server\Commands\ServicesCommand.cs" />
+    <Compile Include="Server\Commands\SetroleCommand.cs" />
+    <Compile Include="Server\Commands\SetSpawnPointCommand.cs" />
+    <Compile Include="Server\Commands\SettimeCommand.cs" />
+    <Compile Include="Server\Commands\StatusCommand.cs" />
+    <Compile Include="Server\Commands\UsersCommand.cs" />
+    <Compile Include="Server\Events\AreaEntityEventArgs.cs" />
+    <Compile Include="Server\Events\AreaVoxelModelEventArgs.cs" />
+    <Compile Include="Server\Events\ConnectionEventArgs.cs" />
+    <Compile Include="Server\Events\EntityLeaveAreaEventArgs.cs" />
+    <Compile Include="Server\Events\LandscapeManagerChunkEventArgs.cs" />
+    <Compile Include="Server\Interfaces\IEntityStorage.cs" />
+    <Compile Include="Server\Interfaces\IServerChatCommand.cs" />
+    <Compile Include="Server\Managers\AreaManager.cs" />
+    <Compile Include="Server\Managers\ChatManager.cs" />
+    <Compile Include="Server\Managers\CommandsManager.cs" />
+    <Compile Include="Server\Managers\ConnectionManager.cs" />
+    <Compile Include="Server\Managers\EntityManager.cs" />
+    <Compile Include="Server\Managers\EntitySpawningManager.cs" />
+    <Compile Include="Server\Managers\GlobalStateManager.cs" />
+    <Compile Include="Server\Managers\LoginManager.cs" />
+    <Compile Include="Server\Managers\PerformanceManager.cs" />
+    <Compile Include="Server\Managers\ScheduleManager.cs" />
+    <Compile Include="Server\Managers\ServerLandscapeManager.cs" />
+    <Compile Include="Server\Managers\ServiceManager.cs" />
+    <Compile Include="Server\Managers\SQLiteStorageManager.cs" />
+    <Compile Include="Server\ServerCore.cs" />
+    <Compile Include="Server\ServerSettings.cs" />
+    <Compile Include="Server\Structs\FocusAI.cs" />
+    <Compile Include="Server\Structs\MapArea.cs" />
+    <Compile Include="Server\Structs\MoveAI.cs" />
+    <Compile Include="Server\Structs\ServerChunk.cs" />
+    <Compile Include="Server\Structs\ServerDynamicEntity.cs" />
+    <Compile Include="Server\Structs\ServerNpc.cs" />
+    <Compile Include="Server\Structs\ServerNpcState.cs" />
+    <Compile Include="Server\Structs\ServerPlayerCharacterEntity.cs" />
+    <Compile Include="Server\Structs\ServerPlayerEntity.cs" />
+    <Compile Include="Server\Structs\ServerPlayerGodEntity.cs" />
+    <Compile Include="Server\Structs\UserState.cs" />
+    <Compile Include="Server\Utils\DynamicIdHelper.cs" />
+    <Compile Include="Server\Utils\IniSettings.cs" />
     <Compile Include="Services\AdministratorCommand.cs" />
-    <Compile Include="Services\Interfaces\IAreaManager.cs" />
-    <Compile Include="Services\Interfaces\IChatManager.cs" />
-    <Compile Include="Services\Interfaces\ICommandsManager.cs" />
     <Compile Include="Services\Interfaces\IRoleRestrictedCommand.cs" />
-    <Compile Include="Services\Interfaces\IServer.cs" />
-    <Compile Include="Services\Interfaces\IServerCommand.cs" />
+    <Compile Include="Services\Interfaces\IChatCommand.cs" />
     <Compile Include="Services\Interfaces\IServerLandscapeManager.cs" />
+    <Compile Include="Services\ModeratorCommand.cs" />
     <Compile Include="Services\NpcService.cs" />
     <Compile Include="Services\PlayerCommandEventArgs.cs" />
-    <Compile Include="Services\ServerCommands.cs" />
+    <Compile Include="Services\Season.cs" />
     <Compile Include="Services\ServerLandscapeManagerBlockChangedEventArgs.cs" />
     <Compile Include="Services\Service.cs" />
     <Compile Include="Services\WaterDynamicService.cs" />
+    <Compile Include="Services\WeatherService.cs" />
     <Compile Include="Structs\Clock.cs" />
+    <Compile Include="Structs\Helpers\TimeSpanHelper.cs" />
     <Compile Include="Structs\IScheduleManager.cs" />
     <Compile Include="Structs\ScheduleCallType.cs" />
     <Compile Include="Structs\ScheduleTask.cs" />
+    <Compile Include="Tools\CubeSelector.cs" />
+    <Compile Include="Tools\TextureSelector.cs" />
+    <Compile Include="Tools\Vector2IConverter.cs" />
     <Compile Include="Tools\XMLSerializer\XmlSerialize.cs" />
     <Compile Include="World\LandscapeBufferManager.cs" />
     <Compile Include="LandscapeEntities\LandscapeEntity.cs" />
@@ -326,14 +460,12 @@
     <Compile Include="Net\Messages\ErrorMessage.cs" />
     <Compile Include="Net\Messages\GameInformationMessage.cs" />
     <Compile Include="Net\Messages\GetChunksMessage.cs" />
-    <Compile Include="Net\Messages\GetVoxelModelsMessage.cs" />
     <Compile Include="Net\Messages\ItemTransferMessage.cs" />
     <Compile Include="Net\Messages\LoginMessage.cs" />
     <Compile Include="Net\Messages\LoginResultMessage.cs" />
     <Compile Include="Net\Messages\MessageTypes.cs" />
     <Compile Include="Net\Messages\PingMessage.cs" />
     <Compile Include="Net\Messages\UseFeedbackMessage.cs" />
-    <Compile Include="Net\Messages\VoxelModelDataMessage.cs" />
     <Compile Include="Net\Messages\WeatherMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\WorldConfiguration.cs" />
@@ -367,7 +499,6 @@
     <Compile Include="Structs\Range2I.cs" />
     <Compile Include="Structs\Size.cs" />
     <Compile Include="Structs\Landscape\TerraCubeWithPosition.cs" />
-    <Compile Include="Tools\BlueprintSelector.cs" />
     <Compile Include="Tools\ContainerEditor.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -378,7 +509,7 @@
     <Compile Include="Tools\ExceptionHandler.cs" />
     <Compile Include="Tools\FullSoundSelector.cs" />
     <Compile Include="Tools\ModelSelector.cs" />
-    <Compile Include="Tools\ModelStateSelector.cs" />
+    <Compile Include="Tools\ModelStateConverter.cs" />
     <Compile Include="Tools\ShortSoundSelector.cs" />
     <Compile Include="Tools\SoundList.cs" />
     <Compile Include="World\PlanGenerator\Biome.cs" />
@@ -440,13 +571,13 @@
     <Compile Include="World\Processors\Utopia\LandscapeEntities.cs" />
     <Compile Include="World\Processors\Utopia\LandscapeRange.cs" />
     <Compile Include="World\Processors\Utopia\LandformFct\Water\River.cs" />
+    <Compile Include="World\Processors\Utopia\OtherFct\VoronoiZones.cs" />
     <Compile Include="World\Processors\Utopia\UtopiaProcessor.cs" />
     <Compile Include="World\VisualWorldParameters.cs" />
     <Compile Include="World\WorldConfigs\ErtyHackwardWorldConfig.cs" />
     <Compile Include="World\WorldConfigs\s33m3WorldConfig.cs" />
     <Compile Include="World\WorldConfigs\FlatWorldConfig.cs" />
     <Compile Include="World\Processors\FlatWorldProcessor.cs" />
-    <Compile Include="World\WorldGenerationStagesManager.cs" />
     <Compile Include="World\WorldGenerator.cs" />
     <Compile Include="World\WorldParameters.cs" />
   </ItemGroup>
@@ -496,22 +627,19 @@
       <DependentUpon>ContainerEditor.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="World\Processors\Utopia\OtherFct\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\SharpDX.2.6.2\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.2\build\SharpDX.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SharpDX.2.6.2\build\SharpDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SharpDX.2.6.2\build\SharpDX.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -18,6 +18,7 @@ using S33M3CoreComponents.Cameras.Interfaces;
 using SharpDX.Direct3D11;
 using Utopia.Components;
 using Utopia.Shared.Settings;
+using Utopia.Worlds.Weather;
 
 namespace Utopia.Components
 {
@@ -27,7 +28,7 @@ namespace Utopia.Components
     /// </summary>
     public class SharedFrameCB: DrawableGameComponent
     {
-        [StructLayout(LayoutKind.Explicit, Size = 240)]
+        [StructLayout(LayoutKind.Explicit, Size = 256)]
         public struct CBPerFrame_Struct
         {
             [FieldOffset(0)]
@@ -48,6 +49,10 @@ namespace Utopia.Components
             public Vector3 CameraWorldPosition;
             [FieldOffset(176)]
             public Matrix InvertedOrientation;
+            [FieldOffset(240)]
+            public Vector2 WeatherGlobalOffset;
+            [FieldOffset(248)]
+            public float TextureFrameAnimation;
         }
         public CBuffer<CBPerFrame_Struct> CBPerFrame;
 
@@ -59,13 +64,14 @@ namespace Utopia.Components
         private StaggingBackBuffer _backBuffer;
         private float _animationValue = 0.0f;
         private float _animationSpeed = 0.5f;
-
+        private IWeather _weather;
 
         public SharedFrameCB(D3DEngine engine,
                              CameraManager<ICameraFocused> cameraManager,
                              ISkyDome skydome,
                              VisualWorldParameters visualWorldParam,
                              IPlayerManager playerManager,
+                             IWeather weather,
                              [Named("SkyBuffer")] StaggingBackBuffer backBuffer)
             
         {
@@ -75,6 +81,8 @@ namespace Utopia.Components
             _visualWorldParam = visualWorldParam;
             _playerManager = playerManager;
             _backBuffer = backBuffer;
+            _weather = weather;
+
             DrawOrders.UpdateIndex(0, 0);
 
             CBPerFrame = new CBuffer<CBPerFrame_Struct>(_engine.Device, "PerFrame");
@@ -94,6 +102,9 @@ namespace Utopia.Components
             CBPerFrame.Values.CameraWorldPosition = _cameraManager.ActiveCamera.WorldPosition.ValueInterp.AsVector3();
             CBPerFrame.Values.InvertedOrientation = Matrix.Transpose(Matrix.RotationQuaternion(Quaternion.Invert(_cameraManager.ActiveCamera.Orientation.ValueInterp)));
 
+            CBPerFrame.Values.WeatherGlobalOffset.X = _weather.MoistureOffset;
+            CBPerFrame.Values.WeatherGlobalOffset.Y = _weather.TemperatureOffset;
+
             switch (ClientSettings.Current.Settings.GraphicalParameters.LandscapeFog)
 	        {
                 case "SkyFog":
@@ -112,9 +123,16 @@ namespace Utopia.Components
             CBPerFrame.Update(context); //Send updated data to Graphical Card
         }
 
+        public override void FTSUpdate(GameTime timeSpent)
+        {
+            CBPerFrame.Values.TextureFrameAnimation += 0.0250f; //1 FPS Default value
+            if (CBPerFrame.Values.TextureFrameAnimation >= _visualWorldParam.CubeTextureManager.TexturesAnimationLCM) CBPerFrame.Values.TextureFrameAnimation = 0.0f;
+        }
+
         public override void VTSUpdate(double interpolationHd, float interpolationLd, float elapsedTime)
         {
             _animationValue += (_animationSpeed * elapsedTime);
+
             while(_animationValue >= 1.0) _animationValue -= 1.0f;
         }
 

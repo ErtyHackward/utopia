@@ -27,7 +27,16 @@ namespace Utopia.Shared.Net.Web.Responses
         [JsonProperty("address")]
         public string ServerAddress { get; set; }
 
+        [JsonProperty("localAddress")]
+        public string LocalAddress { get; set; }
+
+        [JsonProperty("port")]
+        public int Port { get; set; }
+
         [JsonProperty("count")]
         public int UsersCount { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
     }
 }

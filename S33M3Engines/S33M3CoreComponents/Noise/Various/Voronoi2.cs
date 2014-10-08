@@ -203,7 +203,8 @@ namespace S33M3CoreComponents.Noise.Various
 
         public double ValueNoise(int x, int y, int seed)
         {
-            return 1.0 - ((double)IntValueNoise(x, y, seed) / 1073741824.0);
+            //return 1.0 - ((double)IntValueNoise(x, y, seed) / 1073741824.0); // -1 to 1 range
+            return ((double)IntValueNoise(x, y, seed) / 1073741824.0) / 2.0; //0 to 1 range
         }     
     }
 }

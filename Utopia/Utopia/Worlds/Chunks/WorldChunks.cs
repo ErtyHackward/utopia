@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using S33M3CoreComponents.Sound;
+using Utopia.Entities.Managers;
 using Utopia.Shared.Net.Messages;
 using Utopia.Shared.World;
 using Utopia.Shared.Chunks;
@@ -33,6 +34,7 @@ using Ninject;
 using Utopia.Shared.Configuration;
 using S33M3CoreComponents.Inputs;
 using Utopia.Worlds.Shadows;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Worlds.Chunks
 {
@@ -79,11 +81,8 @@ namespace Utopia.Worlds.Chunks
         private ILandscapeManager2D _landscapeManager;
         private IChunkMeshManager _chunkMeshManager;
         private ServerComponent _server;
-        private IPlayerManager _playerManager;
         private IChunkStorageManager _chunkstorage;
-        private ISkyDome _skydome;
         private IWeather _weather;
-        private SharedFrameCB _sharedFrameCB;
         private int _readyToDrawCount;
         private StaggingBackBuffer _skyBackBuffer;
         private readonly object _counterLock = new object();
@@ -150,16 +149,23 @@ namespace Utopia.Worlds.Chunks
         private void OnInitialLoadComplete()
         {
             if (LoadComplete != null) 
-                LoadComplete(this, EventArgs.Empty);
+                LoadComplete(this, EventArgs.Empty);          
         }
 
-        
+        [Inject]
+        public ISkyDome Skydome { get; set; }
 
         [Inject]
         public ISoundEngine SoundEngine { get; set; }
 
         [Inject]
         public WorldShadowMap ShadowMap { get; set; }
+
+        [Inject]
+        public IPlayerManager PlayerManager { get; set; }
+
+        [Inject]
+        public SharedFrameCB SharedFrameCb { get; set; }
 
         public WorldChunks(D3DEngine d3dEngine,
                            CameraManager<ICameraFocused> camManager,
@@ -174,10 +180,7 @@ namespace Utopia.Worlds.Chunks
                            ILightingManager lightingManager,
                            IChunkStorageManager chunkstorage,
                            ServerComponent server,
-                           IPlayerManager player,
-                           ISkyDome skydome,
                            IWeather weather,
-                           SharedFrameCB sharedFrameCB,
                            [Named("SkyBuffer")] StaggingBackBuffer skyBackBuffer,
                            VoxelModelManager voxelModelManager,
                            IChunkEntityImpactManager chunkEntityImpactManager,
@@ -197,10 +200,7 @@ namespace Utopia.Worlds.Chunks
             _landscapeManager = landscapeManager;
             _chunkMeshManager = chunkMeshManager;
             _lightingManager = lightingManager;
-            _playerManager = player;
-            _skydome = skydome;
             _weather = weather;
-            _sharedFrameCB = sharedFrameCB;
             _skyBackBuffer = skyBackBuffer;
             _voxelModelManager = voxelModelManager;
             _chunkEntityImpactManager = chunkEntityImpactManager;
@@ -319,7 +319,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
         /// <returns></returns>
-        public VisualChunk GetChunk(ref Vector3I cubePosition)
+        public VisualChunk GetChunk(Vector3I cubePosition)
         {
             return GetChunk(cubePosition.X, cubePosition.Z);
         }
@@ -339,6 +339,37 @@ namespace Utopia.Worlds.Chunks
             return GetChunk(X, Z);
         }
 
+        public VisualChunk GetPlayerChunk()
+        {
+            return GetChunk(BlockHelper.EntityToBlock(_camManager.ActiveCamera.WorldPosition.Value));
+        }
+
+        /// <summary>
+        /// Get a world's chunk from a chunk location in world coordinate with array bound test
+        /// </summary>
+        /// <param name="X">Chunk X coordinate</param>
+        /// <param name="Z">Chunk Z coordinate</param>
+        /// <returns></returns>
+        public bool GetSafeChunkFromChunkCoord(Vector3I chunkPos, out VisualChunk chunk)
+        {
+            return GetSafeChunkFromChunkCoord(chunkPos.X, chunkPos.Z, out chunk);
+        }
+
+        /// <summary>
+        /// Get a world's chunk from a chunk location in world coordinate with array bound test
+        /// </summary>
+        /// <param name="X">Chunk X coordinate</param>
+        /// <param name="Z">Chunk Z coordinate</param>
+        /// <returns></returns>
+        public bool GetSafeChunkFromChunkCoord(int X, int Z, out VisualChunk chunk)
+        {
+            //From Chunk coordinate to World Coordinate
+            X *= AbstractChunk.ChunkSize.X;
+            Z *= AbstractChunk.ChunkSize.Z;
+
+            return GetSafeChunk(X, Z, out chunk);
+        }
+
         /// <summary>
         /// Get a world's chunk from a chunk position
         /// </summary>
@@ -354,7 +385,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
         /// <returns></returns>
-        public VisualChunk[] GetsurroundingChunkFromChunkCoord(int X, int Z)
+        public VisualChunk[] GetEightSurroundingChunkFromChunkCoord(int X, int Z)
         {
             VisualChunk[] surroundingChunk = new VisualChunk[8];
 
@@ -366,6 +397,25 @@ namespace Utopia.Worlds.Chunks
             surroundingChunk[5] = GetChunkFromChunkCoord(X - 1, Z - 1);
             surroundingChunk[6] = GetChunkFromChunkCoord(X, Z - 1);
             surroundingChunk[7] = GetChunkFromChunkCoord(X + 1, Z - 1);
+
+            return surroundingChunk;
+        }
+
+
+        /// <summary>
+        /// Get a world's chunk from a chunk location in world coordinate
+        /// </summary>
+        /// <param name="X">Chunk X coordinate</param>
+        /// <param name="Z">Chunk Z coordinate</param>
+        /// <returns></returns>
+        public VisualChunk[] GetFourSurroundingChunkFromChunkCoord(int X, int Z)
+        {
+            VisualChunk[] surroundingChunk = new VisualChunk[4];
+
+            surroundingChunk[0] = GetChunkFromChunkCoord(X + 1, Z);
+            surroundingChunk[1] = GetChunkFromChunkCoord(X, Z + 1);
+            surroundingChunk[2] = GetChunkFromChunkCoord(X - 1, Z);
+            surroundingChunk[3] = GetChunkFromChunkCoord(X, Z - 1);
 
             return surroundingChunk;
         }
@@ -467,6 +517,41 @@ namespace Utopia.Worlds.Chunks
         {
             return _cubesHolder.IsSolidToPlayer(ref newPosition2Evaluate) == false;
         }
+
+        public enum GetChunksFilter
+        {
+            All,                      //Return all chunks
+            Visibles,                  //Return all chunks that are visible to the player
+            VisibleWithinStaticObjectRange  //Return all chunks that are visible to the player & in the max range of the static object drawing
+        }
+
+        public IEnumerable<VisualChunk> GetChunks(GetChunksFilter filter)
+        {
+            switch (filter)
+            {
+                case GetChunksFilter.All:
+                    for (int i = 0; i < Chunks.Length; i++)
+                    {
+                        yield return Chunks[i];
+                    }
+                    break;
+                case GetChunksFilter.Visibles:
+                    foreach(var chunk in Chunks.Where(x => !x.Graphics.IsFrustumCulled && x.Graphics.IsExistingMesh4Drawing))
+                    {
+                        yield return chunk;
+                    }
+                    break;
+                case GetChunksFilter.VisibleWithinStaticObjectRange:
+                    for (int i = 0; i < SortedChunks.Length; i++)
+                    {
+                        //Sorted chunk are sorted by DistanceFromPlayer
+                        if (SortedChunks[i].DistanceFromPlayer > StaticEntityViewRange) yield break;
+                        yield return SortedChunks[i];
+                    }
+                    break;
+            }
+            yield break;
+        }
         #endregion
 
         #region Private methods
@@ -476,11 +561,21 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         private void InitChunks()
         {
+            //Init serverEventArea around player
+            var areaSize = _server.GameInformations.AreaSize;
+
+            var notificationAreaSize = new Vector3I(areaSize.X / AbstractChunk.ChunkSize.X, 0, areaSize.Y / AbstractChunk.ChunkSize.Z) + Vector3I.One;
+            _eventNotificationArea = new Range3I
+            {
+                Position = BlockHelper.EntityToChunkPosition(PlayerManager.Player.Position) - notificationAreaSize / 2,
+                Size = notificationAreaSize
+            };
+
             //Defining the World Offset, to be used to reference the 2d circular array of dim defined in chunk
             VisualWorldParameters.WorldRange = new Range3I()
             {
-                Position = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X, 0, VisualWorldParameters.WorldChunkStartUpPosition.Y),
-                Size = VisualWorldParameters.WorldVisibleSize
+                Size = VisualWorldParameters.WorldVisibleSize,
+                Position = VisualWorldParameters.WorldChunkStartUpPosition
             };
 
             //Create the chunks that will be used as "Rendering" array
@@ -502,7 +597,7 @@ namespace Utopia.Worlds.Chunks
                 {
                     cubeRange = new Range3I()
                     {
-                        Position = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, VisualWorldParameters.WorldChunkStartUpPosition.Y + (chunkZ * AbstractChunk.ChunkSize.Z)),
+                        Position = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X), 0, VisualWorldParameters.WorldChunkStartUpPosition.Z + (chunkZ * AbstractChunk.ChunkSize.Z)),
                         Size = AbstractChunk.ChunkSize
                         //Max = new Vector3I(VisualWorldParameters.WorldChunkStartUpPosition.X + ((chunkX + 1) * AbstractChunk.ChunkSize.X), AbstractChunk.ChunkSize.Y, VisualWorldParameters.WorldChunkStartUpPosition.Y + ((chunkZ + 1) * AbstractChunk.ChunkSize.Z))
                     };
@@ -522,13 +617,14 @@ namespace Utopia.Worlds.Chunks
                     Chunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.VisibleChunkInWorld.X] = chunk;
                     SortedChunks[(arrayX >> VisualWorldParameters.ChunkPOWsize) + (arrayZ >> VisualWorldParameters.ChunkPOWsize) * VisualWorldParameters.VisibleChunkInWorld.X] = chunk;
 
-                    //Is this chunk inside the Client storae manager ?
+                    //Is this chunk inside the Client storage manager ?
                     if (_chunkstorage.ChunkHashes.TryGetValue(chunk.Position, out chunkMD5))
                     {
                         chunkPosition.Add(new Vector3I((VisualWorldParameters.WorldChunkStartUpPosition.X + (chunkX * AbstractChunk.ChunkSize.X)) / AbstractChunk.ChunkSize.X, 0,
-                                                       (VisualWorldParameters.WorldChunkStartUpPosition.Y + (chunkZ * AbstractChunk.ChunkSize.Z)) / AbstractChunk.ChunkSize.Z));
+                                                       (VisualWorldParameters.WorldChunkStartUpPosition.Z + (chunkZ * AbstractChunk.ChunkSize.Z)) / AbstractChunk.ChunkSize.Z));
                         chunkHash.Add(chunkMD5);
                     }
+
                 }
             }
 
@@ -537,7 +633,7 @@ namespace Utopia.Worlds.Chunks
                     new Vector3I(
                         VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X, 
                         0,
-                        VisualWorldParameters.WorldChunkStartUpPosition.Y / AbstractChunk.ChunkSize.Z
+                        VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z
                         ),
                     new Vector3I(
                         VisualWorldParameters.VisibleChunkInWorld.X,
@@ -564,6 +660,89 @@ namespace Utopia.Worlds.Chunks
             ChunkNeed2BeSorted = true; // Will force the SortedChunks array to be sorted against the "camera position" (The player).
 
             OnChunksArrayInitialized();
+        }
+
+        /// <summary>
+        /// Will start a full client chunk sync with server !
+        /// </summary>
+        public void ResyncClientChunks()
+        {
+            List<Vector3I> chunkPosition = new List<Vector3I>();
+            List<Md5Hash> chunkHash = new List<Md5Hash>();
+
+            foreach (var chunk in GetChunks(GetChunksFilter.All))
+            {
+                //Requesting server chunks, for validation
+
+                var md5Hash = chunk.GetMd5Hash();
+
+                chunkPosition.Add(chunk.Position);
+                chunkHash.Add(md5Hash);
+                chunk.IsServerRequested = true;
+                chunk.IsServerResyncMode = true;
+            }
+
+            var chunkRange = new Range3I(
+                            new Vector3I(
+                                VisualWorldParameters.WorldChunkStartUpPosition.X / AbstractChunk.ChunkSize.X,
+                                0,
+                                VisualWorldParameters.WorldChunkStartUpPosition.Z / AbstractChunk.ChunkSize.Z
+                                ),
+                            new Vector3I(
+                                VisualWorldParameters.VisibleChunkInWorld.X,
+                                1,
+                                VisualWorldParameters.VisibleChunkInWorld.Y
+                                )
+                 );
+
+            _server.ServerConnection.Send(
+                    new GetChunksMessage()
+                    {
+                        Range = chunkRange,
+                        Md5Hashes = chunkHash.ToArray(),
+                        Positions = chunkPosition.ToArray(),
+                        HashesCount = chunkHash.Count,
+                        Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
+                    }
+            );
+
+        }
+
+        /// <summary>
+        /// Will start a chunk resync cycle (Request to server)
+        /// </summary>
+        /// <param name="chunkPosition">The requested chunk</param>
+        /// <param name="forced">If true, will skip some safety checks</param>
+        /// <returns></returns>
+        public bool ResyncChunk(Vector3I chunkPosition, bool forced)
+        {
+            var chunk = GetChunkFromChunkCoord(chunkPosition.X, chunkPosition.Z);
+
+            if (forced == false && (chunk.ThreadStatus != S33M3DXEngine.Threading.ThreadsManager.ThreadStatus.Locked || chunk.State != ChunkState.DisplayInSyncWithMeshes)) 
+                return false;
+
+            var md5Hash = chunk.GetMd5Hash();
+            
+            chunk.IsServerRequested = true;
+            chunk.IsServerResyncMode = true;
+
+            _server.ServerConnection.Send(
+                new GetChunksMessage
+                {
+                    Range = new Range3I(chunkPosition, Vector3I.One),
+                    Md5Hashes = new[] { md5Hash },
+                    Positions = new[] { chunkPosition },
+                    HashesCount = 1,
+                    Flag = GetChunksMessageFlag.DontSendChunkDataIfNotModified
+                });
+
+            return true;
+        }
+
+        public void RebuildChunk(Vector3I chunkPosition)
+        {
+            var chunk = GetChunkFromChunkCoord(chunkPosition.X, chunkPosition.Z);
+            chunk.State = ChunkState.MeshesChanged;
         }
 
         //Call everytime a chunk has been initialized (= New chunk rebuild form scratch).
@@ -595,7 +774,7 @@ namespace Utopia.Worlds.Chunks
         {
             //Find the next number where mod == 0 !
             int XWrap = VisualWorldParameters.WorldChunkStartUpPosition.X;
-            int ZWrap = VisualWorldParameters.WorldChunkStartUpPosition.Y;
+            int ZWrap = VisualWorldParameters.WorldChunkStartUpPosition.Z;
 
             while (MathHelper.Mod(XWrap, VisualWorldParameters.WorldVisibleSize.X) != 0) XWrap++;
             while (MathHelper.Mod(ZWrap, VisualWorldParameters.WorldVisibleSize.Z) != 0) ZWrap++;
@@ -607,15 +786,16 @@ namespace Utopia.Worlds.Chunks
         #endregion
 
         public bool ShowDebugInfo { get; set; }
+
         public string GetDebugInfo()
         {
             if (ShowDebugInfo)
             {
 
-                var c = GetChunk((int)_playerManager.CameraWorldPosition.X, (int)_playerManager.CameraWorldPosition.Z);
+                var c = GetChunk((int)PlayerManager.CameraWorldPosition.X, (int)PlayerManager.CameraWorldPosition.Z);
                 //From World Coord to Cube Array Coord
-                int arrayX = MathHelper.Mod((int)_playerManager.CameraWorldPosition.X, AbstractChunk.ChunkSize.X);
-                int arrayZ = MathHelper.Mod((int)_playerManager.CameraWorldPosition.Z, AbstractChunk.ChunkSize.Z);
+                int arrayX = MathHelper.Mod((int)PlayerManager.CameraWorldPosition.X, AbstractChunk.ChunkSize.X);
+                int arrayZ = MathHelper.Mod((int)PlayerManager.CameraWorldPosition.Z, AbstractChunk.ChunkSize.Z);
                 var columnInfo = c.BlockData.GetColumnInfo(new Vector2I(arrayX, arrayZ));
 
                 int BprimitiveCount = 0;
@@ -637,14 +817,14 @@ namespace Utopia.Worlds.Chunks
                 var line0 = string.Format("Nbr chunks : {0:000}, Nbr Visible chunks : {1:000}, {2:0000000} Buffered indices, {3:0000000} Visible indices", SortedChunks.Length, _chunkDrawByFrame, BprimitiveCount, VprimitiveCount);
                 var line1 = string.Format("Static entity draw calls {2}: {0}, time {1}", _staticEntityDrawCalls, _staticEntityDrawTime, DrawStaticInstanced ? "[INSTANCED]" : "");
                 var line2 = string.Format("Biomes MetaData : Temperature {0:0.00}, Moisture {1:0.00}, ColumnMaxHeight : {2}, ChunkID : {3}", columnInfo.Temperature / 255.0f, columnInfo.Moisture / 255.0f, columnInfo.MaxHeight, c.Position);
-                string line3 = string.Empty;
+                var line3 = string.Format("Zone id : {0}", columnInfo.Zone);
+                string line4 = string.Empty;
                 if (_utopiaProcessorParam != null)
                 {
-                    line3 = string.Format("Biomes MetaData : Chunk Biome Type {0}, Column Biome Type {1}", _utopiaProcessorParam.Biomes[c.BlockData.ChunkMetaData.ChunkMasterBiomeType].Name, _utopiaProcessorParam.Biomes[columnInfo.Biome].Name);
+                    line4 = string.Format("Biomes MetaData : Chunk Biome Type {0}, Column Biome Type {1}", _utopiaProcessorParam.Biomes[c.BlockData.ChunkMetaData.ChunkMasterBiomeType].Name, _utopiaProcessorParam.Biomes[columnInfo.Biome].Name);
                 }
-                
 
-                return string.Join("\r\n", line0, line1, line2, line3);
+                return string.Join("\r\n", line0, line1, line2, line3, line4);
             }
             else
             {

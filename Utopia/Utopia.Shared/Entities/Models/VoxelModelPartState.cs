@@ -87,10 +87,16 @@ namespace Utopia.Shared.Entities.Models
         public Matrix? PalmTransform;
 
         /// <summary>
+        /// Optional particules for the state
+        /// </summary>
+        [ProtoMember(7)]
+        public StaticEntityParticule Particlules { get; set; }
+
+        /// <summary>
         /// Current part bounding box
         /// </summary>
         public BoundingBox BoundingBox;
-
+        
         public Matrix GetTransformation()
         {
             return _transform.HasValue ? _transform.Value : (_transform = Matrix.Scaling(Scale) * Matrix.Translation(-RotationOffset) * Matrix.RotationQuaternion(Rotation) * Matrix.Translation(RotationOffset) * Matrix.Translation(Translation)).Value;

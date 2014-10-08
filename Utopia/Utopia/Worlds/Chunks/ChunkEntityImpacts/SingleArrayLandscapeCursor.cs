@@ -1,21 +1,25 @@
 ﻿using System;
 using Utopia.Shared.Chunks;
-using Utopia.Shared.Entities;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Interfaces;
 using S33M3Resources.Structs;
 using Utopia.Shared.Settings;
 using Utopia.Shared.Configuration;
 using Utopia.Shared.Structs;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
     public class SingleArrayLandscapeCursor : ILandscapeCursor
     {
         private readonly IChunkEntityImpactManager _landscapeManager;
+        private readonly WorldConfiguration _config;
         private Vector3I _globalPosition;
-        private WorldConfiguration _config;
         private int _bigArrayIndex;
+
+        public uint OwnerDynamicId { get; set; }
+
+        public bool IsError { get { return _bigArrayIndex == int.MaxValue; } }
 
         /// <summary>
         /// Occurs when someone tries to write using this cursor
@@ -28,8 +32,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             _landscapeManager = landscapeManager;
             GlobalPosition = blockPosition;
             _config = config;
-            if (!landscapeManager.CubesHolder.IndexSafe(blockPosition.X, blockPosition.Y, blockPosition.Z, out _bigArrayIndex))
-                throw new IndexOutOfRangeException();
+            landscapeManager.CubesHolder.Index(blockPosition.X, blockPosition.Y, blockPosition.Z, true, out _bigArrayIndex);
         }
 
         public Vector3I GlobalPosition
@@ -40,7 +43,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
                 _bigArrayIndex = _landscapeManager.CubesHolder.Index(ref _globalPosition);
             }
         }
-
+        
         public byte Read()
         {
             return _landscapeManager.CubesHolder.Cubes[_bigArrayIndex].Id;
@@ -52,7 +55,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <returns></returns>
         public BlockTag ReadTag()
         {
-            throw new NotImplementedException();
+            var chunk = (VisualChunk)_landscapeManager.GetChunkFromBlock(_globalPosition);
+            if (chunk == null) return null;
+            return chunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(_globalPosition));
         }
 
         /// <summary>
@@ -61,14 +66,32 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <returns></returns>
         public byte Read<T>(out T tag) where T : BlockTag
         {
-            throw new NotImplementedException();
+            var chunk = (VisualChunk)_landscapeManager.GetChunkFromBlock(_globalPosition);
+            if (chunk == null)
+            {
+                tag = null;
+                return 255; //Send back "Error" value;
+            }
+            tag = (T)chunk.BlockData.GetTag(BlockHelper.GlobalToInternalChunkPosition(_globalPosition));
+            return Read();
         }
 
-        public void Write(byte value, BlockTag tag = null)
+        /// <summary>
+        /// Writes specidfied value to current cursor position
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="tag"> </param>
+        /// <param name="sourceDynamicId">Id of the entity that is responsible for that change</param>
+        public void Write(byte value, BlockTag tag = null, uint sourceDynamicId = 0)
         {
             var handler = BeforeWrite;
             if (handler != null) 
-                handler(this, new LandscapeCursorBeforeWriteEventArgs { GlobalPosition = GlobalPosition, Value = value, BlockTag = tag });
+                handler(this, new LandscapeCursorBeforeWriteEventArgs { 
+                    GlobalPosition = GlobalPosition, 
+                    Value = value, 
+                    BlockTag = tag,
+                    SourceDynamicId = sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId
+                });
 
             _landscapeManager.ReplaceBlock(_bigArrayIndex, ref _globalPosition, value, false, tag);
         }
@@ -140,6 +163,11 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             return this;
         }
 
+        /// <summary>
+        /// Moves current cursor and returns itself (Fluent interface)
+        /// </summary>
+        /// <param name="moveVector"></param>
+        /// <returns></returns>
         public ILandscapeCursor Move(Vector3I moveVector)
         {
             _globalPosition += moveVector;
@@ -152,9 +180,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="sourceDynamicId">Parent entity that issues adding</param>
-        public void AddEntity(StaticEntity entity, uint sourceDynamicId = 0)
+        public void AddEntity(IStaticEntity entity, uint sourceDynamicId = 0)
         {
-            _landscapeManager.AddEntity(entity, sourceDynamicId);
+            _landscapeManager.AddEntity(entity, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
 
         /// <summary>
@@ -165,8 +193,23 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         /// <returns>Removed entity</returns>
         public IStaticEntity RemoveEntity(EntityLink entity, uint sourceDynamicId = 0)
         {
-            return _landscapeManager.RemoveEntity(entity, sourceDynamicId);
+            return _landscapeManager.RemoveEntity(entity, sourceDynamicId == 0 ? OwnerDynamicId : sourceDynamicId);
         }
 
+        /// <summary>
+        /// throws NotSupportedException
+        /// </summary>
+        public void BeginTransaction()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// throws NotSupportedException
+        /// </summary>
+        public void CommitTransaction()
+        {
+            throw new NotSupportedException();
+        }
     }
 }

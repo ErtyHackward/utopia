@@ -21,7 +21,6 @@ namespace Utopia.Worlds.Weather
         private FTSValue<double> _keyFrameAnimation;
         private FTSValue<Vector3> _flatWindFlowNormalizedWithNoise;
 
-
         private FastRandom _rnd;
         #endregion
 

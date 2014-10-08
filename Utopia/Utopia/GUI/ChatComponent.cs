@@ -4,6 +4,7 @@ using System.Text;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Utopia.Network;
+using Utopia.Shared.Entities.Events;
 using Utopia.Shared.Net.Connections;
 using Utopia.Shared.Net.Messages;
 using System.Diagnostics;
@@ -53,6 +54,17 @@ namespace Utopia.GUI
             if (handler != null) handler(this, e);
         }
 
+        /// <summary>
+        /// Occurs when chat component is activated or deactivated
+        /// </summary>
+        public event EventHandler ActivatedChanged;
+
+        protected virtual void OnActivatedChanged()
+        {
+            var handler = ActivatedChanged;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         public int ChatLineLimit { get; set; }
         public bool IsHided { get; set; }
         public bool Activated
@@ -60,8 +72,12 @@ namespace Utopia.GUI
             get { return _activated; }
             private set
             {
+                if (_activated == value)
+                    return;
+
                 _activated = value;
                 _imanager.ActionsManager.IsFullExclusiveMode = value;
+                OnActivatedChanged();
             }
         }
 
@@ -75,12 +91,13 @@ namespace Utopia.GUI
 
             _server.MessageChat += ServerConnectionMessageChat;
             _server.MessagePing += _server_MessagePing;
+            _server.MessageUseFeedback += _server_MessageUseFeedback;
 
             ChatLineLimit = 30;
             //For 5 seconds =
             _hideChatInTick = 15 * Stopwatch.Frequency;
 
-            _d3dEngine.ViewPort_Updated += LocateChat;
+            _d3dEngine.ScreenSize_Updated += LocateChat;
 
             LocateChat(_d3dEngine.ViewPort, _d3dEngine.BackBufferTex.Description);
             IsHided = false;
@@ -93,7 +110,7 @@ namespace Utopia.GUI
         {
             _server.MessagePing -= _server_MessagePing;
             _server.MessageChat -= ServerConnectionMessageChat;
-            _d3dEngine.ViewPort_Updated -= LocateChat;            
+            _d3dEngine.ScreenSize_Updated -= LocateChat;            
         }
 
         public override void Initialize()
@@ -117,6 +134,7 @@ namespace Utopia.GUI
                 _messages.Dequeue(); //Remove the Olds messages (FIFO collection)
             }
 
+            _lastUpdateTime = Stopwatch.GetTimestamp();
             _refreshDisplay = true;
         }
 
@@ -131,20 +149,33 @@ namespace Utopia.GUI
             //Cut the received message by line feed
             foreach (var msgText in e.Message.Message.Split('\n'))
             {
-                if (e.Message.Action)
+                if (e.Message.IsServerMessage)
                 {
-                    AddMessage(string.Format("* {0} {1}", e.Message.DisplayName, msgText));
+                    AddMessage(string.Format("-{0}- {1}", e.Message.DisplayName, msgText));
                 }
-                else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
+                else
+                {
+                    if (e.Message.Action)
+                    {
+                        AddMessage(string.Format("* {0} {1}", e.Message.DisplayName, msgText));
+                    }
+                    else AddMessage(string.Format("<{0}> {1}", e.Message.DisplayName, msgText));
+                }
             }
-
-            _lastUpdateTime = Stopwatch.GetTimestamp();
         }
 
         private void _server_MessagePing(object sender, ProtocolMessageEventArgs<PingMessage> e)
         {
             AddMessage(string.Format("<Pong> {0} ms", Console.PingTimer.ElapsedMilliseconds));
             Console.PingTimer.Stop();
+        }
+
+        private void _server_MessageUseFeedback(object sender, ProtocolMessageEventArgs<UseFeedbackMessage> e)
+        {
+            if (e.Message.OwnerDynamicId == _server.Player.DynamicId && !e.Message.Impact.Success && !string.IsNullOrEmpty(e.Message.Impact.Message))
+            {
+                AddMessage(string.Format(" -- {0}", e.Message.Impact.Message));
+            }
         }
 
         private void SetFontAlphaColor(byte color)
@@ -214,6 +245,14 @@ namespace Utopia.GUI
                                 msg.Action = true;
                                 msg.Message = input.Remove(0, 4);
                             }
+
+                            if (input.StartsWith("/"))
+                                _server.ServerConnection.Send(new EntityUseMessage() { 
+                                    DynamicEntityId = _server.Player.DynamicId, 
+                                    UseType  = UseType.Command, 
+                                    State = _server.Player.EntityState
+                                });
+
                             _server.ServerConnection.Send(msg);
                         }
                     }

@@ -1,10 +1,13 @@
-﻿using ProtoBuf;
+﻿using System.Linq;
+using ProtoBuf;
 using S33M3Resources.Structs;
 using System.ComponentModel;
 using SharpDX;
+using Utopia.Shared.Entities.Concrete;
 using Utopia.Shared.Entities.Concrete.Interface;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Entities.Inventory;
+using Utopia.Shared.Structs.Helpers;
 
 namespace Utopia.Shared.Entities
 {
@@ -13,6 +16,7 @@ namespace Utopia.Shared.Entities
     /// This entity cannot be placed on a block where another entity is placed.
     /// </summary>
     [ProtoContract]
+    [ProtoInclude(100, typeof(OrientedBlockItem))]
     public abstract class BlockItem : Item, IBlockLocationRoot
     {
         /// <summary>
@@ -29,7 +33,7 @@ namespace Utopia.Shared.Entities
             base.SetPosition(pos, item, owner);
 
             var cubeEntity = (BlockItem)item;
-            cubeEntity.BlockLocationRoot = owner.EntityState.NewBlockPosition;
+            cubeEntity.BlockLocationRoot = BlockHelper.EntityToBlock(pos.Position);
         }
 
         public override EntityPosition GetPosition(IDynamicEntity owner)
@@ -39,8 +43,8 @@ namespace Utopia.Shared.Entities
             if (!owner.EntityState.IsBlockPicked) return pos;
 
             // Get the chunk where the entity will be added and check if another entity is present inside this block
-            var workingchunk = LandscapeManager.GetChunk(owner.EntityState.NewBlockPosition);
-            foreach (IBlockLocationRoot entity in workingchunk.Entities.Entities.Values)
+            var workingchunk = LandscapeManager.GetChunkFromBlock(owner.EntityState.NewBlockPosition);
+            foreach (var entity in workingchunk.Entities.OfType<IBlockLocationRoot>())
             {
                 if (entity.BlockLocationRoot == BlockLocationRoot)
                 {

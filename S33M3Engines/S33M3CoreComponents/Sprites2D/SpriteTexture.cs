@@ -44,7 +44,7 @@ namespace S33M3CoreComponents.Sprites2D
                            tex.Description.Format);
 
             _d3dEngine = d3dEngine;
-            _d3dEngine.ViewPort_Updated += D3dEngine_ViewPort_Updated;
+            _d3dEngine.ScreenSize_Updated += D3dEngine_ScreenSize_Updated;
             Width = tex.Description.Width;
             Height = tex.Description.Height;
 
@@ -52,9 +52,9 @@ namespace S33M3CoreComponents.Sprites2D
         }
 
         //Refresh Sprite Centering when the viewPort size change !
-        private void D3dEngine_ViewPort_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
+        private void D3dEngine_ScreenSize_Updated(ViewportF viewport, Texture2DDescription newBackBufferDescr)
         {
-            ScreenPosition = new Rectangle((int)(viewport.Width / 2) - (Width / 2), (int)(viewport.Height / 2) - (Height / 2), (int)(viewport.Width / 2) - (Width / 2) + Width, (int)(viewport.Height / 2) - (Height / 2) + Height);
+            ScreenPosition = new Rectangle((int)(viewport.Width / 2) - (Width / 2), (int)(viewport.Height / 2) - (Height / 2), Width, Height);
         }
 
         public SpriteTexture(Device device, string texturePath) : this(device, texturePath, Vector2I.Zero)
@@ -65,6 +65,13 @@ namespace S33M3CoreComponents.Sprites2D
         public SpriteTexture(Device device, string texturePath, Vector2I screenPosition)
         {
             Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath);
+            CreateResource(device, tex, screenPosition, tex.Description.Format);
+            tex.Dispose();
+        }
+
+        public SpriteTexture(Device device, string texturePath, Vector2I screenPosition, ImageLoadInformation imageLoadParam)
+        {
+            Texture2D tex = Resource.FromFile<Texture2D>(device, texturePath, imageLoadParam);
             CreateResource(device, tex, screenPosition, tex.Description.Format);
             tex.Dispose();
         }
@@ -227,12 +234,12 @@ namespace S33M3CoreComponents.Sprites2D
             Width = texture.Description.Width;
             Height = texture.Description.Height;
 
-            ScreenPosition = new Rectangle(screenPosition.X, screenPosition.Y, screenPosition.X + Width, screenPosition.Y + Height);
+            ScreenPosition = new Rectangle(screenPosition.X, screenPosition.Y, Width, Height);
         }
 
         public override void BeforeDispose()
         {
-            if (_d3dEngine != null) _d3dEngine.ViewPort_Updated -= D3dEngine_ViewPort_Updated;
+            if (_d3dEngine != null) _d3dEngine.ScreenSize_Updated -= D3dEngine_ScreenSize_Updated;
         }
     }
 }

@@ -14,6 +14,7 @@ using Utopia.Shared.Net.Web;
 using Utopia.Shared.Settings;
 using S33M3CoreComponents.Config;
 using System.Reflection;
+using Utopia.Shared.GraphicManagers;
 
 namespace Realms.Client
 {
@@ -38,8 +39,9 @@ namespace Realms.Client
                 Program.StartUpResolution = ClientSettings.Current.Settings.GraphicalParameters.WindowSize;
 
             //Bings all components
-            IocBinding("Utopia Realms v" + Assembly.GetExecutingAssembly().GetName().Version, Program.StartUpResolution);
-            
+            IocBinding("Utopia Realms v" + Assembly.GetExecutingAssembly().GetName().Version.ToString(3), Program.StartUpResolution);
+
+            if (_d3dEngine.isInitialized == false) return;
             //Set Windows Icon
             _d3dEngine.GameWindow.Icon = Resources.Utopia;
 
@@ -52,7 +54,8 @@ namespace Realms.Client
             System.Net.ServicePointManager.Expect100Continue = false;
 
             // Create the Rendering Main LOOP
-            var game = CreateNewGameEngine(_iocContainer, ClientSettings.Current.Settings.GraphicalParameters.VSync); 
+            var game = CreateNewGameEngine(_iocContainer, ClientSettings.Current.Settings.GraphicalParameters.VSync);
+            if (game.Engine.isInitialized == false) ;
             _iocContainer.Bind<Game>().ToConstant(game);
 
             //Everytime a Key binding is change, we need to refresh the Bindings from InputManagers
@@ -82,11 +85,16 @@ namespace Realms.Client
             stateManager.RegisterState(_iocContainer.Get<InGameMenuState>());
             stateManager.RegisterState(_iocContainer.Get<InGameInventoryState>());
             stateManager.RegisterState(_iocContainer.Get<InGameCraftingState>());
+            stateManager.RegisterState(_iocContainer.Get<InGameCharSelectionState>());
 
             stateManager.SwitchComponent = fade;
             game.GameComponents.Add(stateManager);
 
             stateManager.ActivateGameStateAsync("StartUp");
+
+            //Cube Texture manager !
+            var cubeTextureManager = _iocContainer.Get<CubeTexturesManager>();
+            cubeTextureManager.Initialization(_d3dEngine.ImmediateContext, TexturePackConfig.Current.Settings.enuSamplingFilter);
 
             game.GameStateManager = stateManager;
 

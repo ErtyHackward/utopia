@@ -64,7 +64,7 @@ namespace Utopia.Entities.Managers
         /// <summary>
         /// Gets main player entity (character or PlayerFocusEntity)
         /// </summary>
-        public IDynamicEntity Player { get { return GodEntity; } }
+        public ICharacterEntity Player { get { return GodEntity; } }
 
         /// <summary>
         /// If camera is inside water
@@ -129,7 +129,7 @@ namespace Utopia.Entities.Managers
                                 CameraManager<ICameraFocused> cameraManager,
                                 LandscapeBufferManager bufferManager,
                                 VisualWorldParameters visParameters,
-                                IGlobalStateManager globalStateManager)
+                                GlobalStateManager globalStateManager)
         {
             if (engine == null) throw new ArgumentNullException("engine");
             if (playerEntity  == null) throw new ArgumentNullException("playerEntity");
@@ -435,8 +435,8 @@ namespace Utopia.Entities.Managers
             if (heading != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Up, heading, out rotation);
-                Quaternion.Multiply(ref rotation, ref _eyeOrientation, out _eyeOrientation);
-                Quaternion.Multiply(ref rotation, ref _bodyOrientation, out _bodyOrientation);
+                Quaternion.Multiply(ref _eyeOrientation, ref rotation, out _eyeOrientation);
+                Quaternion.Multiply(ref _bodyOrientation, ref rotation, out _bodyOrientation);
             }
 
             // Rotate camera about its local x axis.
@@ -444,10 +444,41 @@ namespace Utopia.Entities.Managers
             if (pitch != 0.0f)
             {
                 Quaternion.RotationAxis(ref MVector3.Right, pitch, out rotation);
-                Quaternion.Multiply(ref _eyeOrientation, ref rotation, out _eyeOrientation);
+                Quaternion.Multiply(ref rotation, ref _eyeOrientation, out _eyeOrientation);
             }
 
             return true;
+        }
+
+
+        public EntityMovement.EntityRotations EntityRotations
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
+        public event EventHandler<PlayerEntityChangedEventArgs> PlayerEntityChanged;
+
+        public event PlayerEntityManager.LandingGround OnLanding;
+
+
+        public Particules.UtopiaParticuleEngine UtopiaParticuleEngine
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

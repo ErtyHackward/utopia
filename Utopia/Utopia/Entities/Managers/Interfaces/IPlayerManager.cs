@@ -1,6 +1,10 @@
 ﻿using S33M3CoreComponents.Cameras.Interfaces;
 using S33M3DXEngine.Main.Interfaces;
+using System;
+using Utopia.Entities.EntityMovement;
+using Utopia.Particules;
 using Utopia.Shared.Entities;
+using Utopia.Shared.Entities.Dynamic;
 using Utopia.Shared.Entities.Interfaces;
 using Utopia.Shared.Structs;
 
@@ -15,7 +19,9 @@ namespace Utopia.Entities.Managers.Interfaces
         /// <summary>
         /// Gets main player entity (character or PlayerFocusEntity)
         /// </summary>
-        IDynamicEntity Player { get; }
+        ICharacterEntity Player { get; }
+
+        EntityRotations EntityRotations { get; set; }
 
         /// <summary>
         /// Gets player's faction
@@ -32,5 +38,9 @@ namespace Utopia.Entities.Managers.Interfaces
         /// Affects picking algo
         /// </summary>
         IItem ActiveTool { get; }
+
+        event EventHandler<PlayerEntityChangedEventArgs> PlayerEntityChanged;
+        event Utopia.Entities.Managers.PlayerEntityManager.LandingGround OnLanding;
+        UtopiaParticuleEngine UtopiaParticuleEngine { get; set; }
     }
 }
