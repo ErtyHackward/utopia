@@ -390,7 +390,7 @@ namespace Realms.Client.States
             _ioc.Get<ServerComponent>().EnterTheWorld();
 
             //Start a client chunk resync phase.
-            _ioc.Get<IWorldChunks>().ResyncClientChunks();
+            _ioc.Get<IWorldChunks2D>().ResyncClientChunks();
         }
 
     }

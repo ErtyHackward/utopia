@@ -37,7 +37,7 @@ namespace Utopia.Entities.Managers
         private readonly int _entityDistance = AbstractChunk.ChunkSize.X * 2;
         private readonly ServerComponent _server;
         private readonly InputsManager _input;
-        private IWorldChunks _worldChunks;
+        private IWorldChunks2D _worldChunks;
         private bool? _onEntityTop;
         #endregion
 
@@ -57,7 +57,7 @@ namespace Utopia.Entities.Managers
         }
 
         [Inject]
-        public IWorldChunks WorldChunks
+        public IWorldChunks2D WorldChunks
         {
             get { return _worldChunks; }
             set { _worldChunks = value; }

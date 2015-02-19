@@ -60,7 +60,7 @@ namespace Realms.Client.Components.GUI
                          CameraManager<ICameraFocused> camManager,
                          PlayerEntityManager playerEntityManager,
                          IWeather weather,
-                         IWorldChunks worldChunks
+                         IWorldChunks2D worldChunks
                          ) :
             base(screen, d3DEngine, toolbar, inputManager, camManager, playerEntityManager, weather, worldChunks)
         {
