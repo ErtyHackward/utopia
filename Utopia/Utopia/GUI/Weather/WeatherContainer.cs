@@ -23,7 +23,7 @@ namespace Utopia.GUI.TopPanel
         #region Private variables
         private D3DEngine _d3DEngine;
         private IWeather _weather;
-        private IWorldChunks _worldChunks;
+        private IWorldChunks2D _worldChunks;
         private PlayerEntityManager _playerEntityManager;
 
         private int _topPanelheight;
@@ -42,7 +42,7 @@ namespace Utopia.GUI.TopPanel
 
         public WeatherContainer(D3DEngine d3DEngine,
                                 IWeather weather,
-                                IWorldChunks worldChunks,
+                                IWorldChunks2D worldChunks,
                                 PlayerEntityManager playerEntityManager)
         {
             _d3DEngine = d3DEngine;

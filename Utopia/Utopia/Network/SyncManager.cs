@@ -34,7 +34,7 @@ namespace Utopia.Network
 
         private readonly IVisualDynamicEntityManager _dynamicEntityManager;
         private readonly ServerComponent _server;
-        private readonly IWorldChunks _chunks;
+        private readonly IWorldChunks2D _chunks;
         private readonly ChatComponent _chat;
         private readonly List<SyncItem> _syncItems = new List<SyncItem>();
 
@@ -72,7 +72,7 @@ namespace Utopia.Network
 
         public SyncManager(IVisualDynamicEntityManager dynamicEntityManager,
                            ServerComponent server,
-                           IWorldChunks chunks,
+                           IWorldChunks2D chunks,
                            ChatComponent chat)
         {
             _dynamicEntityManager = dynamicEntityManager;
