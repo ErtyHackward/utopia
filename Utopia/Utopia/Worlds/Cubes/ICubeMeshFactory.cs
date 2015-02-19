@@ -13,7 +13,7 @@ namespace Utopia.Worlds.Cubes
 {
     public interface ICubeMeshFactory
     {
-        void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref Vector4B cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk, ref TerraCube topCube, Dictionary<long, int> verticeDico);
+        void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref Vector4B cubePosition, ref Vector3I cubePosiInWorld, VisualChunk2D chunk, ref TerraCube topCube, Dictionary<long, int> verticeDico);
         bool FaceGenerationCheck(ref TerraCube cube, ref Vector3I cubePosiInWorld, CubeFaces cubeFace, ref TerraCube NeightBorFaceCube);
     }
 }

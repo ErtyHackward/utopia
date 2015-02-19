@@ -120,7 +120,7 @@ namespace Utopia.Entities.Managers
         {
             if (_worldChunks.SortedChunks == null) return;
 
-            VisualChunk chunk;
+            VisualChunk2D chunk;
             //Check inside the visible chunks (Not visible culled) the statics entities
             //Chunk are sorted around player, the 9 first are the chunk around the players.
             for (int i = 0; i < 9; i++)

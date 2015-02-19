@@ -7,7 +7,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
 {
     public interface IChunkMeshManager
     {
-        void CreateChunkMesh(VisualChunk chunk);
+        void CreateChunkMesh(VisualChunk2D chunk);
         IWorldChunks2D WorldChunks { get; set; }
     }
 }

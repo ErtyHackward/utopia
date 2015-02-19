@@ -16,8 +16,10 @@ namespace Utopia.Worlds.Chunks
     /// <summary>
     /// Provides chunk management using 3d chunk layout
     /// </summary>
-    public class WorldChunks3D : DrawableGameComponent, IWorldChunks<VisualChunk3D>
+    public class WorldChunks3D : DrawableGameComponent, IWorldChunks
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly D3DEngine _d3DEngine;
         private readonly CameraManager<ICameraFocused> _camManager;
         private readonly IPlayerManager _playerManager;
@@ -26,15 +28,28 @@ namespace Utopia.Worlds.Chunks
 
         public VisualWorldParameters VisualWorldParameters { get; set; }
 
-        public VisualChunk3D GetChunk(Vector3I chunkPosition)
+        public VisualChunkBase GetChunk(Vector3I chunkPosition)
         {
             VisualChunk3D chunk;
-            return _chunks.TryGetValue(chunkPosition, out chunk) ? chunk : null;
+            _chunks.TryGetValue(chunkPosition, out chunk);
+            return chunk;
         }
 
         public IEnumerable<VisualChunk3D> VisibleChunks()
         {
             return _sortedChunks.Where(chunk => !chunk.Graphics.IsFrustumCulled);
+        }
+
+        public VisualChunkBase GetBaseChunk(Vector3I chunkPosition)
+        {
+            return GetChunk(chunkPosition);
+        }
+
+        public bool ResyncChunk(Vector3I chunkPosition, bool forced)
+        {
+            Logger.Warn("Requested chunk resync, but not implemented!");
+            //TODO: implement the method
+            return false;
         }
 
         public bool ShowDebugInfo { get; set; }

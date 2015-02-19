@@ -122,6 +122,13 @@ namespace Utopia.Shared.Chunks
             _chunkMetaData = new ChunkMetaData();
         }
 
+        public InsideDataProvider(Vector3I chunkSize)
+        {
+            _chunkSize = chunkSize;
+            _chunkColumns = new ChunkColumnInfo[_chunkSize.X * _chunkSize.Z];
+            _chunkMetaData = new ChunkMetaData();
+        }
+
         /// <summary>
         /// Creates a copy of the data
         /// </summary>
@@ -276,14 +283,6 @@ namespace Utopia.Shared.Chunks
                 return 0;
             lock (_syncRoot)
                 return _blockBytes[((inChunkPosition.Z * _chunkSize.X) + inChunkPosition.X) * _chunkSize.Y + inChunkPosition.Y];
-        }
-
-        public byte GetBlock(int x, int y, int z)
-        {
-            if (_blockBytes == null) 
-                return 0;
-            lock (_syncRoot)
-                return _blockBytes[((z * _chunkSize.X) + x) * _chunkSize.Y + y];
         }
 
         /// <summary>

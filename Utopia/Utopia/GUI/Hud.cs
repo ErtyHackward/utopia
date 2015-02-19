@@ -71,7 +71,7 @@ namespace Utopia.GUI
            CameraManager<ICameraFocused> camManager,
            PlayerEntityManager playerEntityManager,
         IWeather weather,
-        IWorldChunks2D worldChunks)
+        IWorldChunks worldChunks)
         {
             IsDefferedLoadContent = true;
 

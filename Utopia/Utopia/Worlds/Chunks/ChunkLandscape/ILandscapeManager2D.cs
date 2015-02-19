@@ -17,6 +17,6 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         IWorldChunks2D WorldChunks { get; set; }
 
-        void CreateLandScape(VisualChunk chunk);
+        void CreateLandScape(VisualChunk2D chunk);
     }
 }

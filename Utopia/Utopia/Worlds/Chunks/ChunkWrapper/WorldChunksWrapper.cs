@@ -46,28 +46,28 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
             {
                 case ChunkWrapType.X_Plus1:
 
-                    foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Max.X - (AbstractChunk.ChunkSize.X * 2), WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
+                    foreach (VisualChunk2D chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Max.X - (AbstractChunk.ChunkSize.X * 2), WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
                         chunk.RefreshBorderChunk();
                     }
 
                     break;
                 case ChunkWrapType.X_Minus1:
-                    foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Position.X + AbstractChunk.ChunkSize.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
+                    foreach (VisualChunk2D chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Position.X + AbstractChunk.ChunkSize.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
                         chunk.RefreshBorderChunk();
                     }
 
                     break;
                 case ChunkWrapType.Z_Plus1:
-                    foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Max.Z - (AbstractChunk.ChunkSize.Z * 2), WorldChunks.VisualWorldParameters.WorldRange.Position.X))
+                    foreach (VisualChunk2D chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Max.Z - (AbstractChunk.ChunkSize.Z * 2), WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
                         chunk.RefreshBorderChunk();
                     }
 
                     break;
                 case ChunkWrapType.Z_Minus1:
-                    foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Position.Z + AbstractChunk.ChunkSize.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
+                    foreach (VisualChunk2D chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Position.Z + AbstractChunk.ChunkSize.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
                         chunk.RefreshBorderChunk();
                     }
@@ -90,7 +90,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                 case ChunkWrapType.X_Plus1:
                     //GameConsole.Write("Row of chunks generated : Xmax");
                     //Find the Xmin chunks ! (They will be recycled with newwww cube Range)
-                    foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Position.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
+                    foreach (VisualChunk2D chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Position.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.Graphics.IsExistingMesh4Drawing = false;
@@ -113,7 +113,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                 case ChunkWrapType.X_Minus1:
                     //GameConsole.Write("Row of chunks generated : Xmin");
                     //Find the Xmin chunks ! (They will be recycled with newwww cube Range)
-                    foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
+                    foreach (VisualChunk2D chunk in WorldChunks.GetChunksWithFixedX(WorldChunks.VisualWorldParameters.WorldRange.Max.X - AbstractChunk.ChunkSize.X, WorldChunks.VisualWorldParameters.WorldRange.Position.Z))
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.Graphics.IsExistingMesh4Drawing = false;
@@ -136,7 +136,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                 case ChunkWrapType.Z_Plus1:
                     //GameConsole.Write("Row of chunks generated : ZMax");
                     //Find the Xmin chunks ! (They will be recycled with new cube Range)
-                    foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Position.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
+                    foreach (VisualChunk2D chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Position.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.Graphics.IsExistingMesh4Drawing = false;
@@ -158,7 +158,7 @@ namespace Utopia.Worlds.Chunks.ChunkWrapper
                     break;
                 case ChunkWrapType.Z_Minus1:
                     //GameConsole.Write("Row of chunks generated : Zmin");
-                    foreach (VisualChunk chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
+                    foreach (VisualChunk2D chunk in WorldChunks.GetChunksWithFixedZ(WorldChunks.VisualWorldParameters.WorldRange.Max.Z - AbstractChunk.ChunkSize.Z, WorldChunks.VisualWorldParameters.WorldRange.Position.X))
                     {
                         chunk.State = ChunkState.Empty;
                         chunk.Graphics.IsExistingMesh4Drawing = false;

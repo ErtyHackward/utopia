@@ -10,7 +10,10 @@ using S33M3DXEngine.Debug.Interfaces;
 
 namespace Utopia.Worlds.Chunks
 {
-    public interface IWorldChunks<out T> : IDrawableComponent, IDebugInfo where T : VisualChunkBase
+    /// <summary>
+    /// Base interface for 2d and 3d chunk layouts managers
+    /// </summary>
+    public interface IWorldChunks : IDrawableComponent, IDebugInfo
     {
         /// <summary>
         /// Indicates if inital chunks were loaded
@@ -27,25 +30,21 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         /// <param name="chunkPosition"></param>
         /// <returns></returns>
-        T GetChunk(Vector3I chunkPosition);
+        VisualChunkBase GetBaseChunk(Vector3I chunkPosition);
 
-        /// <summary>
-        /// Enumerates all visible chunks by player (i.e. not frustum culled)
-        /// </summary>
-        /// <returns></returns>
-        IEnumerable<T> VisibleChunks();
+        bool ResyncChunk(Vector3I chunkPosition, bool forced);
     }
 
     /// <summary>
     /// Represents 2d chunk layout manager
     /// </summary>
-    public interface IWorldChunks2D : IDrawableComponent, IDebugInfo
+    public interface IWorldChunks2D : IWorldChunks
     {
         /// <summary> The chunk collection </summary>
-        VisualChunk[] Chunks { get; set; }
+        VisualChunk2D[] Chunks { get; set; }
 
         //Chunks sorted from the near to far compared to the players
-        VisualChunk[] SortedChunks { get; set; }
+        VisualChunk2D[] SortedChunks { get; set; }
 
         ShaderResourceView Terra_View { get; }
         
@@ -65,9 +64,7 @@ namespace Utopia.Worlds.Chunks
         bool DrawStaticInstanced { get; set; }
 
         void ResyncClientChunks();
-
-        bool ResyncChunk(Vector3I chunkPosition, bool forced);
-
+        
         ILandscapeManager2D LandscapeManager { get; }
 
         /// <summary>
@@ -91,13 +88,13 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
         /// <returns></returns>
-        VisualChunk GetChunk(int X, int Z);
+        VisualChunk2D GetChunk(int X, int Z);
 
         /// <summary>
         /// Get a world's chunk from a chunk position
         /// </summary>
         /// <param name="chunkPos">chunk space coordinate</param>
-        VisualChunk GetChunkFromChunkCoord(Vector3I chunkPos);
+        VisualChunk2D GetChunkFromChunkCoord(Vector3I chunkPos);
 
         /// <summary>
         /// Get a world's chunk from a chunk position with bound array check
@@ -106,7 +103,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="Z"></param>
         /// <param name="chunk"></param>
         /// <returns></returns>
-        bool GetSafeChunkFromChunkCoord(int X, int Z, out VisualChunk chunk);
+        bool GetSafeChunkFromChunkCoord(int X, int Z, out VisualChunk2D chunk);
 
         /// <summary>
         /// Get a world's chunk from a chunk position with bound array check
@@ -115,7 +112,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="Z"></param>
         /// <param name="chunk"></param>
         /// <returns></returns>
-        bool GetSafeChunkFromChunkCoord(Vector3I chunkPos, out VisualChunk chunk);
+        bool GetSafeChunkFromChunkCoord(Vector3I chunkPos, out VisualChunk2D chunk);
 
         /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate
@@ -123,9 +120,9 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
         /// <returns></returns>
-        VisualChunk GetChunk(Vector3I cubePosition);
+        VisualChunk2D GetChunk(Vector3I cubePosition);
 
-        VisualChunk GetPlayerChunk();
+        VisualChunk2D GetPlayerChunk();
 
         /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate
@@ -133,25 +130,25 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
         /// <returns></returns>
-        VisualChunk GetChunkFromChunkCoord(int X, int Z);
+        VisualChunk2D GetChunkFromChunkCoord(int X, int Z);
 
         /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate with out of array check
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
-        /// <param name="chunk">The VisualChunk return</param>
+        /// <param name="chunk">The VisualChunk2D return</param>
         /// <returns>True if the chunk was found</returns>
-        bool GetSafeChunk(float X, float Z, out VisualChunk chunk);
+        bool GetSafeChunk(float X, float Z, out VisualChunk2D chunk);
 
         /// <summary>
         /// Get a world's chunk from a Cube location in world coordinate with out of array check
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
-        /// <param name="chunk">The VisualChunk return</param>
+        /// <param name="chunk">The VisualChunk2D return</param>
         /// <returns>True if the chunk was found</returns>
-        bool GetSafeChunk(int X, int Z, out VisualChunk chunk);
+        bool GetSafeChunk(int X, int Z, out VisualChunk2D chunk);
 
         /// <summary>
         /// Get the list of chunks for a specific X world coordinate
@@ -159,7 +156,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="FixedX">The Fixed "line" of chunk to retrieve</param>
         /// <param name="WorldMinZ">Get All chunk From the WorldMinZ value to MaxLineZ-WorldMinZ (Excluded)</param>
         /// <returns></returns>
-        IEnumerable<VisualChunk> GetChunksWithFixedX(int FixedX, int WorldMinZ);
+        IEnumerable<VisualChunk2D> GetChunksWithFixedX(int FixedX, int WorldMinZ);
 
         /// <summary>
         /// Get the list of chunks for a specific Z world coordinate
@@ -167,13 +164,13 @@ namespace Utopia.Worlds.Chunks
         /// <param name="FixedX">The Fixed "line" of chunk to retrieve</param>
         /// <param name="WorldMinZ">Get All chunk From the WorldMinX value to MaxLineX-WorldMinX (Excluded)</param>
         /// <returns></returns>
-        IEnumerable<VisualChunk> GetChunksWithFixedZ(int FixedZ, int WorldMinX);
+        IEnumerable<VisualChunk2D> GetChunksWithFixedZ(int FixedZ, int WorldMinX);
 
         /// <summary>
         /// Enumerates all visible chunks by player (i.e. not frustum culled)
         /// </summary>
         /// <returns></returns>
-        IEnumerable<VisualChunk> VisibleChunks();
+        IEnumerable<VisualChunk2D> VisibleChunks();
         
         void InitDrawComponents(DeviceContext context);
 
@@ -181,18 +178,18 @@ namespace Utopia.Worlds.Chunks
 
         bool IsEntityVisible(Vector3D pos);
 
-        IEnumerable<VisualChunk> GetChunks(WorldChunks.GetChunksFilter filter);
+        IEnumerable<VisualChunk2D> GetChunks(WorldChunks.GetChunksFilter filter);
 
         /// <summary>
         /// Enumerates chunks to draw
         /// </summary>
         /// <param name="sameSlice">in case of slice mode set this parameter to process only chunks with the same slice mesh, set this to false to process all visible chunks</param>
         /// <returns></returns>
-        IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true);
+        IEnumerable<VisualChunk2D> ChunksToDraw(bool sameSlice = true);
 
         void RebuildChunk(Vector3I position);
-        void DrawStaticEntitiesShadow(DeviceContext context, VisualChunk chunk);
+        void DrawStaticEntitiesShadow(DeviceContext context, VisualChunk2D chunk);
         //void PrepareVoxelDraw(DeviceContext context, Matrix viewProjection);
-        //void DrawStaticEntities(DeviceContext context, VisualChunk chunk);
+        //void DrawStaticEntities(DeviceContext context, VisualChunk2D chunk);
     }
 }

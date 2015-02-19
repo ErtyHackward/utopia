@@ -139,9 +139,9 @@ namespace Utopia.Worlds.Chunks
         private void ChunkResyncing()
         {
             //Process each chunk that are in Empty state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => x.IsServerResyncMode && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
+            foreach (VisualChunk2D chunk in SortedChunks.Where(x => x.IsServerResyncMode && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
-                VisualChunk localChunk = chunk;
+                VisualChunk2D localChunk = chunk;
 
                 //Start chunk creation process in a threaded way !
                 localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
@@ -153,7 +153,7 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        private void ChunkResyncing_Threaded(VisualChunk chunk)
+        private void ChunkResyncing_Threaded(VisualChunk2D chunk)
         {
             if (chunk.IsServerResyncMode) _landscapeManager.CreateLandScape(chunk);
             chunk.ThreadStatus = ThreadsManager.ThreadStatus.Idle;
@@ -163,9 +163,9 @@ namespace Utopia.Worlds.Chunks
         private void CreateNewChunk()
         {
             //Process each chunk that are in Empty state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty || x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
+            foreach (VisualChunk2D chunk in SortedChunks.Where(x => (x.State == ChunkState.Empty || x.State == ChunkState.LandscapeCreated) && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
-                VisualChunk localChunk = chunk;
+                VisualChunk2D localChunk = chunk;
 
                 //Start chunk creation process in a threaded way !
                 localChunk.ThreadStatus = ThreadsManager.ThreadStatus.Locked;           //Lock the thread before entering async process.
@@ -179,7 +179,7 @@ namespace Utopia.Worlds.Chunks
 
         //Chunk creation steps
         //The process done isnight this step is impacting only the chunk that need to be creation
-        private void ChunkCreationThreadedSteps_Threaded(VisualChunk chunk)
+        private void ChunkCreationThreadedSteps_Threaded(VisualChunk2D chunk)
         {
 
 #if PERFTEST
@@ -206,11 +206,11 @@ namespace Utopia.Worlds.Chunks
         private void PropagateOuterChunkLights()
         {
             //Process each chunk that are in InnerLightsSourcePropagated state, and not being currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x =>
+            foreach (VisualChunk2D chunk in SortedChunks.Where(x =>
                                                        (x.State == ChunkState.InnerLightsSourcePropagated || (x.IsOutsideLightSourcePropagated == false && x.IsBorderChunk == false && x.State >= ChunkState.InnerLightsSourcePropagated)) &&
                                                        x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
-                VisualChunk localChunk = chunk;
+                VisualChunk2D localChunk = chunk;
 
                 //all the surrounding chunks must have had their LightSources Processed at minimum.
                 if (localChunk.IsBorderChunk == true || localChunk.SurroundingChunksMinimumState(ChunkState.InnerLightsSourcePropagated))
@@ -226,7 +226,7 @@ namespace Utopia.Worlds.Chunks
         }
 
         //Will propagate light from chunk surrounding the current chunk
-        private void ChunkOuterLightPropagation_Threaded(VisualChunk chunk)
+        private void ChunkOuterLightPropagation_Threaded(VisualChunk2D chunk)
         {
 #if PERFTEST
             Utopia.Worlds.Chunks.WorldChunks.perf.AddData("ChunkOuterLightPropagation_Threaded Started " + chunk.ChunkID);
@@ -241,9 +241,9 @@ namespace Utopia.Worlds.Chunks
         private void CreateChunkMeshes(int maximumUpdateOrderPossible)
         {
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.OuterLightSourcesProcessed && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
+            foreach (VisualChunk2D chunk in SortedChunks.Where(x => x.State == ChunkState.OuterLightSourcesProcessed && x.ThreadStatus == ThreadsManager.ThreadStatus.Idle))
             {
-                VisualChunk localChunk = chunk;
+                VisualChunk2D localChunk = chunk;
                 if (maximumUpdateOrderPossible > 0 && localChunk.UpdateOrder == 0) continue;
 
                 //all the surrounding chunks must have had their LightSources Processed at minimum.
@@ -259,7 +259,7 @@ namespace Utopia.Worlds.Chunks
         }
 
         //Will create the chunk buffer, ready to be sent to the GC
-        private void CreateChunkMeshes_Threaded(VisualChunk chunk)
+        private void CreateChunkMeshes_Threaded(VisualChunk2D chunk)
         {
 #if PERFTEST
             Utopia.Worlds.Chunks.WorldChunks.perf.AddData("CreateChunkMeshes_Threaded Started  " + chunk.ChunkID);
@@ -278,7 +278,7 @@ namespace Utopia.Worlds.Chunks
             int nbrchunksSend2GC = 0;            
 
             //Process each chunk that are in IsOutsideLightSourcePropagated state, and not currently processed
-            foreach (VisualChunk chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged &&
+            foreach (VisualChunk2D chunk in SortedChunks.Where(x => x.State == ChunkState.MeshesChanged &&
                                                              x.ThreadStatus == ThreadsManager.ThreadStatus.Idle &&
                                                              x.UpdateOrder == maximumUpdateOrderPossible))
             {

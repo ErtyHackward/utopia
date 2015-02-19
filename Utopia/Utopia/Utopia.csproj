@@ -244,7 +244,7 @@
     <Compile Include="Worlds\Chunks\ChunkWrapper\IChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\ChunkWrapper\WorldChunksWrapper.cs" />
     <Compile Include="Worlds\Chunks\Enums\enuLiquidType.cs" />
-    <Compile Include="Worlds\Chunks\VisualChunk.cs" />
+    <Compile Include="Worlds\Chunks\VisualChunk2D.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.Draw.cs" />
     <Compile Include="Worlds\Chunks\WorldChunks.Update.cs" />
     <Compile Include="Worlds\Cubes\LiquidCubeMeshFactory.cs" />
