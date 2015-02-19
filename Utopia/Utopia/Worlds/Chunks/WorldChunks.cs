@@ -93,14 +93,14 @@ namespace Utopia.Worlds.Chunks
         /// <summary>
         /// List of chunks that still _slowly_ appearing
         /// </summary>
-        private List<VisualChunk> _transparentChunks = new List<VisualChunk>();
+        private List<VisualChunk2D> _transparentChunks = new List<VisualChunk2D>();
 
         #endregion
 
         #region Public Property/Variables
         /// <summary> The chunk collection </summary>
-        public VisualChunk[] Chunks { get; set; }
-        public VisualChunk[] SortedChunks { get; set; }
+        public VisualChunk2D[] Chunks { get; set; }
+        public VisualChunk2D[] SortedChunks { get; set; }
 
         public bool ChunkNeed2BeSorted { get; set; }
         public int StaticEntityViewRange { get; set; }
@@ -300,7 +300,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
         /// <returns></returns>
-        public VisualChunk GetChunk(int X, int Z)
+        public VisualChunk2D GetChunk(int X, int Z)
         {
             //From World Coord to Cube Array Coord
             int arrayX = MathHelper.Mod(X, VisualWorldParameters.WorldVisibleSize.X);
@@ -319,9 +319,14 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
         /// <returns></returns>
-        public VisualChunk GetChunk(Vector3I cubePosition)
+        public VisualChunk2D GetChunk(Vector3I cubePosition)
         {
             return GetChunk(cubePosition.X, cubePosition.Z);
+        }
+
+        public VisualChunkBase GetBaseChunk(Vector3I chunkPos)
+        {
+            return GetChunkFromChunkCoord(chunkPos);
         }
 
         /// <summary>
@@ -330,7 +335,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
         /// <returns></returns>
-        public VisualChunk GetChunkFromChunkCoord(int X, int Z)
+        public VisualChunk2D GetChunkFromChunkCoord(int X, int Z)
         {
             //From Chunk coordinate to World Coordinate
             X *= AbstractChunk.ChunkSize.X;
@@ -339,7 +344,7 @@ namespace Utopia.Worlds.Chunks
             return GetChunk(X, Z);
         }
 
-        public VisualChunk GetPlayerChunk()
+        public VisualChunk2D GetPlayerChunk()
         {
             return GetChunk(BlockHelper.EntityToBlock(_camManager.ActiveCamera.WorldPosition.Value));
         }
@@ -350,7 +355,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
         /// <returns></returns>
-        public bool GetSafeChunkFromChunkCoord(Vector3I chunkPos, out VisualChunk chunk)
+        public bool GetSafeChunkFromChunkCoord(Vector3I chunkPos, out VisualChunk2D chunk)
         {
             return GetSafeChunkFromChunkCoord(chunkPos.X, chunkPos.Z, out chunk);
         }
@@ -361,7 +366,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
         /// <returns></returns>
-        public bool GetSafeChunkFromChunkCoord(int X, int Z, out VisualChunk chunk)
+        public bool GetSafeChunkFromChunkCoord(int X, int Z, out VisualChunk2D chunk)
         {
             //From Chunk coordinate to World Coordinate
             X *= AbstractChunk.ChunkSize.X;
@@ -374,7 +379,7 @@ namespace Utopia.Worlds.Chunks
         /// Get a world's chunk from a chunk position
         /// </summary>
         /// <param name="chunkPos">chunk space coordinate</param>
-        public VisualChunk GetChunkFromChunkCoord(Vector3I chunkPos)
+        public VisualChunk2D GetChunkFromChunkCoord(Vector3I chunkPos)
         {
             return GetChunkFromChunkCoord(chunkPos.X, chunkPos.Z);
         }
@@ -385,9 +390,9 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
         /// <returns></returns>
-        public VisualChunk[] GetEightSurroundingChunkFromChunkCoord(int X, int Z)
+        public VisualChunk2D[] GetEightSurroundingChunkFromChunkCoord(int X, int Z)
         {
-            VisualChunk[] surroundingChunk = new VisualChunk[8];
+            VisualChunk2D[] surroundingChunk = new VisualChunk2D[8];
 
             surroundingChunk[0] = GetChunkFromChunkCoord(X + 1, Z);
             surroundingChunk[1] = GetChunkFromChunkCoord(X + 1, Z + 1);
@@ -408,9 +413,9 @@ namespace Utopia.Worlds.Chunks
         /// <param name="X">Chunk X coordinate</param>
         /// <param name="Z">Chunk Z coordinate</param>
         /// <returns></returns>
-        public VisualChunk[] GetFourSurroundingChunkFromChunkCoord(int X, int Z)
+        public VisualChunk2D[] GetFourSurroundingChunkFromChunkCoord(int X, int Z)
         {
-            VisualChunk[] surroundingChunk = new VisualChunk[4];
+            VisualChunk2D[] surroundingChunk = new VisualChunk2D[4];
 
             surroundingChunk[0] = GetChunkFromChunkCoord(X + 1, Z);
             surroundingChunk[1] = GetChunkFromChunkCoord(X, Z + 1);
@@ -425,9 +430,9 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
-        /// <param name="chunk">The VisualChunk return</param>
+        /// <param name="chunk">The VisualChunk2D return</param>
         /// <returns>True if the chunk was found</returns>
-        public bool GetSafeChunk(float X, float Z, out VisualChunk chunk)
+        public bool GetSafeChunk(float X, float Z, out VisualChunk2D chunk)
         {
             return GetSafeChunk((int)X, (int)Z, out chunk);
         }
@@ -437,9 +442,9 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         /// <param name="X">Cube X coordinate in world coordinate</param>
         /// <param name="Z">Cube Z coordinate in world coordinate</param>
-        /// <param name="chunk">The VisualChunk return</param>
+        /// <param name="chunk">The VisualChunk2D return</param>
         /// <returns>True if the chunk was found</returns>
-        public bool GetSafeChunk(int X, int Z, out VisualChunk chunk)
+        public bool GetSafeChunk(int X, int Z, out VisualChunk2D chunk)
         {
             if (X < VisualWorldParameters.WorldRange.Position.X || X >= VisualWorldParameters.WorldRange.Max.X || Z < VisualWorldParameters.WorldRange.Position.Z || Z >= VisualWorldParameters.WorldRange.Max.Z)
             {
@@ -457,7 +462,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="FixedX">The Fixed "line" of chunk to retrieve</param>
         /// <param name="WorldMinZ">Get All chunk From the WorldMinZ value to MaxLineZ-WorldMinZ (Excluded)</param>
         /// <returns></returns>
-        public IEnumerable<VisualChunk> GetChunksWithFixedX(int FixedX, int WorldMinZ)
+        public IEnumerable<VisualChunk2D> GetChunksWithFixedX(int FixedX, int WorldMinZ)
         {
             int Z;
             Z = WorldMinZ;
@@ -474,7 +479,7 @@ namespace Utopia.Worlds.Chunks
         /// <param name="FixedZ">The Fixed "line" of chunk to retrieve</param>
         /// <param name="WorldMinX">Get All chunk From the WorldMinX value to MaxLineX-WorldMinX (Excluded)</param>
         /// <returns></returns>
-        public IEnumerable<VisualChunk> GetChunksWithFixedZ(int FixedZ, int WorldMinX)
+        public IEnumerable<VisualChunk2D> GetChunksWithFixedZ(int FixedZ, int WorldMinX)
         {
             int X;
             X = WorldMinX;
@@ -489,7 +494,7 @@ namespace Utopia.Worlds.Chunks
         /// Enumerates all visible chunks by player (i.e. not frustum culled)
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<VisualChunk> VisibleChunks()
+        public IEnumerable<VisualChunk2D> VisibleChunks()
         {
             return SortedChunks.Where(chunk => !chunk.Graphics.IsFrustumCulled);
         }
@@ -525,7 +530,7 @@ namespace Utopia.Worlds.Chunks
             VisibleWithinStaticObjectRange  //Return all chunks that are visible to the player & in the max range of the static object drawing
         }
 
-        public IEnumerable<VisualChunk> GetChunks(GetChunksFilter filter)
+        public IEnumerable<VisualChunk2D> GetChunks(GetChunksFilter filter)
         {
             switch (filter)
             {
@@ -579,12 +584,12 @@ namespace Utopia.Worlds.Chunks
             };
 
             //Create the chunks that will be used as "Rendering" array
-            Chunks = new VisualChunk[VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y];
-            SortedChunks = new VisualChunk[VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y];
+            Chunks = new VisualChunk2D[VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y];
+            SortedChunks = new VisualChunk2D[VisualWorldParameters.VisibleChunkInWorld.X * VisualWorldParameters.VisibleChunkInWorld.Y];
 
             Range3I cubeRange; //Used to define the blocks inside the chunks
             int arrayX, arrayZ;   //Chunk Array indexes
-            VisualChunk chunk;
+            VisualChunk2D chunk;
 
             //Chunk Server request variables
             List<Vector3I> chunkPosition = new List<Vector3I>();
@@ -605,8 +610,8 @@ namespace Utopia.Worlds.Chunks
                     arrayX = MathHelper.Mod(cubeRange.Position.X, VisualWorldParameters.WorldVisibleSize.X);
                     arrayZ = MathHelper.Mod(cubeRange.Position.Z, VisualWorldParameters.WorldVisibleSize.Z);
 
-                    //Create the new VisualChunk
-                    chunk = new VisualChunk(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _camManager, this, _voxelModelManager, _chunkEntityImpactManager);
+                    //Create the new VisualChunk2D
+                    chunk = new VisualChunk2D(_d3dEngine, _worldFocusManager, VisualWorldParameters, ref cubeRange, _cubesHolder, _camManager, this, _voxelModelManager, _chunkEntityImpactManager);
                     chunk.IsServerRequested = true;
                     //Ask the chunk Data to the DB, in case my local MD5 is equal to the server one.
                     chunk.StorageRequestTicket = _chunkstorage.RequestDataTicket_async(chunk.Position);
@@ -748,7 +753,7 @@ namespace Utopia.Worlds.Chunks
         //Call everytime a chunk has been initialized (= New chunk rebuild form scratch).
         void ChunkReadyToDraw(object sender, EventArgs e)
         {
-            var chunk = (VisualChunk)sender;
+            var chunk = (VisualChunk2D)sender;
             chunk.PopUpValue.Initialize(0.5f);
 
             _transparentChunks.Add(chunk);
@@ -800,7 +805,7 @@ namespace Utopia.Worlds.Chunks
 
                 int BprimitiveCount = 0;
                 int VprimitiveCount = 0;
-                VisualChunk chunk;
+                VisualChunk2D chunk;
                 //Run over all chunks to see their status, and take action accordingly.
                 for (var chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
                 {

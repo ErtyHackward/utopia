@@ -76,7 +76,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
 
         #region Public methods
         //Create the landscape for the chunk
-        public void CreateLandScape(VisualChunk chunk)
+        public void CreateLandScape(VisualChunk2D chunk)
         {
             CheckServerReceivedData(chunk);
         }
@@ -134,7 +134,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
             }
         }
 
-        private void CheckServerReceivedData(VisualChunk chunk)
+        private void CheckServerReceivedData(VisualChunk2D chunk)
         {
             //Is this chunk server requested ==> Then check if the result is buffered
             if (chunk.IsServerRequested)
@@ -290,7 +290,7 @@ namespace Utopia.Worlds.Chunks.ChunkLandscape
         }
 
         //Create the landscape for the chunk
-        private void CreateLandscapeFromGenerator(VisualChunk visualChunk)
+        private void CreateLandscapeFromGenerator(VisualChunk2D visualChunk)
         {
             var generatedChunk = _worldGenerator.GetChunk(visualChunk.Position);
 

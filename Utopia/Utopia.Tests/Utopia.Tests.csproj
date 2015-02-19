@@ -67,6 +67,7 @@
     <Compile Include="CloneTest.cs" />
     <Compile Include="GrowLogicTest.cs" />
     <Compile Include="Md5HashTest.cs" />
+    <Compile Include="OctreeTests.cs" />
     <Compile Include="OtherTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtobufInheritanceTest.cs" />

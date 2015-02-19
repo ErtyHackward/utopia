@@ -14,9 +14,9 @@ using Utopia.Shared.Structs.Landscape;
 namespace Utopia.Worlds.Chunks
 {
     /// <summary>
-    /// Represents a chunk for 3d rendering using "BigArray" technique
+    /// Represents a chunk for 3d rendering using "BigArray" technique in 2d chunk layout
     /// </summary>
-    public class VisualChunk : VisualChunkBase, ISingleArrayDataProviderUser
+    public class VisualChunk2D : VisualChunkBase, ISingleArrayDataProviderUser
     {
         private readonly SingleArrayChunkContainer _singleArrayContainer;
 
@@ -25,7 +25,7 @@ namespace Utopia.Worlds.Chunks
             get { return (SingleArrayDataProvider)base.BlockData; }
         }
 
-        public VisualChunk( D3DEngine d3DEngine, 
+        public VisualChunk2D( D3DEngine d3DEngine, 
                             WorldFocusManager worldFocusManager, 
                             VisualWorldParameters visualWorldParameter, 
                             ref Range3I cubeRange, 

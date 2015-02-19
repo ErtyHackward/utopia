@@ -62,13 +62,13 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         }
 
         #region Public methods
-        public void CreateChunkLightSources(VisualChunk chunk)
+        public void CreateChunkLightSources(VisualChunk2D chunk)
         {
             CreateLightSources(chunk);
             chunk.State = ChunkState.LightsSourceCreated;
         }
 
-        public void PropagateInnerChunkLightSources(VisualChunk chunk)
+        public void PropagateInnerChunkLightSources(VisualChunk2D chunk)
         {
             // speed optimization
             _worldRange = _visualWorldParameters.WorldRange.Position;
@@ -79,7 +79,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             chunk.State = ChunkState.InnerLightsSourcePropagated;
         }
 
-        public void PropagateOutsideChunkLightSources(VisualChunk chunk)
+        public void PropagateOutsideChunkLightSources(VisualChunk2D chunk)
         {
             // speed optimization
             _worldRange = _visualWorldParameters.WorldRange.Position;
@@ -102,7 +102,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Light Source Creation ============================================================================================================
 
         //Create the landscape for the chunk
-        private void CreateLightSources(VisualChunk chunk)
+        private void CreateLightSources(VisualChunk2D chunk)
         {
             Range3I cubeRange = chunk.CubeRange;
             CreateLightSources(ref cubeRange, chunk.BlockData.ChunkMetaData.ChunkMaxHeightBuilt);
@@ -172,7 +172,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             }
 
             //Find all chunk from the Cube range !
-            foreach (VisualChunk chunk in WorldChunk.Chunks)
+            foreach (VisualChunk2D chunk in WorldChunk.Chunks)
             {
                 if ((chunk.CubeRange.Max.X < cubeRange.Position.X) || (chunk.CubeRange.Position.X > cubeRange.Max.X)) continue;
                 if ((chunk.CubeRange.Max.Y < cubeRange.Position.Y) || (chunk.CubeRange.Position.Y > cubeRange.Max.Y)) continue;
@@ -180,7 +180,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
             }
         }
 
-        public void CreateEntityLightSources(VisualChunk chunk)
+        public void CreateEntityLightSources(VisualChunk2D chunk)
         {
             foreach (ILightEmitterEntity LightingEntity in chunk.Entities.Enumerate<ILightEmitterEntity>())
             {
@@ -218,14 +218,14 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         }
 
         //Light Propagation =================================================================================================================
-        private void PropagatesLightSources(VisualChunk chunk)
+        private void PropagatesLightSources(VisualChunk2D chunk)
         {
             Range3I cubeRangeWithOffset = chunk.CubeRange;
             PropagateLightSources(ref cubeRangeWithOffset, false, maxHeight: chunk.BlockData.ChunkMetaData.ChunkMaxHeightBuilt);
             PropagateLightInsideStaticEntities(chunk);
         }
 
-        private void PropagatesBorderLightSources(VisualChunk chunk)
+        private void PropagatesBorderLightSources(VisualChunk2D chunk)
         {
             //Get surrending cubes from this chunk
             Range3I cubeRangeWithBorder = chunk.CubeRange;
@@ -260,7 +260,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
 
         //Can only be done if surrounding chunks have their landscape initialized !
         //Will force lighting from cubes passed, even if not Alpha is not 255 = borderAsLightSource = true
-        private void PropagateLightSourcesForced(Vector3I cubePosition, VisualChunk chunk)
+        private void PropagateLightSourcesForced(Vector3I cubePosition, VisualChunk2D chunk)
         {
             int index = _cubesHolder.Index(ref cubePosition);
             TerraCube cube = _cubesHolder.Cubes[index];
@@ -380,7 +380,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         //Propagate the light inside the chunk entities
         private void PropagateLightInsideStaticEntities(ref Range3I cubeRange)
         {
-            VisualChunk chunk;
+            VisualChunk2D chunk;
             //Find all chunk from the Cube range !
             for (int i = 0; i < WorldChunk.Chunks.Length; i++)
             {
@@ -392,7 +392,7 @@ namespace Utopia.Worlds.Chunks.ChunkLighting
         }
 
         //Propagate the light inside the chunk entities
-        private void PropagateLightInsideStaticEntities(VisualChunk chunk)
+        private void PropagateLightInsideStaticEntities(VisualChunk2D chunk)
         {
             foreach (var voxelEntity in chunk.AllEntities())
             {

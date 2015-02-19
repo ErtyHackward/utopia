@@ -59,7 +59,7 @@ namespace Utopia.Worlds.Cubes
             return false;
         }
 
-        public void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref Vector4B cubePosition, ref Vector3I cubePosiInWorld, VisualChunk chunk, ref TerraCube topCube, Dictionary<long, int> verticeDico)
+        public void GenCubeFace(ref TerraCube cube, CubeFaces cubeFace, ref Vector4B cubePosition, ref Vector3I cubePosiInWorld, VisualChunk2D chunk, ref TerraCube topCube, Dictionary<long, int> verticeDico)
         {
             int yBlockOffsetAsInt = 0;
             float yBlockOffset = 0;

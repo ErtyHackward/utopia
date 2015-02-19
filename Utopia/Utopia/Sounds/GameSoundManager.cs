@@ -306,7 +306,7 @@ namespace Utopia.Sounds
             _soundEngine.Update3DSounds();
 
             //Get current player chunk
-            VisualChunk chunk;
+            VisualChunk2D chunk;
             if (!_worldChunk.GetSafeChunk(MathHelper.Floor(_playerEntityManager.Player.Position.X), MathHelper.Floor(_playerEntityManager.Player.Position.Z), out chunk)) 
                 return;
 
@@ -479,7 +479,7 @@ namespace Utopia.Sounds
         #region Biome ambiant Sound Processing
         private ISoundVoice _currentlyPLayingAmbiantSound;
         private Biome _previousBiomePlaying;
-        private void AmbiantSoundProcessing(VisualChunk chunk, ICharacterEntity player)
+        private void AmbiantSoundProcessing(VisualChunk2D chunk, ICharacterEntity player)
         {
             ChunkColumnInfo columnInfo = chunk.BlockData.GetColumnInfo(player.Position.ToCubePosition().X - chunk.ChunkPositionBlockUnit.X, player.Position.ToCubePosition().Z - chunk.ChunkPositionBlockUnit.Y);
 
@@ -655,7 +655,7 @@ namespace Utopia.Sounds
 
             int i = 0;
             //Collection surrending "Sound" entities (Max of 100) ===========================================
-            foreach (VisualChunk chunk in _worldChunk.SortedChunks.Where(x => x.DistanceFromPlayer < _collectRange))
+            foreach (VisualChunk2D chunk in _worldChunk.SortedChunks.Where(x => x.DistanceFromPlayer < _collectRange))
             {
                 foreach (var soundStaticEntities in chunk.SoundStaticEntities)
                 {

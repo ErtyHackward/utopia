@@ -23,7 +23,7 @@ using System.Linq;
 
 namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 {
-    public class ChunkEntityImpactManager : LandscapeManager<VisualChunk>, IChunkEntityImpactManager
+    public class ChunkEntityImpactManager : LandscapeManager<VisualChunk2D>, IChunkEntityImpactManager
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -170,7 +170,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
         }
 
-        private void SendChunkForBuffering(VisualChunk impactedChunk)
+        private void SendChunkForBuffering(VisualChunk2D impactedChunk)
         {
             // Save the modified Chunk in local buffer DB, only the structure is saved, not the Lighting data.
             
@@ -243,14 +243,14 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             }
 
             //Multiple blocks to change =============================================
-            Dictionary<VisualChunk, List<TerraCubePositionTag>> blockPerChunk = new Dictionary<VisualChunk, List<TerraCubePositionTag>>();
+            Dictionary<VisualChunk2D, List<TerraCubePositionTag>> blockPerChunk = new Dictionary<VisualChunk2D, List<TerraCubePositionTag>>();
             List<TerraCubePositionTag> blockList;
             //Multiple block to changes at once
             //Split the various blocks by chunks
             for (int i = 0; i < blockId.Length; i++)
             {
                 BlockTag tag = tags != null ? tags[i] : null;
-                VisualChunk impactedChunk;
+                VisualChunk2D impactedChunk;
                 if (_worldChunks.GetSafeChunk(position[i].X, position[i].Z, out impactedChunk))
                 {
                     if (!blockPerChunk.TryGetValue(impactedChunk, out blockList))
@@ -270,7 +270,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         }
 
 
-        public void ReplaceChunkBlocksThreaded(VisualChunk impactedChunk, List<TerraCubePositionTag> blocks, bool isNetworkChanged)
+        public void ReplaceChunkBlocksThreaded(VisualChunk2D impactedChunk, List<TerraCubePositionTag> blocks, bool isNetworkChanged)
         {
             while (!ReplaceChunkBlocks(impactedChunk, blocks, isNetworkChanged) &&
                     isNetworkChanged)
@@ -280,7 +280,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
         }
 
         //Multiple blocks replace logic 
-        public bool ReplaceChunkBlocks(VisualChunk impactedChunk, List<TerraCubePositionTag> blocks, bool isNetworkChanged)
+        public bool ReplaceChunkBlocks(VisualChunk2D impactedChunk, List<TerraCubePositionTag> blocks, bool isNetworkChanged)
         {
             if (impactedChunk.State != ChunkState.DisplayInSyncWithMeshes && isNetworkChanged)
             {
@@ -354,7 +354,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 
         public bool ReplaceBlock(int cubeArrayIndex, ref Vector3I cubeCoordinates, byte replacementCubeId, bool isNetworkChanged, BlockTag blockTag = null)
         {
-            VisualChunk impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
+            VisualChunk2D impactedChunk = _worldChunks.GetChunk(cubeCoordinates.X, cubeCoordinates.Z);
 
             if (impactedChunk.State != ChunkState.DisplayInSyncWithMeshes && isNetworkChanged)
             {
@@ -481,7 +481,7 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
             Utopia.Worlds.Chunks.WorldChunks.perf.cubeChunkID = mainChunkId;
             Utopia.Worlds.Chunks.WorldChunks.perf.AddData("Modified chunk is : " + mainChunkId);
 #endif
-            VisualChunk NeightBorChunk;
+            VisualChunk2D NeightBorChunk;
             foreach (var chunklocation in chunkRange)
             {
                 NeightBorChunk = _worldChunks.GetChunkFromChunkCoord(chunklocation);
@@ -497,9 +497,9 @@ namespace Utopia.Worlds.Chunks.ChunkEntityImpacts
 #endif
         }
 
-        public override VisualChunk GetChunk(Vector3I position)
+        public override VisualChunk2D GetChunk(Vector3I position)
         {
-            VisualChunk chunk;
+            VisualChunk2D chunk;
             _worldChunks.GetSafeChunkFromChunkCoord(position, out chunk);
             return chunk;
         }

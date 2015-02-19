@@ -109,7 +109,7 @@ namespace Utopia.Worlds.Chunks
 #if DEBUG
         private void DrawDebug(DeviceContext context)
         {
-            VisualChunk chunk;
+            VisualChunk2D chunk;
             for (int chunkIndice = 0; chunkIndice < SortedChunks.Length; chunkIndice++)
             {
                 chunk = SortedChunks[chunkIndice];
@@ -129,7 +129,7 @@ namespace Utopia.Worlds.Chunks
             return pos.Y < _sliceValue + 1 && pos.Y > _sliceValue - 6;
         }
 
-        public IEnumerable<VisualChunk> ChunksToDraw(bool sameSlice = true)
+        public IEnumerable<VisualChunk2D> ChunksToDraw(bool sameSlice = true)
         {
             //var chunksLimit = _sliceValue == -1 ? SortedChunks.Length : Math.Min(SortedChunks.Length, SliceViewChunks);
 
@@ -253,7 +253,7 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        public void DrawStaticEntitiesShadow(DeviceContext context, VisualChunk chunk)
+        public void DrawStaticEntitiesShadow(DeviceContext context, VisualChunk2D chunk)
         {
             //For Each different entity Model
             foreach (var pair in chunk.AllPairs())
@@ -264,7 +264,7 @@ namespace Utopia.Worlds.Chunks
             }
         }
 
-        private void DrawStaticEntities(DeviceContext context, VisualChunk chunk)
+        private void DrawStaticEntities(DeviceContext context, VisualChunk2D chunk)
         {
             //For Each different entity Model
             foreach (var pair in chunk.AllPairs())

@@ -136,7 +136,7 @@ namespace Utopia.Particules
             if (MaxRenderingDistance > 0 && Vector3D.DistanceSquared(cameraLocation, new Vector3D(CubeLocation)) > _maxRenderingDistanceSquared) return;
 
             //GetCube Profile
-            VisualChunk chunk = null;
+            VisualChunk2D chunk = null;
             var profile = _visualWorldParameters.WorldParameters.Configuration.BlockProfiles[cube.Id];
             //Get Chunk in case if the block is subject to BiomeColoring
             chunk = _worldChunk.GetChunk(CubeLocation.X, CubeLocation.Z);

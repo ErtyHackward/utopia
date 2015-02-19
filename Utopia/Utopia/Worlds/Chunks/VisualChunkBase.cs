@@ -28,6 +28,9 @@ using Utopia.Shared.Entities;
 
 namespace Utopia.Worlds.Chunks
 {
+    /// <summary>
+    /// Abstract class for 2d and 3d chunk layout types 
+    /// </summary>
     public abstract class VisualChunkBase : CompressibleChunk, IDisposable
     {
         private struct TreeBpSeed
@@ -100,8 +103,8 @@ namespace Utopia.Worlds.Chunks
         /// </summary>
         public ChunkGraphics Graphics { get; private set; }
 
-        public VisualChunk[] EightSurroundingChunks;
-        public VisualChunk[] FourSurroundingChunks;
+        public VisualChunk2D[] EightSurroundingChunks;
+        public VisualChunk2D[] FourSurroundingChunks;
 
         /// <summary>
         /// Gets or sets the value of chunk opaque. Allows to create slowly appearing effect
@@ -238,8 +241,8 @@ namespace Utopia.Worlds.Chunks
             }
             else
             {
-                EightSurroundingChunks = new VisualChunk[0];
-                FourSurroundingChunks = new VisualChunk[0];
+                EightSurroundingChunks = new VisualChunk2D[0];
+                FourSurroundingChunks = new VisualChunk2D[0];
             }
         }
 

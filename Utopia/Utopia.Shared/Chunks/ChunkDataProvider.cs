@@ -99,6 +99,11 @@ namespace Utopia.Shared.Chunks
         /// <returns></returns>
         public abstract byte GetBlock(Vector3I inChunkPosition);
 
+        public byte GetBlock(int x, int y, int z)
+        {
+            return GetBlock(new Vector3I(x, y, z));
+        }
+
         /// <summary>
         /// Gets a single block with tag (can be null)
         /// </summary>

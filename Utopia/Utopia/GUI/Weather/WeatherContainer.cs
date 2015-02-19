@@ -23,7 +23,7 @@ namespace Utopia.GUI.TopPanel
         #region Private variables
         private D3DEngine _d3DEngine;
         private IWeather _weather;
-        private IWorldChunks2D _worldChunks;
+        private IWorldChunks _worldChunks;
         private PlayerEntityManager _playerEntityManager;
 
         private int _topPanelheight;
@@ -42,7 +42,7 @@ namespace Utopia.GUI.TopPanel
 
         public WeatherContainer(D3DEngine d3DEngine,
                                 IWeather weather,
-                                IWorldChunks2D worldChunks,
+                                IWorldChunks worldChunks,
                                 PlayerEntityManager playerEntityManager)
         {
             _d3DEngine = d3DEngine;
@@ -66,7 +66,7 @@ namespace Utopia.GUI.TopPanel
         #region Public Methods
         public void Update(GameTime timeSpend)
         {
-            var playerChunk = _worldChunks.GetChunkFromChunkCoord(_playerEntityManager.ChunkPosition);
+            var playerChunk = _worldChunks.GetBaseChunk(_playerEntityManager.ChunkPosition);
             var inChunkPosition =  BlockHelper.GlobalToInternalChunkPosition(_playerEntityManager.Player.Position);
 
             var chunkColumnMeta = playerChunk.BlockData.GetColumnInfo(inChunkPosition.X, inChunkPosition.Z);

@@ -117,6 +117,7 @@
     <Compile Include="Chunks\CompressibleChunk.cs" />
     <Compile Include="Chunks\CursorRelativeMovement.cs" />
     <Compile Include="Chunks\IEntitySpawningControler.cs" />
+    <Compile Include="Chunks\OctreeChunkDataProvider.cs" />
     <Compile Include="ClassExt\CursorHelper.cs" />
     <Compile Include="ClassExt\ListExtension.cs" />
     <Compile Include="Entities\Concrete\TreeSoul.cs" />

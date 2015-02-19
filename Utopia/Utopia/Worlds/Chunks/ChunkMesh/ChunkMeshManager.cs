@@ -44,7 +44,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         }
 
         #region Public methods
-        public void CreateChunkMesh(VisualChunk chunk)
+        public void CreateChunkMesh(VisualChunk2D chunk)
         {
             CreateCubeMeshes(chunk);
             chunk.State = ChunkState.MeshesChanged;
@@ -58,7 +58,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         }
 
         //Creation of the cubes meshes, Face type by face type
-        private void CreateCubeMeshes(VisualChunk chunk)
+        private void CreateCubeMeshes(VisualChunk2D chunk)
         {
             //Instanciate the various collection objects that wil be used during the cube mesh creations
             chunk.Graphics.InitializeChunkBuffers();
@@ -73,7 +73,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             chunk.OnChunkMeshUpdated();
         }
 
-        private void GenerateCubesFace(CubeFaces cubeFace, VisualChunk chunk)
+        private void GenerateCubesFace(CubeFaces cubeFace, VisualChunk2D chunk)
         {
             TerraCube currentCube, neightborCube, topCube;
             BlockProfile blockProfile, neightborCubeProfile;
@@ -223,7 +223,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
                         {
                             //Find the chunk where this neightboor is located !! (Could be a chunk next to this one !)
                             Vector3I NeightCubeWorldPosition = new Vector3I(xNeight + chunk.CubeRange.Position.X, yNeight, zNeight + chunk.CubeRange.Position.Z);
-                            VisualChunk neighbChunk = WorldChunks.GetChunk(NeightCubeWorldPosition);
+                            VisualChunk2D neighbChunk = WorldChunks.GetChunk(NeightCubeWorldPosition);
 
                             BlockTag tag = neighbChunk.BlockData.GetTag(new Vector3I(NeightCubeWorldPosition.X - neighbChunk.CubeRange.Position.X, yNeight, NeightCubeWorldPosition.Z - neighbChunk.CubeRange.Position.Z));
                             ICubeYOffsetModifier tagOffset = tag as ICubeYOffsetModifier;
@@ -266,7 +266,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
             verticeDico.Clear();
         }
 
-        //private void GenerateStaticEntitiesMesh(VisualChunk chunk)
+        //private void GenerateStaticEntitiesMesh(VisualChunk2D chunk)
         //{
         //    chunk.StaticSpritesVertices.Clear();
         //    chunk.StaticSpritesIndices.Clear();
@@ -277,7 +277,7 @@ namespace Utopia.Worlds.Chunks.ChunkMesh
         //    }
         //}
 
-        //private void GenerateEntitySprite(VisualChunk chunk, List<VertexSprite3D> vertices, List<ushort> indices, SpriteFormat spriteFormat, VisualSpriteEntity sprite)
+        //private void GenerateEntitySprite(VisualChunk2D chunk, List<VertexSprite3D> vertices, List<ushort> indices, SpriteFormat spriteFormat, VisualSpriteEntity sprite)
         //{
         //    Vector3 spriteLocation = sprite.SpriteEntity.Position.AsVector3();
         //    int baseIndex = vertices.Count;
