@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using S33M3Resources.Structs;
 using Utopia.Shared;
 using Utopia.Shared.Chunks;
+using Utopia.Shared.Structs;
 
 namespace Utopia.Tests
 {
@@ -21,28 +22,17 @@ namespace Utopia.Tests
             var octree = new OctreeChunkDataProvider();
             Random r = new Random();
 
-            for (int x = 0; x < 16; x++)
+            foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
             {
-                for (int y = 0; y < 16; y++)
-                {
-                    for (int z = 0; z < 16; z++)
-                    {
-                        var value = (byte)(r.NextDouble() * 255);
-                        inside.SetBlock(new Vector3I(x, y, z), value);
-                        octree.SetBlock(new Vector3I(x, y, z), value);
-                    }
-                }
+                var value = (byte)(r.NextDouble() * 255);
+                inside.SetBlock(pos, value);
+                octree.SetBlock(pos, value);
             }
 
-            for (int x = 0; x < 16; x++)
+
+            foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
             {
-                for (int y = 0; y < 16; y++)
-                {
-                    for (int z = 0; z < 16; z++)
-                    {
-                        Assert.AreEqual(inside.GetBlock(x, y, z), octree.GetBlock(x, y, z));
-                    }
-                }
+                Assert.AreEqual(inside.GetBlock(pos), octree.GetBlock(pos));
             }
         }
 
@@ -64,11 +54,11 @@ namespace Utopia.Tests
         {
             var sw = Stopwatch.StartNew();
 
-            for (var x = 0; x < 100; x++)
+            for (var x = 0; x < 10; x++)
                 action();
 
             sw.Stop();
-            Console.WriteLine(desc + " x100 = " + sw.ElapsedMilliseconds + " ms" );
+            Console.WriteLine(desc + " x10 = " + sw.ElapsedMilliseconds + " ms" );
 
         }
 
@@ -79,6 +69,10 @@ namespace Utopia.Tests
         [TestMethod]
         public void OctreePerfomanceTest()
         {            
+
+            MeasureMemoryUsage("4k array", () => { var array = new Byte[16 * 16 * 16]; });
+            MeasureMemoryUsage("32k array", () => { var array = new Byte[16 * 128 * 16]; });
+
             for (int i = 0; i < 3; i ++)
             {
                 Console.WriteLine("Take " + (i + 1));
@@ -87,19 +81,13 @@ namespace Utopia.Tests
 
                 MeasureMemoryUsage("Flattern array full chunk random data:", () =>
                 {
-                    inside = new InsideDataProvider(new Vector3I(16, 16, 16));
+                    inside = new InsideDataProvider();
                     Random r = new Random(0);
 
-                    for (int x = 0; x < 16; x++)
+                    foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
                     {
-                        for (int y = 0; y < 16; y++)
-                        {
-                            for (int z = 0; z < 16; z++)
-                            {
-                                var value = (byte)(r.NextDouble() * 255);
-                                inside.SetBlock(new Vector3I(x, y, z), value);
-                            }
-                        }
+                        var value = (byte)(r.NextDouble() * 255);
+                        inside.SetBlock(pos, value);
                     }
                 });
 
@@ -109,17 +97,11 @@ namespace Utopia.Tests
 
                 MeasureMemoryUsage("Flattern array all zero:", () =>
                 {
-                    inside = new InsideDataProvider(new Vector3I(16, 16, 16));
+                    inside = new InsideDataProvider();
 
-                    for (int x = 0; x < 16; x++)
+                    foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
                     {
-                        for (int y = 0; y < 16; y++)
-                        {
-                            for (int z = 0; z < 16; z++)
-                            {
-                                inside.SetBlock(new Vector3I(x, y, z), 0);
-                            }
-                        }
+                        inside.SetBlock(pos, 0);
                     }
                 });
 
@@ -130,17 +112,11 @@ namespace Utopia.Tests
                 MeasurePerformance("Flattern array create:", () =>
                 {
                     Random r = new Random(0);
-                    inside = new InsideDataProvider(new Vector3I(16, 16, 16));
-                    for (int x = 0; x < 16; x++)
+                    inside = new InsideDataProvider();
+                    foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
                     {
-                        for (int y = 0; y < 16; y++)
-                        {
-                            for (int z = 0; z < 16; z++)
-                            {
-                                var value = (byte)(r.NextDouble() * 255);
-                                inside.SetBlock(new Vector3I(x, y, z), value);
-                            }
-                        }
+                        var value = (byte)(r.NextDouble() * 255);
+                        inside.SetBlock(pos, value);
                     }
                 });
 
@@ -152,15 +128,9 @@ namespace Utopia.Tests
                 {
                     byte value;
 
-                    for (int x = 0; x < 16; x++)
+                    foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
                     {
-                        for (int y = 0; y < 16; y++)
-                        {
-                            for (int z = 0; z < 16; z++)
-                            {
-                                value = inside.GetBlock(new Vector3I(x, y, z));
-                            }
-                        }
+                        value = inside.GetBlock(pos);
                     }
                 });
 
@@ -172,16 +142,10 @@ namespace Utopia.Tests
                 {
                     octree = new OctreeChunkDataProvider();
                     Random r = new Random(0);
-                    for (int x = 0; x < 16; x++)
+                    foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
                     {
-                        for (int y = 0; y < 16; y++)
-                        {
-                            for (int z = 0; z < 16; z++)
-                            {
-                                var value = (byte)(r.NextDouble() * 255);
-                                octree.SetBlock(new Vector3I(x, y, z), value);
-                            }
-                        }
+                        var value = (byte)(r.NextDouble() * 255);
+                        octree.SetBlock(pos, value);
                     }
                 });
 
@@ -192,15 +156,9 @@ namespace Utopia.Tests
                 MeasureMemoryUsage("Octree all zero:", () =>
                 {
                     octree = new OctreeChunkDataProvider();
-                    for (int x = 0; x < 16; x++)
+                    foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
                     {
-                        for (int y = 0; y < 16; y++)
-                        {
-                            for (int z = 0; z < 16; z++)
-                            {
-                                octree.SetBlock(new Vector3I(x, y, z), 0);
-                            }
-                        }
+                        octree.SetBlock(pos, 0);
                     }
                 });
 
@@ -213,16 +171,10 @@ namespace Utopia.Tests
                 {
                     Random r = new Random(0);
                     octree = new OctreeChunkDataProvider();
-                    for (int x = 0; x < 16; x++)
+                    foreach (var pos in new Range3I(new Vector3I(), new Vector3I(16, 64, 16)))
                     {
-                        for (int y = 0; y < 8; y++)
-                        {
-                            for (int z = 0; z < 16; z++)
-                            {
-                                var value = (byte)(r.NextDouble() * 255);
-                                octree.SetBlock(new Vector3I(x, y, z), value);
-                            }
-                        }
+                        var value = (byte)(r.NextDouble() * 255);
+                        octree.SetBlock(pos, value);
                     }
                 });
 
@@ -234,16 +186,10 @@ namespace Utopia.Tests
                 {
                     Random r = new Random(0);
                     octree = new OctreeChunkDataProvider();
-                    for (int x = 0; x < 16; x++)
+                    foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
                     {
-                        for (int y = 0; y < 16; y++)
-                        {
-                            for (int z = 0; z < 16; z++)
-                            {
-                                var value = (byte)(r.NextDouble() * 255);
-                                octree.SetBlock(new Vector3I(x, y, z), value);
-                            }
-                        }
+                        var value = (byte)(r.NextDouble() * 255);
+                        octree.SetBlock(pos, value);
                     }
                 });
 
@@ -255,15 +201,9 @@ namespace Utopia.Tests
                 {
                     byte value;
 
-                    for (int x = 0; x < 16; x++)
+                    foreach (var pos in new Range3I(new Vector3I(), AbstractChunk.ChunkSize))
                     {
-                        for (int y = 0; y < 16; y++)
-                        {
-                            for (int z = 0; z < 16; z++)
-                            {
-                                value = octree.GetBlock(new Vector3I(x, y, z));
-                            }
-                        }
+                        value = octree.GetBlock(pos);
                     }
                 });
 
