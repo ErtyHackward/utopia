@@ -39,6 +39,7 @@ namespace Utopia.Entities.Managers
         private readonly InputsManager _input;
         private IWorldChunks _worldChunks;
         private bool? _onEntityTop;
+        bool _isOnGround;
         #endregion
 
         #region Public properties
@@ -152,25 +153,36 @@ namespace Utopia.Entities.Managers
             if (IsDirty) 
                 _timer_OnTimerRaised();
 
-            bool isSliding = false;
+            IsCollidingWithEntity(physicSimu, AroundEntities(), ref playerBoundingBox, ref newPosition2Evaluate, ref previousPosition, ref originalPosition);
+        }
+
+        public IEnumerable<VisualEntity> AroundEntities()
+        {
             for (int i = 0; i < _entitiesNearPlayer.Count; i++)
             {
-                var entityTesting = _entitiesNearPlayer[i];
+                yield return _entitiesNearPlayer[i];
+            }
+        }
 
-                if (entityTesting.Entity.IsPlayerCollidable)
-                {
-                    //Compute the New world located player bounding box, that will be use for collision detection
-                    var playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), playerBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
-                    bool isEntityOnSliding;
-                    CollisionCheck(physicSimu, entityTesting, ref playerBoundingBox, ref playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, out isEntityOnSliding);
-                    isSliding |= isEntityOnSliding;
-                }
+        public static void IsCollidingWithEntity(VerletSimulator physicSimu, IEnumerable<VisualEntity> aroundEntities, ref BoundingBox playerBoundingBox, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ref Vector3D originalPosition)
+        {
+            bool isSliding = false;
+            foreach (var entityTesting in aroundEntities)
+            {
+                if (!entityTesting.Entity.IsPlayerCollidable) 
+                    continue;
+
+                //Compute the New world located player bounding box, that will be use for collision detection
+                var playerBoundingBox2Evaluate = new BoundingBox(playerBoundingBox.Minimum + newPosition2Evaluate.AsVector3(), playerBoundingBox.Maximum + newPosition2Evaluate.AsVector3());
+                bool isEntityOnSliding;
+                CollisionCheck(physicSimu, entityTesting, ref playerBoundingBox, ref playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, out isEntityOnSliding);
+                isSliding |= isEntityOnSliding;
             }
 
             physicSimu.IsSliding = isSliding;
         }
 
-        private void CollisionCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, out bool isSliding)
+        private static void CollisionCheck(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, out bool isSliding)
         {
             isSliding = false;
 
@@ -208,9 +220,7 @@ namespace Utopia.Entities.Managers
 
         }
 
-        bool _isOnGround;
-
-        private void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        private static void ModelCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (entityTesting.SkipOneCollisionTest)
             {
@@ -297,7 +307,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private bool IsCollidingWithModel(VisualEntity entityTesting, BoundingBox playerBoundingBox2Evaluate)
+        private static bool IsCollidingWithModel(VisualEntity entityTesting, BoundingBox playerBoundingBox2Evaluate)
         {
             var visualVoxelEntity = entityTesting as VisualVoxelEntity;
             if (visualVoxelEntity == null) 
@@ -381,7 +391,7 @@ namespace Utopia.Entities.Managers
         }
 
 
-        private void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation, bool OnSlidingSlope, out bool isSliding)
+        private static void SlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation, bool OnSlidingSlope, out bool isSliding)
         {
             if (IsSlopeCollisionDetection(physicSimu, entityTesting, ref playerBoundingBox, ref playerBoundingBox2Evaluate, ref newPosition2Evaluate, ref previousPosition, slopeOrientation, OnSlidingSlope, out isSliding))
             {
@@ -405,7 +415,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private bool IsSlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation, bool onSlidingSlope, out bool isSliding)
+        private static bool IsSlopeCollisionDetection(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox playerBoundingBox, ref BoundingBox playerBoundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation, bool onSlidingSlope, out bool isSliding)
         {
             isSliding = false;
 
@@ -460,7 +470,7 @@ namespace Utopia.Entities.Managers
 
         }
 
-        private bool NormalSlope(VerletSimulator physicSimu, VisualEntity entityTesting, float Y, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        private static bool NormalSlope(VerletSimulator physicSimu, VisualEntity entityTesting, float Y, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             if (((entityTesting.WorldBBox.Minimum.Y + Y) - newPosition2Evaluate.Y) < 0.3f)
             {
@@ -478,7 +488,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private bool SlidingSlope(VerletSimulator physicSimu, VisualEntity entityTesting, float Y, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation, out bool isSliding)
+        private static bool SlidingSlope(VerletSimulator physicSimu, VisualEntity entityTesting, float Y, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition, ItemOrientation slopeOrientation, out bool isSliding)
         {
             isSliding = false;
 
@@ -552,7 +562,7 @@ namespace Utopia.Entities.Managers
             }
         }
 
-        private void BoundingBoxCollision(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
+        private static void BoundingBoxCollision(VerletSimulator physicSimu, VisualEntity entityTesting, ref BoundingBox entityBoundingBox, ref BoundingBox boundingBox2Evaluate, ref Vector3D newPosition2Evaluate, ref Vector3D previousPosition)
         {
             Vector3D newPositionWithColliding = previousPosition;
 
@@ -592,7 +602,7 @@ namespace Utopia.Entities.Managers
             //Set the NEW player position after collision tests
             newPosition2Evaluate = newPositionWithColliding;
 
-            // ? I'm on "TOP" of an object ???
+            // ? Am I on "TOP" of an object ???
             if (_onEntityTop == true)
             {
                 physicSimu.OnGround = true;
