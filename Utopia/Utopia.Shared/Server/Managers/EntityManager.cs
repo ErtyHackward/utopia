@@ -380,8 +380,12 @@ namespace Utopia.Shared.Server.Managers
             charEntity.EntityFactory = _server.EntityFactory;
 
             var npc = new ServerNpc(_server, charEntity);
-            var id = DynamicIdHelper.GetNextUniqueId();
-            npc.DynamicEntity.DynamicId = id;
+            var id = charEntity.DynamicId;
+            if (id == 0)
+            {
+                id = DynamicIdHelper.GetNextUniqueId();
+                npc.DynamicEntity.DynamicId = id;
+            }
             _server.AreaManager.AddEntity(npc);
             _npcs.Add(id, npc);
 
