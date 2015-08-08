@@ -170,7 +170,9 @@ namespace Utopia.Entities
             {
                 texture = _iconTextureArray;
                 var cubeId = ((CubeResource)item).CubeId;
-                textureArrayIndex = _cubeIconIndexes[cubeId];
+                byte arrayIndex;
+                if (_cubeIconIndexes.TryGetValue(cubeId, out arrayIndex))
+                    textureArrayIndex = arrayIndex;
                 return;
             }
             if (item is Item)
